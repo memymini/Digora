@@ -1,26 +1,196 @@
+/* globals.css — Tailwind v4 */
 @import "tailwindcss";
+/* v4용 애니메이션 유틸 (tailwindcss-animate 대체) */
+@import "tw-animate-css";
 
+/* ──────────────────────────────────────────────────────────────
+   Digora Design System (HSL only)
+   - v4는 @theme로 디자인 토큰을 정의하면 유틸(bg-*, text-*, rounded-*, shadow-*)이 자동 생성됨
+   ────────────────────────────────────────────────────────────── */
+@theme {
+  /* Colors */
+  --color-background: hsl(210 17% 98%);
+  --color-foreground: hsl(0 0% 18%);
+
+  --color-card: hsl(0 0% 100%);
+  --color-card-foreground: hsl(0 0% 18%);
+
+  --color-popover: hsl(0 0% 100%);
+  --color-popover-foreground: hsl(0 0% 18%);
+
+  --color-primary: hsl(248 79% 67%);
+  --color-primary-foreground: hsl(0 0% 100%);
+
+  --color-secondary: hsl(248 30% 95%);
+  --color-secondary-foreground: hsl(248 79% 67%);
+
+  --color-muted: hsl(210 16% 93%);
+  --color-muted-foreground: hsl(0 0% 50%);
+
+  --color-accent: hsl(210 16% 93%);
+  --color-accent-foreground: hsl(0 0% 18%);
+
+  /* Voting */
+  --color-vote-blue: hsl(225 73% 57%);
+  --color-vote-red: hsl(348 83% 47%);
+
+  /* Destructive */
+  --color-destructive: hsl(348 83% 47%);
+  --color-destructive-foreground: hsl(0 0% 100%);
+
+  /* Aliases used in your config (bg-border, ring-ring 등으로 사용 가능) */
+  --color-border: hsl(210 16% 93%);
+  --color-input: hsl(210 16% 93%);
+  --color-ring: hsl(248 79% 67%);
+
+  /* Sidebar */
+  --color-sidebar-background: hsl(0 0% 98%);
+  --color-sidebar-foreground: hsl(240 5.3% 26.1%);
+  --color-sidebar-primary: hsl(240 5.9% 10%);
+  --color-sidebar-primary-foreground: hsl(0 0% 98%);
+  --color-sidebar-accent: hsl(240 4.8% 95.9%);
+  --color-sidebar-accent-foreground: hsl(240 5.9% 10%);
+  --color-sidebar-border: hsl(220 13% 91%);
+  --color-sidebar-ring: hsl(217.2 91.2% 59.8%);
+
+  /* Shadows */
+  --shadow-card: 0 2px 8px -2px hsl(248 79% 67% / 0.1);
+  --shadow-hover: 0 8px 25px -8px hsl(248 79% 67% / 0.2);
+
+  /* Fonts → font-pretendard 유틸 자동 생성 */
+  --font-pretendard: "Pretendard Variable", Pretendard, -apple-system, system-ui,
+    "Segoe UI", Roboto, "Noto Sans KR", "Apple SD Gothic Neo", "Helvetica Neue",
+    Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+
+  /* Animations (config의 accordion-* 이식) → animate-accordion-down/up 유틸 생성 */
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
+
+  /* Radius: v3의 --radius 기반 계산식을 v4 토큰(rounded-*) 스케일에 매핑 */
+  /* rounded-lg/md/sm 에 대응 */
+  --radius-lg: var(--radius); /* 기본 */
+  --radius-md: calc(var(--radius) - 2px); /* config md */
+  --radius-sm: calc(var(--radius) - 4px); /* config sm */
+}
+
+/* 일반 런타임 변수(유틸 생성 X) */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* 디자인 시스템 기본 radius (위에서 스케일로 파생) */
+  --radius: 0.75rem;
+
+  /* Gradients */
+  --gradient-primary: linear-gradient(
+    135deg,
+    var(--color-primary),
+    hsl(248 79% 75%)
+  );
+  --gradient-voting: linear-gradient(
+    90deg,
+    var(--color-vote-blue),
+    var(--color-vote-red)
+  );
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* Dark mode: class 방식 (html 또는 body에 .dark 추가) */
+.dark {
+  --color-background: hsl(0 0% 9%);
+  --color-foreground: hsl(0 0% 95%);
+
+  --color-card: hsl(0 0% 12%);
+  --color-card-foreground: hsl(0 0% 95%);
+
+  --color-popover: hsl(0 0% 12%);
+  --color-popover-foreground: hsl(0 0% 95%);
+
+  --color-primary: hsl(248 79% 67%);
+  --color-primary-foreground: hsl(0 0% 100%);
+
+  --color-secondary: hsl(248 20% 20%);
+  --color-secondary-foreground: hsl(0 0% 95%);
+
+  --color-muted: hsl(0 0% 18%);
+  --color-muted-foreground: hsl(0 0% 60%);
+
+  --color-accent: hsl(0 0% 18%);
+  --color-accent-foreground: hsl(0 0% 95%);
+
+  --color-vote-blue: hsl(225 73% 57%);
+  --color-vote-red: hsl(348 83% 47%);
+
+  --color-destructive: hsl(348 83% 47%);
+  --color-destructive-foreground: hsl(0 0% 100%);
+
+  --color-border: hsl(0 0% 18%);
+  --color-input: hsl(0 0% 18%);
+  --color-ring: hsl(248 79% 67%);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* Base 레이어 */
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-pretendard antialiased;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* 타이포 유틸 (config의 폰트/사이즈 감성 유지) */
+@utility heading-1 {
+  @apply text-[28px] font-bold leading-tight;
 }
+@utility heading-2 {
+  @apply text-[22px] font-bold leading-tight;
+}
+@utility body-text {
+  @apply text-base font-normal leading-relaxed;
+}
+@utility label-text {
+  @apply text-[15px] font-semibold leading-normal;
+}
+@utility caption-text {
+  @apply text-[13px] font-normal leading-normal;
+}
+
+/* 커스텀 유틸 */
+@utility vote-gradient {
+  background: linear-gradient(
+    90deg,
+    var(--color-vote-blue) 0%,
+    var(--color-vote-red) 100%
+  );
+}
+@utility card-shadow {
+  box-shadow: var(--shadow-card);
+}
+@utility card-shadow-hover {
+  box-shadow: var(--shadow-hover);
+}
+
+/* v3의 theme.container(center/padding/screens) 대응:
+   안전하게 독립 유틸로 제공 (내장 .container 규칙과 충돌 방지) */
+@utility container-digora {
+  max-width: 1400px;
+  margin-inline: auto; /* center:true */
+  padding-inline: 2rem; /* padding:"2rem" */
+}
+/* 필요하면 브레이크포인트별 변형도 정의 가능
+@media (width >= 1536px) { .container-digora { max-width: 1400px } }
+*/
