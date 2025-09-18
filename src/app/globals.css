@@ -3,6 +3,27 @@
 @import "tw-animate-css";
 
 /* ──────────────────────────────────────────────────────────────
+   Custom Animations
+   ────────────────────────────────────────────────────────────── */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@utility animate-fade-in-up {
+  /* Hide element by default */
+  opacity: 0;
+  /* Animation */
+  animation: fadeInUp 0.7s ease-out forwards;
+}
+
+/* ──────────────────────────────────────────────────────────────
    Digora Design System
    ────────────────────────────────────────────────────────────── */
 @theme {
@@ -151,14 +172,23 @@
 }
 
 /* 타이포 유틸 (config의 폰트/사이즈 감성 유지) */
+@utility hero-1 {
+  @apply text-[48px] font-extrabold leading-tight;
+}
 @utility heading-1 {
   @apply text-[28px] font-bold leading-tight;
 }
 @utility heading-2 {
   @apply text-[22px] font-bold leading-tight;
 }
+@utility body-text-1 {
+  @apply text-xl font-medium leading-relaxed; /* 20px */
+}
 @utility body-text {
-  @apply text-base font-normal leading-relaxed; /* 16px */
+  @apply text-base font-medium leading-relaxed; /* 16px */
+}
+@utility label-text-1 {
+  @apply text-xl font-semibold leading-normal;
 }
 @utility label-text {
   @apply text-[15px] font-semibold leading-normal;
@@ -192,3 +222,34 @@
 /* 필요하면 브레이크포인트별 변형도 정의 가능
 @media (width >= 1536px) { .container-digora { max-width: 1400px } }
 */
+
+/* ──────────────────────────────────────────────────────────────
+   Custom Animations
+   ────────────────────────────────────────────────────────────── */
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes competitive-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.03);
+  }
+}
+
+@utility animate-shimmer {
+  background-size: 200% auto;
+  animation: shimmer 4s infinite linear;
+}
+
+@utility animate-competitive-pulse {
+  animation: competitive-pulse 3s infinite ease-in-out;
+}

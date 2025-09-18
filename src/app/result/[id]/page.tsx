@@ -10,7 +10,6 @@ import {
   Clock,
   MapPin,
 } from "lucide-react";
-import { Header } from "@/components/Header";
 import {
   BarChart,
   Bar,
@@ -60,12 +59,9 @@ const demographicData = [
   { age: "60대+", candidateA: 1700, candidateB: 1000 },
 ];
 
-const regionData = [
-  { region: "서울", candidateA: 4500, candidateB: 3800 },
-  { region: "경기", candidateA: 3200, candidateB: 2900 },
-  { region: "부산", candidateA: 1800, candidateB: 2100 },
-  { region: "대구", candidateA: 1200, candidateB: 900 },
-  { region: "기타", candidateA: 4720, candidateB: 3150 },
+const genderData = [
+  { gender: "남성", candidateA: 4500, candidateB: 3800 },
+  { gender: "여성", candidateA: 3200, candidateB: 2900 },
 ];
 
 const COLORS = ["#4169E1", "#DC143C"];
@@ -92,8 +88,6 @@ export default function VoteResult() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
-
       <main className="container mx-auto px-4 py-6 max-w-7xl">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
@@ -117,7 +111,9 @@ export default function VoteResult() {
         {/* Title & Final Results */}
         <Card className="p-8 card-shadow mb-8">
           <div className="text-center mb-8">
-            <h1 className="heading-1 mb-4">{mockResultData.title}</h1>
+            <h1 className="heading-2 sm:heading-1 mb-4">
+              {mockResultData.title}
+            </h1>
             <div className="flex items-center justify-center gap-4 caption-text text-muted-foreground">
               <span>
                 총 {mockResultData.totalVotes.toLocaleString()}명 참여
@@ -130,9 +126,9 @@ export default function VoteResult() {
           </div>
 
           {/* Final Results Display */}
-          <div className="flex items-center justify-center gap-16 mb-8">
+          <div className="flex flex-row items-center justify-center gap-4 sm:gap-16 mb-8">
             <div className="flex flex-col items-center">
-              <div className="w-32 h-32 rounded-full overflow-hidden mb-4 ring-4 ring-vote-blue">
+              <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full overflow-hidden mb-4 ring-4 ring-vote-blue">
                 <Image
                   src={politicianA}
                   alt={mockResultData.candidateA.name}
@@ -140,10 +136,10 @@ export default function VoteResult() {
                 />
               </div>
               <div className="text-center">
-                <p className="heading-2 text-vote-blue mb-2">
+                <p className="text-lg sm:heading-2 text-vote-blue mb-1 sm:mb-2">
                   {mockResultData.candidateA.name}
                 </p>
-                <p className="text-4xl font-bold text-vote-blue mb-1">
+                <p className="text-3xl sm:text-4xl font-bold text-vote-blue mb-1">
                   {candidateAPercent}%
                 </p>
                 <p className="caption-text text-muted-foreground">
@@ -158,11 +154,13 @@ export default function VoteResult() {
             </div>
 
             <div className="flex items-center justify-center">
-              <div className="text-6xl font-bold text-muted-foreground">VS</div>
+              <div className="text-4xl sm:text-6xl font-bold text-muted-foreground">
+                VS
+              </div>
             </div>
 
             <div className="flex flex-col items-center">
-              <div className="w-32 h-32 rounded-full overflow-hidden mb-4 ring-4 ring-vote-red">
+              <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full overflow-hidden mb-4 ring-4 ring-vote-red">
                 <Image
                   src={politicianB}
                   alt={mockResultData.candidateB.name}
@@ -170,10 +168,10 @@ export default function VoteResult() {
                 />
               </div>
               <div className="text-center">
-                <p className="heading-2 text-vote-red mb-2">
+                <p className="text-lg sm:heading-2 text-vote-red mb-1 sm:mb-2">
                   {mockResultData.candidateB.name}
                 </p>
-                <p className="text-4xl font-bold text-vote-red mb-1">
+                <p className="text-3xl sm:text-4xl font-bold text-vote-red mb-1">
                   {candidateBPercent}%
                 </p>
                 <p className="caption-text text-muted-foreground">
@@ -327,20 +325,20 @@ export default function VoteResult() {
             </div>
           </Card>
 
-          {/* Regional Results */}
+          {/* Gender Demographics */}
           <Card className="p-6 card-shadow">
             <div className="flex items-center gap-2 mb-6">
-              <MapPin className="w-5 h-5 text-primary" />
-              <h3 className="heading-2">지역별 투표 현황</h3>
+              <Users className="w-5 h-5 text-primary" />
+              <h3 className="heading-2">성별 투표 현황</h3>
             </div>
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
-                  data={regionData}
+                  data={genderData}
                   margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" stroke="#E9ECEF" />
-                  <XAxis dataKey="region" tick={{ fontSize: 12 }} />
+                  <XAxis dataKey="gender" tick={{ fontSize: 12 }} />
                   <YAxis tick={{ fontSize: 12 }} />
                   <Tooltip
                     formatter={(value: number) => [

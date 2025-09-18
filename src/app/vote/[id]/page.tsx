@@ -52,6 +52,42 @@ const mockComments = [
     likes: 18,
     createdAt: "4시간 전",
   },
+  {
+    id: "3",
+    content:
+      "저는 김정치 후보의 외교 정책이 더 마음에 듭니다. 안정적인 국제 관계가 중요하죠.",
+    author: "베리뱃지 사용자",
+    badge: "50대 남성 • 자영업",
+    likes: 11,
+    createdAt: "5시간 전",
+  },
+  {
+    id: "4",
+    content:
+      "환경 문제에 대한 박정책 후보의 공약이 구체적이어서 신뢰가 갑니다.",
+    author: "베리뱃지 사용자",
+    badge: "20대 여성 • 대학생",
+    likes: 22,
+    createdAt: "8시간 전",
+  },
+  {
+    id: "5",
+    content:
+      "결국 중요한 건 일자리 문제 아닐까요? 두 후보 모두 좀 더 확실한 대책을 보여줬으면 합니다.",
+    author: "베리뱃지 사용자",
+    badge: "30대 남성 • 개발자",
+    likes: 30,
+    createdAt: "1일 전",
+  },
+  {
+    id: "6",
+    content:
+      "결국 중요한 건 일자리 문제 아닐까요? 두 후보 모두 좀 더 확실한 대책을 보여줬으면 합니다.",
+    author: "베리뱃지 사용자",
+    badge: "30대 남성 • 개발자",
+    likes: 30,
+    createdAt: "1일 전",
+  },
 ];
 
 export default function VoteDetail() {
@@ -82,8 +118,6 @@ export default function VoteDetail() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
-
       <main className="container mx-auto px-4 py-6 max-w-4xl">
         {/* Back Button */}
         <Button
@@ -99,7 +133,9 @@ export default function VoteDetail() {
         <Card className="p-8 card-shadow mb-8">
           {/* Title & Description */}
           <div className="mb-8">
-            <h1 className="heading-1 mb-4">{mockVoteData.title}</h1>
+            <h1 className="heading-2 sm:heading-1 mb-4">
+              {mockVoteData.title}
+            </h1>
             <p className="body-text text-muted-foreground mb-6">
               {mockVoteData.description}
             </p>
@@ -120,7 +156,7 @@ export default function VoteDetail() {
 
           {/* Candidates Section */}
           <div className="mb-8">
-            <div className="flex items-center justify-center gap-12 mb-8">
+            <div className="flex flex-row items-center justify-center gap-4 sm:gap-16 mb-8">
               {/* Candidate A */}
               <div
                 className={`flex flex-col items-center cursor-pointer transition-all duration-300 ${
@@ -131,7 +167,7 @@ export default function VoteDetail() {
                 }
               >
                 <div
-                  className={`w-32 h-32 rounded-full overflow-hidden mb-4 ring-4 transition-all duration-300 ${
+                  className={`w-24 h-24 sm:w-32 sm:h-32 rounded-full overflow-hidden mb-4 ring-4 transition-all duration-300 ${
                     selectedCandidate === "candidate-a"
                       ? "ring-vote-blue"
                       : "ring-vote-blue/20"
@@ -146,10 +182,10 @@ export default function VoteDetail() {
                   />
                 </div>
                 <div className="text-center">
-                  <p className="heading-2 text-vote-blue mb-2">
+                  <p className="text-lg sm:heading-2 text-vote-blue mb-1 sm:mb-2">
                     {mockVoteData.candidateA.name}
                   </p>
-                  <p className="heading-1 text-vote-blue font-bold">
+                  <p className="text-2xl sm:heading-1 text-vote-blue font-bold">
                     {candidateAPercent}%
                   </p>
                   <p className="caption-text text-muted-foreground mt-1">
@@ -159,7 +195,7 @@ export default function VoteDetail() {
               </div>
 
               <div className="flex items-center justify-center">
-                <div className="heading-1 text-muted-foreground font-bold">
+                <div className="text-2xl sm:heading-1 text-muted-foreground font-bold">
                   VS
                 </div>
               </div>
@@ -174,7 +210,7 @@ export default function VoteDetail() {
                 }
               >
                 <div
-                  className={`w-32 h-32 rounded-full overflow-hidden mb-4 ring-4 transition-all duration-300 ${
+                  className={`w-24 h-24 sm:w-32 sm:h-32 rounded-full overflow-hidden mb-4 ring-4 transition-all duration-300 ${
                     selectedCandidate === "candidate-b"
                       ? "ring-vote-red"
                       : "ring-vote-red/20"
@@ -189,10 +225,10 @@ export default function VoteDetail() {
                   />
                 </div>
                 <div className="text-center">
-                  <p className="heading-2 text-vote-red mb-2">
+                  <p className="text-lg sm:heading-2 text-vote-red mb-1 sm:mb-2">
                     {mockVoteData.candidateB.name}
                   </p>
-                  <p className="heading-1 text-vote-red font-bold">
+                  <p className="text-2xl sm:heading-1 text-vote-red font-bold">
                     {candidateBPercent}%
                   </p>
                   <p className="caption-text text-muted-foreground mt-1">
@@ -284,7 +320,13 @@ export default function VoteDetail() {
           )}
 
           {/* Comments List */}
-          <div className="space-y-4">
+          <div
+            className={`space-y-4 ${
+              mockComments.length >= 3
+                ? "overflow-y-auto max-h-[22rem] sm:max-h-[30rem] pr-3"
+                : ""
+            }`}
+          >
             {mockComments.map((comment) => (
               <div
                 key={comment.id}

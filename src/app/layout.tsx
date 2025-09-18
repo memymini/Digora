@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { Header } from "@/components/Header";
+import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "디고라",
@@ -14,7 +16,9 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body className="">
-        <main>{children}</main>
+        <Header />
+        {children}
+        <Footer />
       </body>
     </html>
   );
