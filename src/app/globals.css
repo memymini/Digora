@@ -1,11 +1,9 @@
 /* globals.css — Tailwind v4 */
 @import "tailwindcss";
-/* v4용 애니메이션 유틸 (tailwindcss-animate 대체) */
 @import "tw-animate-css";
 
 /* ──────────────────────────────────────────────────────────────
-   Digora Design System (HSL only)
-   - v4는 @theme로 디자인 토큰을 정의하면 유틸(bg-*, text-*, rounded-*, shadow-*)이 자동 생성됨
+   Digora Design System
    ────────────────────────────────────────────────────────────── */
 @theme {
   /* Colors */
@@ -160,7 +158,7 @@
   @apply text-[22px] font-bold leading-tight;
 }
 @utility body-text {
-  @apply text-base font-normal leading-relaxed;
+  @apply text-base font-normal leading-relaxed; /* 16px */
 }
 @utility label-text {
   @apply text-[15px] font-semibold leading-normal;
