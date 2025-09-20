@@ -13,7 +13,7 @@ CREATE TABLE profiles (
 
 -- ========== VOTES ==========
 CREATE TABLE votes (
-  id         uuid PRIMARY KEY,
+  id         bigserial PRIMARY KEY,
   title      text NOT NULL,
   details    text,
   status     text NOT NULL CHECK (status IN ('scheduled','ongoing','closed','archived')),
@@ -24,8 +24,8 @@ CREATE TABLE votes (
 
 -- ========== VOTE_OPTIONS ==========
 CREATE TABLE vote_options (
-  id             uuid PRIMARY KEY,
-  vote_id        uuid NOT NULL REFERENCES votes(id) ON DELETE CASCADE,
+  id             bigserial PRIMARY KEY,
+  vote_id        bigint NOT NULL REFERENCES votes(id) ON DELETE CASCADE,
   candidate_name text NOT NULL,
   party          text,
   image_path     text,
@@ -36,7 +36,7 @@ CREATE TABLE vote_options (
 
 -- ========== VOTE_PARTICIPANTS ==========
 CREATE TABLE vote_participants (
-  vote_id    uuid NOT NULL REFERENCES votes(id) ON DELETE CASCADE,
+  vote_id    bigint NOT NULL REFERENCES votes(id) ON DELETE CASCADE,
   user_id    uuid NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
   alias_code text NOT NULL,
   created_at timestamptz,
@@ -46,9 +46,9 @@ CREATE TABLE vote_participants (
 
 -- ========== BALLOTS ==========
 CREATE TABLE ballots (
-  id         uuid PRIMARY KEY,
-  vote_id    uuid NOT NULL REFERENCES votes(id) ON DELETE CASCADE,
-  option_id  uuid NOT NULL,
+  id         bigserial PRIMARY KEY,
+  vote_id    bigint NOT NULL REFERENCES votes(id) ON DELETE CASCADE,
+  option_id  bigint NOT NULL,
   user_id    uuid NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
   created_at timestamptz,
   UNIQUE (vote_id, user_id),
@@ -58,10 +58,10 @@ CREATE TABLE ballots (
 
 -- ========== COMMENTS ==========
 CREATE TABLE comments (
-  id          uuid PRIMARY KEY,
-  vote_id     uuid NOT NULL REFERENCES votes(id) ON DELETE CASCADE,
+  id          bigserial PRIMARY KEY,
+  vote_id     bigint NOT NULL REFERENCES votes(id) ON DELETE CASCADE,
   user_id     uuid NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
-  parent_id   uuid REFERENCES comments(id) ON DELETE CASCADE,
+  parent_id   bigint REFERENCES comments(id) ON DELETE CASCADE,
   body        text NOT NULL,
   visibility  text NOT NULL CHECK (visibility IN ('active','hidden','deleted_by_user','deleted_by_admin')),
   badge_label text,
@@ -72,8 +72,8 @@ CREATE TABLE comments (
 
 -- ========== COMMENT_REACTIONS ==========
 CREATE TABLE comment_reactions (
-  id         uuid PRIMARY KEY,
-  comment_id uuid NOT NULL REFERENCES comments(id) ON DELETE CASCADE,
+  id         bigserial PRIMARY KEY,
+  comment_id bigint NOT NULL REFERENCES comments(id) ON DELETE CASCADE,
   user_id    uuid NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
   type       text NOT NULL CHECK (type IN ('like')),
   created_at timestamptz,
@@ -82,8 +82,8 @@ CREATE TABLE comment_reactions (
 
 -- ========== COMMENT_REPORTS ==========
 CREATE TABLE comment_reports (
-  id          uuid PRIMARY KEY,
-  comment_id  uuid NOT NULL REFERENCES comments(id) ON DELETE CASCADE,
+  id          bigserial PRIMARY KEY,
+  comment_id  bigint NOT NULL REFERENCES comments(id) ON DELETE CASCADE,
   reporter_id uuid NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
   reason      text NOT NULL,
   status      text NOT NULL CHECK (status IN ('pending','hidden','rejected')),
