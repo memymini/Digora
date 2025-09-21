@@ -20,7 +20,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background w-full">
-      <main className="container mx-auto px-4 py-8 w-full gap-8 flex flex-col sm:gap-12">
+      <main className="container mx-auto px-6 py-8 w-full gap-8 flex flex-col sm:gap-12">
         {/* Hero Section */}
         <section className="flex flex-col items-center w-full gap-8 py-4 text-center h-auto md:gap-12 md:py-24">
           <h1
@@ -44,21 +44,28 @@ export default function Home() {
             }`}
           >
             <div className="flex items-center w-full max-w-250 gap-4 justify-center sm:justify-around md:gap-8">
-              <Image
-                src="/images/politician-a.jpg"
-                width={330}
-                height={330}
-                alt="politician-a"
-                className="object-cover w-28 h-28 sm:w-50 sm:h-50 rounded-full card-shadow md:w-72 md:h-72 animate-competitive-pulse transition-transform duration-300 hover:scale-105"
-              />
-              <span className="text-2xl font-bold md:text-4xl">vs</span>
-              <Image
-                src="/images/politician-b.jpg"
-                width={330}
-                height={330}
-                alt="politician-b"
-                className="object-cover w-28 h-28 sm:w-50 sm:h-50 rounded-full card-shadow md:w-72 md:h-72 animate-competitive-pulse transition-transform duration-300 hover:scale-105 [animation-delay:1.5s]"
-              />
+              <div className="relative w-[100%]">
+                <div className="relative aspect-[3/4] overflow-hidden transition-all duration-300">
+                  <Image
+                    src="/images/politician-a.jpg"
+                    fill
+                    alt="politician-a"
+                    className="object-cover grayscale"
+                  />
+                </div>
+              </div>
+
+              <span className="text-2xl font-black md:text-4xl">vs</span>
+              <div className="relative w-[100%]">
+                <div className="relative aspect-[3/4] overflow-hidden transition-all duration-300">
+                  <Image
+                    src="/images/politician-b.jpg"
+                    fill
+                    alt="politician-a"
+                    className="object-cover grayscale"
+                  />
+                </div>
+              </div>
             </div>
             <p className="max-w-2xl mx-auto body-text text-muted-foreground md:body-text-1">
               베리뱃지 시스템과 함께하는

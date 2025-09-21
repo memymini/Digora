@@ -42,10 +42,10 @@ export const VoteCard = ({
   const candidateBPercent = 100 - candidateAPercent;
 
   return (
-    <Card className="p-6 card-shadow hover:card-shadow-hover transition-all duration-300 cursor-pointer group">
+    <Card className="p-6 card-shadow hover:card-shadow-hover transition-all duration-300 cursor-pointer group flex flex-col">
       {/* Title */}
       <div className="mb-4">
-        <h3 className="heading-2 mb-2">{title}</h3>
+        <h3 className="heading-2 mb-2 line-clamp-2 min-h-15">{title}</h3>
         <div className="flex items-center gap-4 caption-text text-muted-foreground">
           <div className="flex items-center gap-1">
             <TrendingUp className="w-4 h-4" />
@@ -62,10 +62,10 @@ export const VoteCard = ({
 
       {/* Candidates */}
       <div className="mb-6">
-        <div className="flex items-center justify-center gap-8 mb-6">
+        <div className="flex items-center justify-center mb-6">
           {/* Candidate A */}
-          <div className="flex flex-col items-center flex-1 max-w-[200px]">
-            <div className="w-24 h-24 rounded-full overflow-hidden mb-3 ring-2 ring-vote-blue/20">
+          <div className="flex flex-col items-center max-w-[200px]">
+            <div className="w-36 h-48 overflow-hidden mb-3 inset-ring-2 inset-ring-vote-blue/20">
               <Image
                 src={politicianA}
                 alt={candidateA.name}
@@ -79,14 +79,9 @@ export const VoteCard = ({
               </p>
             </div>
           </div>
-
-          <div className="flex items-center justify-center">
-            <div className="heading-2 text-muted-foreground font-bold">VS</div>
-          </div>
-
           {/* Candidate B */}
-          <div className="flex flex-col items-center flex-1 max-w-[200px]">
-            <div className="w-24 h-24 rounded-full overflow-hidden mb-3 ring-2 ring-vote-red/20">
+          <div className="flex flex-col items-center max-w-[200px]">
+            <div className="w-36 h-48 overflow-hidden mb-3 inset-ring-2 inset-ring-vote-red/20">
               <Image
                 src={politicianB}
                 alt={candidateB.name}
@@ -113,11 +108,11 @@ export const VoteCard = ({
             style={{ width: `${candidateBPercent}%` }}
           />
         </div>
-
+        {/* 
         <div className="flex justify-between mt-2 caption-text text-muted-foreground">
           <span>{candidateA.votes.toLocaleString()}표</span>
           <span>{candidateB.votes.toLocaleString()}표</span>
-        </div>
+        </div> */}
       </div>
 
       {/* Action Button */}

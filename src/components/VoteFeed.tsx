@@ -66,7 +66,7 @@ const mockVotes = [
 
 export const VoteFeed = () => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="flex items-center gap-6 overflow-x-auto hide-scrollbar pb-6">
       {mockVotes.map((vote) => (
         <VoteCard key={vote.id} {...vote} />
       ))}
