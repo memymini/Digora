@@ -1,39 +1,44 @@
 "use client";
 import { useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, TrendingUp, MessageCircle, Users } from "lucide-react";
-import { Header } from "@/components/Header";
-import politicianA from "@/assets/images/politician-a.jpg";
-import politicianB from "@/assets/images/politician-b.jpg";
-import Image from "next/image";
+import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
+import { CandidateProfile } from "@/components/common/CandidateProfile";
+import { VoteHeader } from "@/components/common/VoteHeader";
+import { CommentSection } from "@/components/vote/CommentSection";
+import { VoteResponse, CommentResponse } from "@/lib/types";
 
 // Mock data - 실제로는 API에서 가져올 데이터
-const mockVoteData = {
-  id: "1",
+const mockVoteData: VoteResponse = {
+  voteId: 1,
   title: "2024년 대선, 누가 더 적합할까요?",
-  description:
+  details:
     "다가오는 대선에서 국가 발전을 위해 더 적합한 후보는 누구라고 생각하시나요? 각 후보의 공약과 비전을 고려해 투표해주세요.",
-  candidateA: {
-    id: "candidate-a",
-    name: "김정치",
-    votes: 15420,
-    image: politicianA,
-  },
-  candidateB: {
-    id: "candidate-b",
-    name: "박정책",
-    votes: 12850,
-    image: politicianB,
-  },
-  totalVotes: 28270,
-  isActive: true,
-  userVoted: null, // null: 미투표, 'candidate-a' | 'candidate-b': 투표 완료
+  totalCount: 28270,
+  status: "진행중",
+  isUserVoted: false,
+  userVotedOptionId: null,
+  options: [
+    {
+      id: 1,
+      name: "김정치",
+      imageUrl: "/images/politician-a.jpg",
+      count: 15420,
+      percent: 50,
+    },
+    {
+      id: 2,
+      name: "박정책",
+      imageUrl: "/images/politician-b.jpg",
+      count: 12850,
+      percent: 50,
+    },
+  ],
 };
 
-const mockComments = [
+const mockComments: CommentResponse[] = [
   {
     id: "1",
     content:
@@ -42,6 +47,26 @@ const mockComments = [
     badge: "30대 남성 • 회사원",
     likes: 24,
     createdAt: "2시간 전",
+    replies: [
+      {
+        id: "1-1",
+        content:
+          "동의합니다. 김정치 후보의 공약이 더 구체적이라 신뢰가 가네요.",
+        author: "베리뱃지 사용자",
+        badge: "30대 여성 • 마케터",
+        likes: 8,
+        createdAt: "1시간 전",
+      },
+      {
+        id: "1-2",
+        content:
+          "저는 생각이 좀 다릅니다. 박정책 후보의 복지 정책이 더 중요하다고 생각해요.",
+        author: "베리뱃지 사용자",
+        badge: "40대 남성 • 교사",
+        likes: 12,
+        createdAt: "30분 전",
+      },
+    ],
   },
   {
     id: "2",
@@ -60,6 +85,16 @@ const mockComments = [
     badge: "50대 남성 • 자영업",
     likes: 11,
     createdAt: "5시간 전",
+    replies: [
+      {
+        id: "3-1",
+        content: "맞아요. 요즘 같은 때일수록 외교가 중요하죠.",
+        author: "베리뱃지 사용자",
+        badge: "50대 여성 • 주부",
+        likes: 5,
+        createdAt: "4시간 전",
+      },
+    ],
   },
   {
     id: "4",
@@ -79,34 +114,15 @@ const mockComments = [
     likes: 30,
     createdAt: "1일 전",
   },
-  {
-    id: "6",
-    content:
-      "결국 중요한 건 일자리 문제 아닐까요? 두 후보 모두 좀 더 확실한 대책을 보여줬으면 합니다.",
-    author: "베리뱃지 사용자",
-    badge: "30대 남성 • 개발자",
-    likes: 30,
-    createdAt: "1일 전",
-  },
 ];
 
-export default function VoteDetail() {
+export default function VotePage() {
   const { id } = useParams();
-  const router = useRouter();
-  const [selectedCandidate, setSelectedCandidate] = useState<string | null>(
-    null
-  );
+  const [selectedCandidate, setSelectedCandidate] = useState<number | null>();
   const [comment, setComment] = useState("");
-  const [userVoted, setUserVoted] = useState<string | null>(
-    mockVoteData.userVoted
+  const [userVoted, setUserVoted] = useState<number | null>(
+    mockVoteData.userVotedOptionId
   );
-
-  const totalCandidateVotes =
-    mockVoteData.candidateA.votes + mockVoteData.candidateB.votes;
-  const candidateAPercent = Math.round(
-    (mockVoteData.candidateA.votes / totalCandidateVotes) * 100
-  );
-  const candidateBPercent = 100 - candidateAPercent;
 
   const handleVote = () => {
     if (selectedCandidate && !userVoted) {
@@ -116,137 +132,69 @@ export default function VoteDetail() {
     }
   };
 
+  const handleCommentSubmit = () => {
+    console.log("Submitting comment:", comment);
+    // 실제로는 API 호출
+    setComment("");
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <main className="container mx-auto px-4 py-6 max-w-4xl">
         {/* Back Button */}
         <Button
           variant="ghost"
-          onClick={() => router.push("/")}
           className="mb-6 p-0 h-auto text-muted-foreground hover:text-foreground"
         >
-          <ArrowLeft className="w-5 h-5 mr-2" />
-          <span className="label-text">돌아가기</span>
+          <Link href="/" className="flex items-center">
+            <ArrowLeft className="w-5 h-5 mr-2" />
+            <span className="label-text">돌아가기</span>
+          </Link>
         </Button>
 
         {/* Vote Content */}
-        <Card className="p-8 card-shadow mb-8">
-          {/* Title & Description */}
-          <div className="mb-8">
-            <h1 className="heading-2 sm:heading-1 mb-4">
-              {mockVoteData.title}
-            </h1>
-            <p className="body-text text-muted-foreground mb-6">
-              {mockVoteData.description}
-            </p>
-
-            <div className="flex items-center gap-6 caption-text text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <TrendingUp className="w-4 h-4" />
-                <span>{mockVoteData.totalVotes.toLocaleString()}명 참여</span>
-              </div>
-              {mockVoteData.isActive && (
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
-                  <span>진행중</span>
-                </div>
-              )}
-            </div>
-          </div>
+        <Card className="p-8 md:p-12 card-shadow mb-8">
+          <VoteHeader
+            title={mockVoteData.title}
+            description={mockVoteData.details}
+            totalVotes={mockVoteData.totalCount}
+            isActive={mockVoteData.status === "진행중"}
+          />
 
           {/* Candidates Section */}
           <div className="mb-8">
-            <div className="flex flex-row items-center justify-center gap-4 sm:gap-16 mb-8">
-              {/* Candidate A */}
-              <div
-                className={`flex flex-col items-center cursor-pointer transition-all duration-300 ${
-                  selectedCandidate === "candidate-a" ? "scale-105" : ""
-                } ${userVoted ? "cursor-default" : ""}`}
-                onClick={() =>
-                  !userVoted && setSelectedCandidate("candidate-a")
+            <div className="flex flex-row items-center justify-center gap-2 sm:gap-4 mb-8">
+              <CandidateProfile
+                candidate={mockVoteData.options[0]}
+                percentage={mockVoteData.options[0].percent}
+                isSelected={selectedCandidate === mockVoteData.options[0].id}
+                isVoted={!!userVoted}
+                onSelect={() =>
+                  !userVoted && setSelectedCandidate(mockVoteData.options[0].id)
                 }
-              >
-                <div
-                  className={`w-24 h-24 sm:w-32 sm:h-32 rounded-full overflow-hidden mb-4 ring-4 transition-all duration-300 ${
-                    selectedCandidate === "candidate-a"
-                      ? "ring-vote-blue"
-                      : "ring-vote-blue/20"
-                  } ${
-                    userVoted === "candidate-a" ? "ring-vote-blue ring-4" : ""
-                  }`}
-                >
-                  <Image
-                    src={politicianA}
-                    alt={mockVoteData.candidateA.name}
-                    className="w-full h-full object-cover grayscale"
-                  />
-                </div>
-                <div className="text-center">
-                  <p className="text-lg sm:heading-2 text-vote-blue mb-1 sm:mb-2">
-                    {mockVoteData.candidateA.name}
-                  </p>
-                  <p className="text-2xl sm:heading-1 text-vote-blue font-bold">
-                    {candidateAPercent}%
-                  </p>
-                  <p className="caption-text text-muted-foreground mt-1">
-                    {mockVoteData.candidateA.votes.toLocaleString()}표
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-center">
-                <div className="text-2xl sm:heading-1 text-muted-foreground font-bold">
-                  VS
-                </div>
-              </div>
-
-              {/* Candidate B */}
-              <div
-                className={`flex flex-col items-center cursor-pointer transition-all duration-300 ${
-                  selectedCandidate === "candidate-b" ? "scale-105" : ""
-                } ${userVoted ? "cursor-default" : ""}`}
-                onClick={() =>
-                  !userVoted && setSelectedCandidate("candidate-b")
+                color="blue"
+              />
+              <CandidateProfile
+                candidate={mockVoteData.options[1]}
+                percentage={mockVoteData.options[1].percent}
+                isSelected={selectedCandidate === mockVoteData.options[1].id}
+                isVoted={!!userVoted}
+                onSelect={() =>
+                  !userVoted && setSelectedCandidate(mockVoteData.options[1].id)
                 }
-              >
-                <div
-                  className={`w-24 h-24 sm:w-32 sm:h-32 rounded-full overflow-hidden mb-4 ring-4 transition-all duration-300 ${
-                    selectedCandidate === "candidate-b"
-                      ? "ring-vote-red"
-                      : "ring-vote-red/20"
-                  } ${
-                    userVoted === "candidate-b" ? "ring-vote-red ring-4" : ""
-                  }`}
-                >
-                  <Image
-                    src={politicianB}
-                    alt={mockVoteData.candidateB.name}
-                    className="w-full h-full object-cover grayscale"
-                  />
-                </div>
-                <div className="text-center">
-                  <p className="text-lg sm:heading-2 text-vote-red mb-1 sm:mb-2">
-                    {mockVoteData.candidateB.name}
-                  </p>
-                  <p className="text-2xl sm:heading-1 text-vote-red font-bold">
-                    {candidateBPercent}%
-                  </p>
-                  <p className="caption-text text-muted-foreground mt-1">
-                    {mockVoteData.candidateB.votes.toLocaleString()}표
-                  </p>
-                </div>
-              </div>
+                color="red"
+              />
             </div>
 
             {/* Vote Bar */}
             <div className="relative h-6 bg-muted rounded-full overflow-hidden mb-6">
               <div
                 className="absolute left-0 top-0 h-full bg-vote-blue transition-all duration-500"
-                style={{ width: `${candidateAPercent}%` }}
+                style={{ width: `${mockVoteData.options[0].percent}%` }}
               />
               <div
                 className="absolute right-0 top-0 h-full bg-vote-red transition-all duration-500"
-                style={{ width: `${candidateBPercent}%` }}
+                style={{ width: `${mockVoteData.options[1].percent}%` }}
               />
             </div>
 
@@ -260,9 +208,9 @@ export default function VoteDetail() {
               >
                 {selectedCandidate
                   ? `${
-                      selectedCandidate === "candidate-a"
-                        ? mockVoteData.candidateA.name
-                        : mockVoteData.candidateB.name
+                      selectedCandidate === mockVoteData.options[0].id
+                        ? mockVoteData.options[0].name
+                        : mockVoteData.options[1].name
                     }에게 투표하기`
                   : "후보를 선택해주세요"}
               </Button>
@@ -270,9 +218,9 @@ export default function VoteDetail() {
               <div className="text-center p-4 bg-primary/10 rounded-lg">
                 <p className="label-text text-primary">
                   투표가 완료되었습니다!
-                  {userVoted === "candidate-a"
-                    ? mockVoteData.candidateA.name
-                    : mockVoteData.candidateB.name}
+                  {userVoted === mockVoteData.options[0].id
+                    ? mockVoteData.options[0].name
+                    : mockVoteData.options[1].name}
                   에게 투표하셨습니다.
                 </p>
               </div>
@@ -280,79 +228,13 @@ export default function VoteDetail() {
           </div>
         </Card>
 
-        {/* Comments Section */}
-        <Card className="p-6 card-shadow">
-          <div className="flex items-center gap-2 mb-6">
-            <MessageCircle className="w-5 h-5 text-muted-foreground" />
-            <h2 className="heading-2">댓글</h2>
-            <span className="caption-text text-muted-foreground">
-              ({mockComments.length})
-            </span>
-          </div>
-
-          {/* Comment Input */}
-          {userVoted && (
-            <div className="mb-6">
-              <Textarea
-                placeholder="베리뱃지로 검증된 의견을 남겨보세요..."
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                className="mb-3"
-              />
-              <div className="flex justify-end">
-                <Button
-                  variant="outline"
-                  disabled={!comment.trim()}
-                  className="label-text"
-                >
-                  댓글 등록
-                </Button>
-              </div>
-            </div>
-          )}
-
-          {!userVoted && (
-            <div className="mb-6 p-4 bg-muted/50 rounded-lg text-center">
-              <p className="body-text text-muted-foreground">
-                투표 후 댓글을 작성할 수 있습니다.
-              </p>
-            </div>
-          )}
-
-          {/* Comments List */}
-          <div
-            className={`space-y-4 ${
-              mockComments.length >= 3
-                ? "overflow-y-auto max-h-[22rem] sm:max-h-[30rem] pr-3"
-                : ""
-            }`}
-          >
-            {mockComments.map((comment) => (
-              <div
-                key={comment.id}
-                className="border-b border-border pb-4 last:border-b-0 last:pb-0"
-              >
-                <div className="flex items-start justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
-                      <Users className="w-4 h-4 text-primary" />
-                    </div>
-                    <div>
-                      <p className="label-text text-primary">{comment.badge}</p>
-                      <p className="caption-text text-muted-foreground">
-                        {comment.createdAt}
-                      </p>
-                    </div>
-                  </div>
-                  <span className="caption-text text-muted-foreground">
-                    👍 {comment.likes}
-                  </span>
-                </div>
-                <p className="body-text pl-10">{comment.content}</p>
-              </div>
-            ))}
-          </div>
-        </Card>
+        <CommentSection
+          comments={mockComments}
+          userVoted={!!userVoted}
+          commentInput={comment}
+          onCommentChange={setComment}
+          onCommentSubmit={handleCommentSubmit}
+        />
       </main>
     </div>
   );
