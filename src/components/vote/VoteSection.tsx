@@ -1,0 +1,98 @@
+"use client";
+import { VoteHeader } from "@/components/common/VoteHeader";
+import { Card } from "@/components/ui/card";
+import { CandidateProfile } from "@/components/common/CandidateProfile";
+import { Button } from "../ui/button";
+import { useState } from "react";
+import { VoteResponse } from "@/lib/types";
+
+export default function VoteSection({ data }: { data: VoteResponse }) {
+  const [selectedCandidate, setSelectedCandidate] = useState<number | null>();
+  const [userVoted, setUserVoted] = useState<number | null>(
+    data.userVotedOptionId
+  );
+
+  const handleVote = () => {
+    if (selectedCandidate && !data.isUserVoted) {
+      setUserVoted(selectedCandidate);
+      // 실제로는 API 호출
+      console.log(`투표: ${selectedCandidate}`);
+    }
+  };
+  return (
+    <Card className="p-8 md:p-12 card-shadow mb-8">
+      <VoteHeader
+        title={data.title}
+        description={data.details}
+        totalVotes={data.totalCount}
+        isActive={data.status === "진행중"}
+      />
+
+      {/* Candidates Section */}
+      <div className="mb-8">
+        <div className="flex flex-row items-center justify-center gap-2 sm:gap-4 mb-8">
+          <CandidateProfile
+            candidate={data.options[0]}
+            percentage={data.options[0].percent}
+            isSelected={selectedCandidate === data.options[0].id}
+            isVoted={!!data.isUserVoted}
+            onSelect={() =>
+              !data.isUserVoted && setSelectedCandidate(data.options[0].id)
+            }
+            color="blue"
+          />
+          <CandidateProfile
+            candidate={data.options[1]}
+            percentage={data.options[1].percent}
+            isSelected={selectedCandidate === data.options[1].id}
+            isVoted={!!data.isUserVoted}
+            onSelect={() =>
+              !data.isUserVoted && setSelectedCandidate(data.options[1].id)
+            }
+            color="red"
+          />
+        </div>
+
+        {/* Vote Bar */}
+        <div className="relative h-6 bg-muted rounded-full overflow-hidden mb-6">
+          <div
+            className="absolute left-0 top-0 h-full bg-vote-blue transition-all duration-500"
+            style={{ width: `${data.options[0].percent}%` }}
+          />
+          <div
+            className="absolute right-0 top-0 h-full bg-vote-red transition-all duration-500"
+            style={{ width: `${data.options[1].percent}%` }}
+          />
+        </div>
+
+        {/* Vote Button */}
+        {!data.isUserVoted ? (
+          <Button
+            onClick={handleVote}
+            disabled={!selectedCandidate}
+            className="w-full h-12 label-text"
+            variant="vote"
+          >
+            {selectedCandidate
+              ? `${
+                  selectedCandidate === data.options[0].id
+                    ? data.options[0].name
+                    : data.options[1].name
+                }에게 투표하기`
+              : "후보를 선택해주세요"}
+          </Button>
+        ) : (
+          <div className="text-center p-4 bg-primary/10 rounded-lg">
+            <p className="label-text text-primary">
+              투표가 완료되었습니다!
+              {data.userVotedOptionId === data.options[0].id
+                ? data.options[0].name
+                : data.options[1].name}
+              에게 투표하셨습니다.
+            </p>
+          </div>
+        )}
+      </div>
+    </Card>
+  );
+}

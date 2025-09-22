@@ -72,7 +72,7 @@ export const CandidateProfile = ({
           {percentage}%
         </p>
         <p className="caption-text text-muted-foreground mt-1">
-          {candidate.count.toLocaleString()}표
+          {candidate.count}표
         </p>
         {isWinner && (
           <div

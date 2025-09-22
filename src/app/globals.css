@@ -74,7 +74,7 @@
 
   /* Shadows */
   --shadow-card: 0 2px 8px -2px hsl(248 79% 67% / 0.1);
-  --shadow-hover: 0 8px 25px -8px hsl(248 79% 67% / 0.2);
+  --shadow-hover: 0 8px 25px -8px hsl(248 79% 67% / 0.25);
 
   /* Fonts → font-pretendard 유틸 자동 생성 */
   --font-pretendard: "Pretendard Variable", Pretendard, -apple-system, system-ui,
@@ -210,6 +210,17 @@
 }
 @utility card-shadow-hover {
   box-shadow: var(--shadow-hover);
+}
+
+@utility hide-scrollbar {
+  /* Hide scrollbar for IE, Edge and Firefox */
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 /* v3의 theme.container(center/padding/screens) 대응:
