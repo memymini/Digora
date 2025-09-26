@@ -1,63 +1,71 @@
-// src/components/result/VoteDistribution.tsx
 "use client";
 
-import {
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  Tooltip,
-  Legend,
-} from "recharts";
-import { Card } from "@/components/ui/card";
+import { ChartCard } from "@/components/common/ChartCard";
 import { Users } from "lucide-react";
 
-interface VoteDistributionProps {
-  data: { name: string; value: number }[];
-  colors: string[];
+interface Candidate {
+  name: string;
+  percent: number;
 }
 
-export function VoteDistribution({ data, colors }: VoteDistributionProps) {
-  return (
-    <Card className="p-6 card-shadow">
-      <div className="flex items-center gap-2 mb-6">
-        <Users className="w-5 h-5 text-primary" />
-        <h3 className="heading-2">투표 분포</h3>
-      </div>
-      <div className="h-64">
-        <ResponsiveContainer width="100%" height="100%">
-          <PieChart>
-            <Pie
-              data={data}
-              cx="50%"
-              cy="50%"
-              innerRadius={60}
-              outerRadius={100}
-              paddingAngle={5}
-              dataKey="value"
-            >
-              {data.map((entry, index) => (
-                <Cell
-                  key={`cell-${index}`}
-                  fill={colors[index % colors.length]}
-                />
-              ))}
-            </Pie>
-            <Tooltip
-              formatter={(value: number) => [
-                value.toLocaleString() + "표",
-                "득표수",
-              ]}
-              contentStyle={{
-                backgroundColor: "#F8F9FA",
-                border: "1px solid #E9ECEF",
-                borderRadius: "8px",
-              }}
-            />
-            <Legend />
-          </PieChart>
-        </ResponsiveContainer>
-      </div>
-    </Card>
-  );
+interface VoteDistributionChartProps {
+  data: Candidate[];
 }
+
+const COLORS = ["#4169E1", "#DC143C"];
+
+export const VoteDistributionChart = ({ data }: VoteDistributionChartProps) => {
+  const candidateA = data[0];
+  const candidateB = data[1];
+
+  const cells = Array.from({ length: 100 }, (_, i) => {
+    if (i < (candidateA?.percent || 0)) {
+      return (
+        <div
+          key={i}
+          className="w-full h-full"
+          style={{ backgroundColor: COLORS[0] }}
+        />
+      );
+    } else if (i < (candidateA?.percent || 0) + (candidateB?.percent || 0)) {
+      return (
+        <div
+          key={i}
+          className="w-full h-full"
+          style={{ backgroundColor: COLORS[1] }}
+        />
+      );
+    } else {
+      return <div key={i} className="w-full h-full bg-gray-200" />;
+    }
+  });
+
+  return (
+    <ChartCard
+      title="투표 분포"
+      icon={<Users className="w-5 h-5 text-primary" />}
+    >
+      <div className="aspect-square w-full min-w-0 max-w-50 mx-auto">
+        <div className="grid grid-cols-10 grid-rows-10 gap-1 w-full h-full">
+          {cells}
+        </div>
+      </div>
+      <div className="flex justify-center mt-4 space-x-4">
+        <div className="flex items-center">
+          <div
+            className="w-4 h-4 mr-2"
+            style={{ backgroundColor: COLORS[0] }}
+          ></div>
+          <span>{candidateA?.name}</span>
+        </div>
+        <div className="flex items-center">
+          <div
+            className="w-4 h-4 mr-2"
+            style={{ backgroundColor: COLORS[1] }}
+          ></div>
+          <span>{candidateB?.name}</span>
+        </div>
+      </div>
+    </ChartCard>
+  );
+};

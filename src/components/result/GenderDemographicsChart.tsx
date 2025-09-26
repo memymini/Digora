@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import { Card } from "@/components/ui/card";
 import { Users } from "lucide-react";
 import {
@@ -12,13 +12,11 @@ import {
   Bar,
 } from "recharts";
 
-interface GroupData {
-  key: string;
-  results: { count: number }[];
-}
-
 interface GenderDemographicsChartProps {
-  data: GroupData[];
+  data: {
+    key: string;
+    results: { count: number; percent: number }[];
+  }[];
   candidateAName: string;
   candidateBName: string;
 }
@@ -28,29 +26,40 @@ export function GenderDemographicsChart({
   candidateAName,
   candidateBName,
 }: GenderDemographicsChartProps) {
-  const chartData = data.map((group) => ({
+  const processedData = data.map((group) => ({
     key: group.key,
-    candidateA: group.results[0]?.count ?? 0,
-    candidateB: group.results[1]?.count ?? 0,
+    candidateA: group.results[0]?.percent,
+    candidateB: group.results[1]?.percent,
   }));
 
   return (
     <Card className="p-6 card-shadow">
       <div className="flex items-center gap-2 mb-6">
         <Users className="w-5 h-5 text-primary" />
-        <h3 className="heading-2">성별 투표 현황</h3>
+        <h3 className="heading-2">성별 투표 현황 (100% 누적)</h3>
       </div>
       <div className="h-64">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
-            data={chartData}
-            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+            layout="vertical"
+            data={processedData}
+            margin={{ top: 5, right: 20, left: 20, bottom: 5 }}
           >
             <CartesianGrid strokeDasharray="3 3" stroke="#E9ECEF" />
-            <XAxis dataKey="key" tick={{ fontSize: 12 }} />
-            <YAxis tick={{ fontSize: 12 }} />
+            <XAxis 
+              type="number" 
+              domain={[0, 100]} 
+              tickFormatter={(tick) => `${tick}%`} 
+              tick={{ fontSize: 12 }} 
+            />
+            <YAxis 
+              type="category" 
+              dataKey="key" 
+              width={40} 
+              tick={{ fontSize: 12 }} 
+            />
             <Tooltip
-              formatter={(value: number) => [value.toLocaleString() + "표", ""]}
+              formatter={(value: number) => [`${value.toFixed(1)}%`, undefined]}
               contentStyle={{
                 backgroundColor: "#F8F9FA",
                 border: "1px solid #E9ECEF",
@@ -58,8 +67,8 @@ export function GenderDemographicsChart({
               }}
             />
             <Legend />
-            <Bar dataKey="candidateA" fill="#4169E1" name={candidateAName} />
-            <Bar dataKey="candidateB" fill="#DC143C" name={candidateBName} />
+            <Bar dataKey="candidateA" stackId="a" fill="#4169E1" name={candidateAName} />
+            <Bar dataKey="candidateB" stackId="a" fill="#DC143C" name={candidateBName} />
           </BarChart>
         </ResponsiveContainer>
       </div>

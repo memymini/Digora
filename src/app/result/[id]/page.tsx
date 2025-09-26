@@ -5,6 +5,9 @@ import { ResultResponse, StatisticResponse } from "@/lib/types";
 import { HourlyTrendChart } from "@/components/result/HourlyTrendChart";
 import FinalResult from "@/components/result/FinalResult";
 import BackButton from "@/components/common/BackButton";
+import { VoteDistributionChart } from "@/components/result/VoteDistributionChart";
+import { AgePyramidChart } from "@/components/result/AgePyramidChart";
+import { GenderPyramidChart } from "@/components/result/GenderPyramidChart";
 
 // 투표 상세 및 전체 결과 데이터
 export const mockResultData: ResultResponse = {
@@ -124,19 +127,31 @@ export default function ResultPage() {
         {/* Title & Final Results */}
         <FinalResult data={resultData} />
         {/* 날짜별 차트 */}
-        <HourlyTrendChart
-          data={statisticData.dailyTrend}
-          candidateAName={candidateA.name}
-          candidateBName={candidateB.name}
-        />
+
         {/* Analysis Charts Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 my-8">
+          <HourlyTrendChart
+            data={statisticData.dailyTrend}
+            candidateAName={candidateA.name}
+            candidateBName={candidateB.name}
+          />
+          <VoteDistributionChart data={resultData.candidates} />
           <AgeDemographicsChart
             data={statisticData?.ageGroups}
             candidateAName={candidateA.name}
             candidateBName={candidateB.name}
           />
+          <AgePyramidChart
+            data={statisticData?.ageGroups}
+            candidateAName={candidateA.name}
+            candidateBName={candidateB.name}
+          />
           <GenderDemographicsChart
+            data={statisticData?.genderGroups}
+            candidateAName={candidateA.name}
+            candidateBName={candidateB.name}
+          />
+          <GenderPyramidChart
             data={statisticData?.genderGroups}
             candidateAName={candidateA.name}
             candidateBName={candidateB.name}
