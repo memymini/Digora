@@ -1,19 +1,42 @@
 import { LargeNumberLike } from "crypto";
 
-// 공통 응답 타입
-export interface ApiResponse<T> {
-  success: boolean;
-  code: string;
+// =================================
+// 표준 API 응답 타입
+// =================================
+
+// 표준 API 에러 객체 타입
+export interface ApiError {
+  code: string; // 예: 'INTERNAL_SERVER_ERROR', 'INVALID_INPUT'
   message: string;
-  data?: T;
 }
 
-// Enum 타입
-export type VoteStatus = "진행 예정" | "진행중" | "투표 종료";
-export type AgeRange = "20대" | "30대" | "40대" | "50대" | "60대+";
-export type Gender = "여성" | "남성" | "기타";
+// 표준 API 성공 응답 타입
+export interface ApiSuccessResponse<T> {
+  success: true;
+  data: T;
+}
 
+// 표준 API 에러 응답 타입
+export interface ApiErrorResponse {
+  success: false;
+  error: ApiError;
+}
+
+// 표준 API 응답 유니온 타입
+export type ApiResponse<T> = ApiSuccessResponse<T> | ApiErrorResponse;
+
+
+// =================================
+// Enum 타입
+// =================================
+export type VoteStatus = "scheduled" | "ongoing" | "closed" | "archived";
+export type AgeRange = "10s" | "20s" | "30s" | "40s" | "50s" | "60s_plus" | "unknown";
+export type Gender = "male" | "female" | "other" | "unknown";
+
+
+// =================================
 // Common 타입
+// =================================
 export interface CountPercent {
   count: number;
   percent: number;
@@ -41,7 +64,9 @@ export interface DailyTrend {
   candidateB: number;
 }
 
+// =================================
 // Result 타입
+// =================================
 export interface ResultResponse {
   voteId: number;
   title: string;
@@ -57,8 +82,9 @@ export interface StatisticResponse {
   dailyTrend: DailyTrend[];
 }
 
+// =================================
 // Vote 타입
-
+// =================================
 export interface VoteResponse {
   voteId: number;
   title: string;
@@ -70,13 +96,25 @@ export interface VoteResponse {
   options: Option[];
 }
 
+// =================================
 // Comment 타입
+// =================================
 export interface CommentResponse {
-  id: string;
+  id: number;
   content: string;
   author: string;
   badge: string;
   likes: number;
   createdAt: string;
   replies?: CommentResponse[];
+}
+
+// =================================
+// Home 타입
+// =================================
+export interface VoteFeedResponse {
+  voteId: number;
+  totalCount: number;
+  title: string;
+  candidates: Candidate[];
 }
