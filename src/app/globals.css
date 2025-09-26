@@ -223,6 +223,14 @@
   }
 }
 
+@utility scroll-snap-x-mandatory {
+  scroll-snap-type: x mandatory;
+}
+
+@utility scroll-snap-align-center {
+  scroll-snap-align: center;
+}
+
 /* v3의 theme.container(center/padding/screens) 대응:
    안전하게 독립 유틸로 제공 (내장 .container 규칙과 충돌 방지) */
 @utility container-digora {
