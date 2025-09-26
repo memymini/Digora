@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { MessageCircle } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 export const Header = () => {
   return (
@@ -8,10 +8,15 @@ export const Header = () => {
       <div className="container flex h-16 items-center justify-between px-4">
         {/* Logo */}
         <div className="flex items-center space-x-2">
-          <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary">
-            <MessageCircle className="w-5 h-5 text-primary-foreground" />
-          </div>
-          <span className="heading-2 text-primary">디고라</span>
+          <Link href="/">
+            <Image
+              src="/images/logo-2.png"
+              alt="logo"
+              width={120}
+              height={60}
+              className=""
+            />
+          </Link>
         </div>
 
         {/* Login Button */}
