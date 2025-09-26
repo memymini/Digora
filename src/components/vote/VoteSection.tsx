@@ -8,15 +8,10 @@ import { VoteResponse } from "@/lib/types";
 
 export default function VoteSection({ data }: { data: VoteResponse }) {
   const [selectedCandidate, setSelectedCandidate] = useState<number | null>();
-  const [userVoted, setUserVoted] = useState<number | null>(
-    data.userVotedOptionId
-  );
 
   const handleVote = () => {
     if (selectedCandidate && !data.isUserVoted) {
-      setUserVoted(selectedCandidate);
       // 실제로는 API 호출
-      console.log(`투표: ${selectedCandidate}`);
     }
   };
   return (
@@ -25,7 +20,7 @@ export default function VoteSection({ data }: { data: VoteResponse }) {
         title={data.title}
         description={data.details}
         totalVotes={data.totalCount}
-        isActive={data.status === "진행중"}
+        isActive={data.status === "ongoing"}
       />
 
       {/* Candidates Section */}
