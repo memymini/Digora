@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { ApiResponse, VoteFeedResponse } from "@/lib/types";
+import { ApiResponse, Candidate, VoteFeedResponse } from "@/lib/types";
 
 export const revalidate = 0;
 
@@ -8,14 +8,15 @@ export async function GET(
   request: Request
 ): Promise<NextResponse<ApiResponse<VoteFeedResponse[]>>> {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
 
-    // 'get_vote_feed' RPC 함수를 호출합니다.
-    const { data, error } = await (await supabase).rpc("get_vote_feed");
+    const { data, error } = await supabase
+      .from("votes")
+      .select("*, vote_options(*)")
+      .order("starts_at", { ascending: false });
 
     if (error) {
       console.error("Error fetching vote feed:", error);
-      // Supabase 에러 처리
       return NextResponse.json(
         {
           success: false,
@@ -28,13 +29,58 @@ export async function GET(
       );
     }
 
-    // API 응답 형식에 맞게 데이터를 반환합니다.
+    // Efficiently fetch all ballot counts for the retrieved votes
+    const voteIds = data.map((vote) => vote.id);
+    const { data: ballots, error: ballotsError } = await supabase
+      .from("ballots")
+      .select("vote_id, option_id")
+      .in("vote_id", voteIds);
+
+    if (ballotsError) {
+      // Log the error but don't fail the whole request, counts can be 0
+      console.error("Error fetching ballot counts:", ballotsError);
+    }
+
+    // Process ballots to get total counts and individual option counts
+    const voteStats = (ballots || []).reduce((acc, ballot) => {
+      if (!acc[ballot.vote_id]) {
+        acc[ballot.vote_id] = { total: 0, options: {} };
+      }
+      acc[ballot.vote_id].total += 1;
+      acc[ballot.vote_id].options[ballot.option_id] =
+        (acc[ballot.vote_id].options[ballot.option_id] || 0) + 1;
+      return acc;
+    }, {} as Record<number, { total: number; options: Record<number, number> }>);
+
+    const transformedData: VoteFeedResponse[] = data.map((vote) => {
+      const options = vote.vote_options || [];
+      const stats = voteStats[vote.id] || { total: 0, options: {} };
+      const totalCount = stats.total;
+
+      const candidates: Candidate[] = options.map((opt) => {
+        const count = stats.options[opt.id] || 0;
+        const percent = totalCount > 0 ? (count / totalCount) * 100 : 0;
+        return {
+          name: opt.candidate_name || "N/A",
+          imageUrl: opt.image_path || "",
+          count: count,
+          percent: percent,
+        };
+      });
+
+      return {
+        voteId: vote.id,
+        title: vote.title,
+        totalCount: totalCount,
+        candidates: candidates,
+      };
+    });
+
     return NextResponse.json({
       success: true,
-      data: data as VoteFeedResponse[],
+      data: transformedData,
     });
   } catch (e: any) {
-    // 기타 서버 에러 처리
     console.error("An unexpected error occurred:", e);
     return NextResponse.json(
       {
