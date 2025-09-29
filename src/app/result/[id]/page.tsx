@@ -15,7 +15,7 @@ export const mockResultData: ResultResponse = {
   title: "2024년 대선, 누가 더 적합할까요?",
   totalCount: 30840,
   duration: 7,
-  status: "진행중",
+  status: "closed",
   candidates: [
     {
       name: "김정치",
@@ -36,7 +36,7 @@ export const mockResultData: ResultResponse = {
 export const mockStatisticData: StatisticResponse = {
   ageGroups: [
     {
-      key: "20대",
+      key: "20s",
       totalCount: 2827,
       totalPercent: 10,
       results: [
@@ -45,7 +45,7 @@ export const mockStatisticData: StatisticResponse = {
       ],
     },
     {
-      key: "30대",
+      key: "30s",
       totalCount: 3000,
       totalPercent: 12,
       results: [
@@ -54,7 +54,7 @@ export const mockStatisticData: StatisticResponse = {
       ],
     },
     {
-      key: "40대",
+      key: "40s",
       totalCount: 3000,
       totalPercent: 12,
       results: [
@@ -63,7 +63,7 @@ export const mockStatisticData: StatisticResponse = {
       ],
     },
     {
-      key: "50대",
+      key: "50s",
       totalCount: 3000,
       totalPercent: 12,
       results: [
@@ -72,7 +72,7 @@ export const mockStatisticData: StatisticResponse = {
       ],
     },
     {
-      key: "60대+",
+      key: "60s_plus",
       totalCount: 3000,
       totalPercent: 12,
       results: [
@@ -83,7 +83,7 @@ export const mockStatisticData: StatisticResponse = {
   ],
   genderGroups: [
     {
-      key: "남성",
+      key: "male",
       totalCount: 15000,
       totalPercent: 49,
       results: [
@@ -92,7 +92,7 @@ export const mockStatisticData: StatisticResponse = {
       ],
     },
     {
-      key: "여성",
+      key: "female",
       totalCount: 15840,
       totalPercent: 51,
       results: [
