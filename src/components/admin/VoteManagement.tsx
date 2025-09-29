@@ -13,7 +13,9 @@ export const VoteManagement = () => {
 
   useEffect(() => {
     const fetchVotes = async () => {
-      const { data, error } = await supabase.from("votes").select("*");
+      const { data, error } = await supabase
+        .from("votes")
+        .select("*, vote_options(*)");
       if (data) {
         setVotes(data);
       }
@@ -30,7 +32,10 @@ export const VoteManagement = () => {
 
   const handleDelete = async (voteId: number) => {
     if (window.confirm("정말로 이 투표를 삭제하시겠습니까?")) {
-      const { error } = await supabase.from("votes").delete().match({ id: voteId });
+      const { error } = await supabase
+        .from("votes")
+        .delete()
+        .match({ id: voteId });
       if (error) {
         alert("삭제 중 오류가 발생했습니다.");
         console.error(error);
@@ -45,14 +50,14 @@ export const VoteManagement = () => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const title = formData.get("title") as string;
-    const subtitle = formData.get("subtitle") as string;
-    const duration = formData.get("duration") as string;
+    const details = formData.get("subtitle") as string;
+    const ends_at = formData.get("duration") as string;
     const candidateAFile = formData.get("candidateA") as File;
     const candidateBFile = formData.get("candidateB") as File;
+    const candidateAName = formData.get("candidateAName") as string;
+    const candidateBName = formData.get("candidateBName") as string;
 
-    let candidateAUrl = selectedVote?.candidate_a_url || null;
-    let candidateBUrl = selectedVote?.candidate_b_url || null;
-
+    // 1. Upload images
     const uploadImage = async (file: File) => {
       if (!file || file.size === 0) return null;
       const fileName = `${Date.now()}_${file.name}`;
@@ -61,70 +66,121 @@ export const VoteManagement = () => {
         .upload(fileName, file);
       if (error) {
         console.error("Image upload error:", error);
-        return null;
+        throw error;
       }
-      const { data: urlData } = supabase.storage.from("vote-images").getPublicUrl(data.path);
+      const { data: urlData } = supabase.storage
+        .from("vote-images")
+        .getPublicUrl(data.path);
       return urlData.publicUrl;
     };
 
-    if (candidateAFile?.size > 0) {
-        candidateAUrl = await uploadImage(candidateAFile);
-    }
-    if (candidateBFile?.size > 0) {
-        candidateBUrl = await uploadImage(candidateBFile);
-    }
+    try {
+      const [candidateAUrl, candidateBUrl] = await Promise.all([
+        uploadImage(candidateAFile),
+        uploadImage(candidateBFile),
+      ]);
 
-    if (!candidateAUrl || !candidateBUrl) {
-        alert("이미지 업로드에 실패했습니다.");
-        return;
-    }
+      if (selectedVote) {
+        // UPDATE LOGIC
+        const { data: updatedVote, error: voteUpdateError } = await supabase
+          .from("votes")
+          .update({ title, details, ends_at })
+          .match({ id: selectedVote.id })
+          .select("*, vote_options(*)")
+          .single();
 
-    const voteData = {
-      title,
-      subtitle,
-      end_date: duration,
-      candidate_a_url: candidateAUrl,
-      candidate_b_url: candidateBUrl,
-    };
+        if (voteUpdateError) throw voteUpdateError;
 
-    if (selectedVote) {
-      // Update logic
-      const { data, error } = await supabase
-        .from("votes")
-        .update(voteData)
-        .match({ id: selectedVote.id })
-        .select()
-        .single();
-      if (error) {
-        alert("투표 수정 중 오류가 발생했습니다.");
-        console.error(error);
-      } else if (data) {
-        setVotes(votes.map((v) => (v.id === data.id ? data : v)));
+        // Update candidate names
+        const optionsUpdatePromises = [
+          supabase
+            .from("vote_options")
+            .update({ candidate_name: candidateAName })
+            .match({ id: selectedVote.vote_options[0].id }),
+          supabase
+            .from("vote_options")
+            .update({ candidate_name: candidateBName })
+            .match({ id: selectedVote.vote_options[1].id }),
+        ];
+
+        await Promise.all(optionsUpdatePromises);
+
+        // This is a bit inefficient as it refetches, but ensures UI consistency
+        const { data: refetchedVote, error: refetchError } = await supabase
+          .from("votes")
+          .select("*, vote_options(*)")
+          .eq("id", updatedVote.id)
+          .single();
+        if (refetchError) throw refetchError;
+
+        setVotes(
+          votes.map((v) => (v.id === refetchedVote.id ? refetchedVote : v))
+        );
         alert("투표가 수정되었습니다.");
-      }
-    } else {
-      // Create logic
-      const { data, error } = await supabase
-        .from("votes")
-        .insert(voteData)
-        .select()
-        .single();
+      } else {
+        // CREATE LOGIC
+        if (!candidateAUrl || !candidateBUrl) {
+          alert("두 후보의 이미지를 모두 업로드해야 합니다.");
+          return;
+        }
 
-      if (error) {
-        alert("투표 생성 중 오류가 발생했습니다.");
-        console.error(error);
-      } else if (data) {
-        setVotes([...votes, data]);
+        // 2. Insert into 'votes' table
+        const { data: voteData, error: voteError } = await supabase
+          .from("votes")
+          .insert({
+            title,
+            details,
+            starts_at: new Date().toISOString(),
+            ends_at,
+            status: "ongoing",
+          })
+          .select()
+          .single();
+
+        if (voteError) throw voteError;
+        if (!voteData) throw new Error("Failed to create vote.");
+
+        // 3. Insert into 'vote_options' table
+        const optionsToInsert = [
+          {
+            vote_id: voteData.id,
+            candidate_name: candidateAName || "후보 1",
+            image_path: candidateAUrl,
+          },
+          {
+            vote_id: voteData.id,
+            candidate_name: candidateBName || "후보 2",
+            image_path: candidateBUrl,
+          },
+        ];
+
+        const { error: optionsError } = await supabase
+          .from("vote_options")
+          .insert(optionsToInsert);
+
+        if (optionsError) throw optionsError;
+
+        const { data: newVoteWithDetails, error: newVoteError } = await supabase
+          .from("votes")
+          .select("*, vote_options(*)")
+          .eq("id", voteData.id)
+          .single();
+        if (newVoteError) throw newVoteError;
+
+        setVotes([...votes, newVoteWithDetails]);
         alert("새로운 투표가 생성되었습니다.");
       }
+
+      setSelectedVote(null);
+    } catch (error) {
+      console.error("Submit error:", error);
+      alert("작업 중 오류가 발생했습니다.");
     }
-    setSelectedVote(null);
-    // Reset form by re-rendering VoteForm with no selectedVote
   };
 
   const handleCancel = () => {
     setSelectedVote(null);
-  }
+  };
 
   return (
     <Card>
@@ -132,7 +188,11 @@ export const VoteManagement = () => {
         <CardTitle>ADM-01: 투표 생성 및 관리</CardTitle>
       </CardHeader>
       <CardContent>
-        <VoteForm selectedVote={selectedVote} onSubmit={handleSubmit} onCancel={handleCancel} />
+        <VoteForm
+          selectedVote={selectedVote}
+          onSubmit={handleSubmit}
+          onCancel={handleCancel}
+        />
 
         <div className="border-t pt-8">
           <h3 className="text-lg font-semibold mb-4">생성된 투표 목록</h3>
