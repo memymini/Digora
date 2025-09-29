@@ -5,15 +5,27 @@ import { CandidateProfile } from "@/components/common/CandidateProfile";
 import { Button } from "../ui/button";
 import { useState } from "react";
 import { VoteResponse } from "@/lib/types";
+import { useVoteMutation } from "@/hooks/mutations/useVoteMutation";
 
 export default function VoteSection({ data }: { data: VoteResponse }) {
   const [selectedCandidate, setSelectedCandidate] = useState<number | null>();
 
+  const { mutate, isPending } = useVoteMutation({
+    voteId: data.voteId,
+  });
+
   const handleVote = () => {
     if (selectedCandidate && !data.isUserVoted) {
-      // 실제로는 API 호출
+      mutate({ optionId: selectedCandidate });
     }
   };
+
+  const handleSelectCandidate = (optionId: number) => {
+    if (!data.isUserVoted) {
+      setSelectedCandidate(optionId);
+    }
+  };
+
   return (
     <Card className="p-8 md:p-12 card-shadow mb-8">
       <VoteHeader
@@ -28,22 +40,16 @@ export default function VoteSection({ data }: { data: VoteResponse }) {
         <div className="flex flex-row items-center justify-center gap-2 sm:gap-4 mb-8">
           <CandidateProfile
             candidate={data.options[0]}
-            percentage={data.options[0].percent}
             isSelected={selectedCandidate === data.options[0].id}
             isVoted={!!data.isUserVoted}
-            onSelect={() =>
-              !data.isUserVoted && setSelectedCandidate(data.options[0].id)
-            }
+            onSelect={() => handleSelectCandidate(data.options[0].id)}
             color="blue"
           />
           <CandidateProfile
             candidate={data.options[1]}
-            percentage={data.options[1].percent}
             isSelected={selectedCandidate === data.options[1].id}
             isVoted={!!data.isUserVoted}
-            onSelect={() =>
-              !data.isUserVoted && setSelectedCandidate(data.options[1].id)
-            }
+            onSelect={() => handleSelectCandidate(data.options[1].id)}
             color="red"
           />
         </div>
@@ -62,20 +68,24 @@ export default function VoteSection({ data }: { data: VoteResponse }) {
 
         {/* Vote Button */}
         {!data.isUserVoted ? (
-          <Button
-            onClick={handleVote}
-            disabled={!selectedCandidate}
-            className="w-full h-12 label-text"
-            variant="vote"
-          >
-            {selectedCandidate
-              ? `${
-                  selectedCandidate === data.options[0].id
-                    ? data.options[0].name
-                    : data.options[1].name
-                }에게 투표하기`
-              : "후보를 선택해주세요"}
-          </Button>
+          <div className="flex flex-col items-center">
+            <Button
+              onClick={handleVote}
+              disabled={!selectedCandidate || isPending}
+              className="w-full h-12 label-text mb-2"
+              variant="vote"
+            >
+              {isPending
+                ? "투표하는 중..."
+                : selectedCandidate
+                ? `${
+                    selectedCandidate === data.options[0].id
+                      ? data.options[0].name
+                      : data.options[1].name
+                  }에게 투표하기`
+                : "후보를 선택해주세요"}
+            </Button>
+          </div>
         ) : (
           <div className="text-center p-4 bg-primary/10 rounded-lg">
             <p className="label-text text-primary">
