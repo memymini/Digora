@@ -1,4 +1,8 @@
-import { LargeNumberLike } from "crypto";
+export interface UserPayload {
+  userId: string;
+  role: string;
+  displayName: string;
+}
 
 // =================================
 // 표준 API 응답 타입
@@ -25,14 +29,19 @@ export interface ApiErrorResponse {
 // 표준 API 응답 유니온 타입
 export type ApiResponse<T> = ApiSuccessResponse<T> | ApiErrorResponse;
 
-
 // =================================
 // Enum 타입
 // =================================
 export type VoteStatus = "scheduled" | "ongoing" | "closed" | "archived";
-export type AgeRange = "10s" | "20s" | "30s" | "40s" | "50s" | "60s_plus" | "unknown";
+export type AgeRange =
+  | "10s"
+  | "20s"
+  | "30s"
+  | "40s"
+  | "50s"
+  | "60s_plus"
+  | "unknown";
 export type Gender = "male" | "female" | "other" | "unknown";
-
 
 // =================================
 // Common 타입
@@ -85,6 +94,10 @@ export interface StatisticResponse {
 // =================================
 // Vote 타입
 // =================================
+export interface VoteRequest {
+  optionId: number;
+}
+
 export interface VoteResponse {
   voteId: number;
   title: string;
