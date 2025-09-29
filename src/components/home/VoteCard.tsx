@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { TrendingUp } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { CandidateProfile } from "../common/CandidateProfile";
-import { Candidate, VoteFeedResponse } from "@/lib/types";
+import { VoteFeedResponse } from "@/lib/types";
 
 export const VoteCard = ({ data }: { data: VoteFeedResponse }) => {
   const router = useRouter();
@@ -32,13 +32,11 @@ export const VoteCard = ({ data }: { data: VoteFeedResponse }) => {
         <div className="flex items-center justify-center mb-6 w-full gap-2 sm:gap-4">
           <CandidateProfile
             candidate={candidateA}
-            percentage={candidateA.percent}
             isWinner={candidateA.percent > candidateB.percent}
             color="blue"
           />
           <CandidateProfile
             candidate={candidateB}
-            percentage={candidateB.percent}
             isWinner={candidateB.percent > candidateB.percent}
             color="red"
           />

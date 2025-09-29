@@ -3,7 +3,6 @@ import Image from "next/image";
 
 interface CandidateProfileProps {
   candidate: Candidate;
-  percentage: number;
   isSelected?: boolean;
   isVoted?: boolean;
   onSelect?: () => void;
@@ -13,12 +12,10 @@ interface CandidateProfileProps {
 
 export const CandidateProfile = ({
   candidate,
-  percentage,
   isSelected,
   isVoted,
   onSelect,
   color,
-  isWinner,
 }: CandidateProfileProps) => {
   const colorClasses = {
     blue: {
@@ -71,7 +68,7 @@ export const CandidateProfile = ({
             <p
               className={`text-2xl sm:heading-1 font-bold ${colorClasses[color].text}`}
             >
-              {percentage}%
+              {candidate.percent}%
             </p>
             <p className="caption-text text-muted-foreground mt-1">
               {candidate.count}표
