@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { ChartCard } from "@/components/common/ChartCard";
 import { Users } from "lucide-react";
@@ -37,8 +37,8 @@ export const GenderPyramidChart = ({
 
   const maxAbsValue = Math.max(
     ...processedData.flatMap((d) => [
-      Math.abs(d[candidateAName]),
-      Math.abs(d[candidateBName]),
+      Math.abs(d[candidateAName] as number),
+      Math.abs(d[candidateBName] as number),
     ])
   );
 
@@ -61,9 +61,17 @@ export const GenderPyramidChart = ({
             tickFormatter={(value) => Math.abs(value).toLocaleString()}
             tick={{ fontSize: 12 }}
           />
-          <YAxis type="category" dataKey="key" width={40} tick={{ fontSize: 12 }} />
+          <YAxis
+            type="category"
+            dataKey="key"
+            width={40}
+            tick={{ fontSize: 12 }}
+          />
           <Tooltip
-            formatter={(value: number) => [Math.abs(value).toLocaleString() + "표", null]}
+            formatter={(value: number) => [
+              Math.abs(value).toLocaleString() + "표",
+              null,
+            ]}
             contentStyle={{
               backgroundColor: "#F8F9FA",
               border: "1px solid #E9ECEF",

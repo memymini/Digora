@@ -6,8 +6,9 @@ export const revalidate = 0;
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse<ApiResponse<null>>> {
+  const { id } = await params;
   try {
     const supabase = await createClient();
 
@@ -29,7 +30,7 @@ export async function POST(
     }
 
     // 2. Validate voteId
-    const voteId = parseInt(params.id, 10);
+    const voteId = parseInt(id, 10);
     if (isNaN(voteId)) {
       return NextResponse.json(
         {
@@ -119,7 +120,8 @@ export async function POST(
     return NextResponse.json({ success: true, data: null });
   } catch (e: unknown) {
     console.error("An unexpected error occurred during voting:", e);
-    const errorMessage = e instanceof Error ? e.message : "An unknown error occurred.";
+    const errorMessage =
+      e instanceof Error ? e.message : "An unknown error occurred.";
     return NextResponse.json(
       {
         success: false,

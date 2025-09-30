@@ -10,7 +10,7 @@ import { AgePyramidChart } from "@/components/result/AgePyramidChart";
 import { GenderPyramidChart } from "@/components/result/GenderPyramidChart";
 
 // 투표 상세 및 전체 결과 데이터
-export const mockResultData: ResultResponse = {
+const mockResultData: ResultResponse = {
   voteId: 1,
   title: "2024년 대선, 누가 더 적합할까요?",
   totalCount: 30840,
@@ -33,7 +33,7 @@ export const mockResultData: ResultResponse = {
 };
 
 // 통계 데이터
-export const mockStatisticData: StatisticResponse = {
+const mockStatisticData: StatisticResponse = {
   ageGroups: [
     {
       key: "20s",

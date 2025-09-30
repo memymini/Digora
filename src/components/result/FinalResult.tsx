@@ -20,14 +20,12 @@ export default function FinalResult({ data }) {
       <div className="flex flex-row items-center justify-around gap-4 sm:gap-8 mb-8">
         <CandidateProfile
           candidate={candidateA}
-          percentage={candidateA.percent}
           isWinner={candidateA.percent > candidateB.percent}
           color="blue"
         />
 
         <CandidateProfile
           candidate={candidateB}
-          percentage={candidateB.percent}
           isWinner={candidateB.percent > candidateA.percent}
           color="red"
         />

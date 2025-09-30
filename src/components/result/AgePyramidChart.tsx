@@ -31,14 +31,14 @@ export const AgePyramidChart = ({
 }: AgePyramidChartProps) => {
   const processedData = data.map((group) => ({
     key: group.key,
-    [candidateAName]: group.results[0]?.count,
-    [candidateBName]: -Math.abs(group.results[1]?.count),
+    [candidateAName]: group.results[0]?.count ?? 0,
+    [candidateBName]: -(group.results[1]?.count ?? 0),
   }));
 
   const maxAbsValue = Math.max(
     ...processedData.flatMap((d) => [
-      Math.abs(d[candidateAName]),
-      Math.abs(d[candidateBName]),
+      Math.abs(d[candidateAName] as number),
+      Math.abs(d[candidateBName] as number),
     ])
   );
 
