@@ -5,7 +5,6 @@ import { ApiResponse, Candidate, VoteFeedResponse } from "@/lib/types";
 export const revalidate = 0;
 
 export async function GET(
-  request: Request
 ): Promise<NextResponse<ApiResponse<VoteFeedResponse[]>>> {
   try {
     const supabase = await createClient();
@@ -80,14 +79,15 @@ export async function GET(
       success: true,
       data: transformedData,
     });
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error("An unexpected error occurred:", e);
+    const errorMessage = e instanceof Error ? e.message : "An unknown error occurred.";
     return NextResponse.json(
       {
         success: false,
         error: {
           code: "INTERNAL_SERVER_ERROR",
-          message: e.message,
+          message: errorMessage,
         },
       },
       { status: 500 }

@@ -117,12 +117,13 @@ export async function POST(
     }
 
     return NextResponse.json({ success: true, data: null });
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error("An unexpected error occurred during voting:", e);
+    const errorMessage = e instanceof Error ? e.message : "An unknown error occurred.";
     return NextResponse.json(
       {
         success: false,
-        error: { code: "INTERNAL_SERVER_ERROR", message: e.message },
+        error: { code: "INTERNAL_SERVER_ERROR", message: errorMessage },
       },
       { status: 500 }
     );

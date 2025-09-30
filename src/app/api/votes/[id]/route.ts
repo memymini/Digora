@@ -122,12 +122,13 @@ export async function GET(
     };
 
     return NextResponse.json({ success: true, data: responseData });
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error("An unexpected error occurred:", e);
+    const errorMessage = e instanceof Error ? e.message : "An unknown error occurred.";
     return NextResponse.json(
       {
         success: false,
-        error: { code: "INTERNAL_SERVER_ERROR", message: e.message },
+        error: { code: "INTERNAL_SERVER_ERROR", message: errorMessage },
       },
       { status: 500 }
     );

@@ -1,15 +1,16 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { ApiResponse, CommentResponse } from "@/lib/types";
 
 export const revalidate = 0;
 
 export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse<ApiResponse<CommentResponse[]>>> {
+  const { id } = await params;
   try {
-    const voteId = parseInt(params.id, 10);
+    const voteId = parseInt(id, 10);
     if (isNaN(voteId)) {
       return NextResponse.json(
         {
@@ -49,12 +50,14 @@ export async function GET(
       success: true,
       data: data as CommentResponse[],
     });
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error("An unexpected error occurred:", e);
+    const errorMessage =
+      e instanceof Error ? e.message : "An unknown error occurred.";
     return NextResponse.json(
       {
         success: false,
-        error: { code: "INTERNAL_SERVER_ERROR", message: e.message },
+        error: { code: "INTERNAL_SERVER_ERROR", message: errorMessage },
       },
       { status: 500 }
     );

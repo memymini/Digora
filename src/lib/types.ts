@@ -131,3 +131,58 @@ export interface VoteFeedResponse {
   title: string;
   candidates: Candidate[];
 }
+
+// =================================
+// Profile 타입
+// =================================
+export interface Profile {
+  id: string;
+  kakao_user_id: string | null;
+  display_name: string | null;
+  role: 'user' | 'admin';
+  gender: 'male' | 'female' | 'other' | 'unknown';
+  age_group: '10s' | '20s' | '30s' | '40s' | '50s' | '60s_plus' | 'unknown';
+  created_at: string | null;
+}
+
+// =================================
+// Reported Comment 타입
+// =================================
+export interface ReportedComment {
+  id: number;
+  comment_id: number;
+  reporter_id: string;
+  reason: string;
+  status: 'pending' | 'hidden' | 'rejected';
+  handled_by: string | null;
+  handled_at: string | null;
+  notes: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+}
+
+// =================================
+// Vote Option 타입
+// =================================
+export interface VoteOption {
+  id: number;
+  vote_id: number;
+  candidate_name: string;
+  party: string | null;
+  image_path: string | null;
+  position: number | null;
+}
+
+// =================================
+// Vote With Options 타입
+// =================================
+export interface VoteWithOption {
+  id: number;
+  title: string;
+  details: string | null;
+  status: VoteStatus;
+  starts_at: string;
+  ends_at: string;
+  created_by: string | null;
+  vote_options: VoteOption[];
+}

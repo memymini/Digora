@@ -5,10 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { VoteForm } from "./VoteForm";
 import { createClient } from "@/lib/supabase/client";
+import { VoteWithOption } from "@/lib/types";
 
 export const VoteManagement = () => {
-  const [votes, setVotes] = useState<any[]>([]);
-  const [selectedVote, setSelectedVote] = useState<any>(null);
+  const [votes, setVotes] = useState<VoteWithOption[]>([]);
+  const [selectedVote, setSelectedVote] = useState<VoteWithOption | null>(null);
   const supabase = createClient();
 
   useEffect(() => {
@@ -26,7 +27,7 @@ export const VoteManagement = () => {
     fetchVotes();
   }, [supabase]);
 
-  const handleEdit = (vote: any) => {
+  const handleEdit = (vote: VoteWithOption) => {
     setSelectedVote(vote);
   };
 
@@ -205,7 +206,7 @@ export const VoteManagement = () => {
                 <div>
                   <p className="font-bold">{vote.title}</p>
                   <p className="text-sm text-gray-600">
-                    종료일: {vote.end_date}
+                    종료일: {vote.ends_at}
                   </p>
                 </div>
                 <div className="space-x-2">

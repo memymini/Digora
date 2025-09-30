@@ -3,13 +3,14 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { VoteWithOption } from "@/lib/types";
 
 export const VoteForm = ({
   selectedVote,
   onSubmit,
   onCancel,
 }: {
-  selectedVote: any;
+  selectedVote: VoteWithOption | null;
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   onCancel: () => void;
 }) => {
@@ -21,8 +22,8 @@ export const VoteForm = ({
   );
 
   useEffect(() => {
-    setCandidateAPreview(selectedVote?.candidate_a_url || null);
-    setCandidateBPreview(selectedVote?.candidate_b_url || null);
+    setCandidateAPreview(selectedVote?.vote_options[0].image_path || null);
+    setCandidateBPreview(selectedVote?.vote_options[1].image_path || null);
   }, [selectedVote]);
 
   const handleFileChange = (
@@ -69,7 +70,7 @@ export const VoteForm = ({
           type="text"
           name="subtitle"
           id="subtitle"
-          defaultValue={selectedVote?.subtitle}
+          defaultValue={selectedVote?.details}
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
         />
       </div>
@@ -164,7 +165,7 @@ export const VoteForm = ({
           type="date"
           name="duration"
           id="duration"
-          defaultValue={selectedVote?.end_date}
+          defaultValue={selectedVote?.ends_at}
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
           required
         />

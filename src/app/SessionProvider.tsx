@@ -3,12 +3,13 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import type { User } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
+import { Profile } from "@/lib/types";
 
 // We also need the profile data, not just the auth user.
 // Let's define a session type that includes the profile.
 export interface SessionData {
   user: User;
-  profile: any; // Replace 'any' with a proper Profile type later
+  profile: Profile; // Replace 'any' with a proper Profile type later
 }
 
 export const SessionContext = createContext<SessionData | null>(null);
