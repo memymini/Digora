@@ -28,17 +28,15 @@ export const Header = () => {
     <header className="flex justify-center sticky top-0 z-50 w-full border-b bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60">
       <div className="container flex h-16 items-center justify-between px-4">
         {/* Logo */}
-        <div className="flex items-center space-x-2">
-          <Link href="/">
-            <Image
-              src="/images/logo-2.png"
-              alt="logo"
-              width={120}
-              height={60}
-              className=""
-            />
-          </Link>
-        </div>
+        <Link href="/" className="flex items-center">
+          <Image
+            src="/images/logo-2.png"
+            alt="logo"
+            width={160}
+            height={80}
+            className=""
+          />
+        </Link>
 
         {/* Login/Logout Button */}
         <div className="flex items-center gap-4">
@@ -52,11 +50,13 @@ export const Header = () => {
               </Button>
             </>
           ) : (
-            <Button
-              onClick={handleLogin}
-              variant="kakao"
-              className="label-text"
-            >
+            <Button onClick={handleLogin} variant="kakao">
+              <Image
+                src="/images/kakao-logo.png"
+                alt="kakao-logo"
+                width={18}
+                height={18}
+              />
               카카오 로그인
             </Button>
           )}
