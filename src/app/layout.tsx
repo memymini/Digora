@@ -6,6 +6,7 @@ import { QueryProvider } from "./QueryProvider";
 import { createClient } from "@/lib/supabase/server";
 import { SessionProvider } from "./SessionProvider";
 import { Toaster } from "react-hot-toast";
+import ProgressBarProvider from "./ProgressBarProvider";
 
 export const metadata: Metadata = {
   title: "디고라",
@@ -38,12 +39,15 @@ export default async function RootLayout({
     <html lang="ko">
       <body className="">
         <QueryProvider>
-          <SessionProvider session={session}>
-            <Header />
-            {children}
-            <Footer />
-          </SessionProvider>
+          <ProgressBarProvider>
+            <SessionProvider session={session}>
+              <Header />
+              {children}
+              <Footer />
+            </SessionProvider>
+          </ProgressBarProvider>
         </QueryProvider>
+
         <Toaster />
       </body>
     </html>

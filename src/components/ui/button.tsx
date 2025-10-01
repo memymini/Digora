@@ -22,7 +22,7 @@ const buttonVariants = cva(
         "vote-blue": "bg-vote-blue text-white hover:bg-vote-blue/90",
         "vote-red": "bg-vote-red text-white hover:bg-vote-red/90",
         kakao:
-          "bg-[#FEE500] text-[#000000] hover:bg-[#FEE500]/90 font-semibold",
+          "bg-[#FEE500] text-[#000000] hover:bg-[#FEE500]/90 font-kakao rounded-sm",
       },
       size: {
         default: "h-10 px-4 py-2",
