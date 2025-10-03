@@ -53,7 +53,7 @@ export interface CountPercent {
 
 export interface Candidate extends CountPercent {
   name: string;
-  imageUrl: string;
+  imageUrl?: string;
 }
 
 export interface Option extends Candidate {
@@ -79,18 +79,60 @@ export interface DailyTrend {
 export interface ResultResponse {
   voteId: number;
   title: string;
+  detail: string;
   totalCount: number;
   duration: number;
   status: VoteStatus;
-  candidates: Candidate[];
+  candidates: Option[];
 }
 
 export interface StatisticResponse {
-  ageGroups: Group[];
-  genderGroups: Group[];
-  dailyTrend: DailyTrend[];
+  totalCount: number;
+  candidates: Option[];
+  ageDistribution: AgeDistribution[]; // 연령별 100% 차트, 상세 차트
+  genderDistribution: GenderDistribution[]; // 성별 상세 차트
+  overallDistribution: OverallDistribution[]; // 연령/성별 100% 차트
+  timeline: TimelineDistribution[]; // 날짜별 차트
+  summary: Summary;
 }
 
+export interface AgeDistribution {
+  age: string;
+  totalCount: number;
+  totalPercent: number;
+  results: ChartResult[];
+}
+
+export interface GenderDistribution {
+  gender: string;
+  totalCount: number;
+  totalPercent: number;
+  results: ChartResult[];
+}
+
+export interface OverallDistribution {
+  group: string;
+  totalCount: number;
+  totalPercent: number;
+  results: ChartResult[];
+}
+
+export interface TimelineDistribution {
+  date: string;
+  results: ChartResult[];
+}
+
+export interface Summary {
+  voteDifference: number;
+  participationRate: number;
+  commentCount: number;
+}
+
+export interface ChartResult {
+  id: number;
+  count: number;
+  percent: number;
+}
 // =================================
 // Vote 타입
 // =================================
@@ -139,9 +181,9 @@ export interface Profile {
   id: string;
   kakao_user_id: string | null;
   display_name: string | null;
-  role: 'user' | 'admin';
-  gender: 'male' | 'female' | 'other' | 'unknown';
-  age_group: '10s' | '20s' | '30s' | '40s' | '50s' | '60s_plus' | 'unknown';
+  role: "user" | "admin";
+  gender: "male" | "female" | "other" | "unknown";
+  age_group: "10s" | "20s" | "30s" | "40s" | "50s" | "60s_plus" | "unknown";
   created_at: string | null;
 }
 
@@ -153,7 +195,7 @@ export interface ReportedComment {
   comment_id: number;
   reporter_id: string;
   reason: string;
-  status: 'pending' | 'hidden' | 'rejected';
+  status: "pending" | "hidden" | "rejected";
   handled_by: string | null;
   handled_at: string | null;
   notes: string | null;
