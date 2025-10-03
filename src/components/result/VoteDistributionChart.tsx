@@ -1,71 +1,47 @@
 "use client";
-
 import { ChartCard } from "@/components/common/ChartCard";
+import { Option } from "@/lib/types";
 import { Users } from "lucide-react";
+import { WaffleChart } from "./WaffleChart";
 
-interface Candidate {
-  name: string;
-  percent: number;
-}
+const COLORS = ["#4169E1", "#DC143C", "#20B2AA", "#FF8C00"];
 
 interface VoteDistributionChartProps {
-  data: Candidate[];
+  candidates: Option[];
 }
 
-const COLORS = ["#4169E1", "#DC143C"];
+export const VoteDistributionChart = ({
+  candidates,
+}: VoteDistributionChartProps) => {
+  if (!candidates || candidates.length < 2) {
+    return <div>데이터가 부족합니다.</div>;
+  }
 
-export const VoteDistributionChart = ({ data }: VoteDistributionChartProps) => {
-  const candidateA = data[0];
-  const candidateB = data[1];
+  // WaffleChart가 현재 2명의 후보만 지원한다고 가정하고, 첫 2명으로 제한합니다.
+  // 향후 WaffleChart가 여러 후보를 지원하게 되면 이 로직은 변경될 수 있습니다.
+  const candidateA = candidates[0];
+  const candidateB = candidates[1];
 
-  const cells = Array.from({ length: 100 }, (_, i) => {
-    if (i < (candidateA?.percent || 0)) {
-      return (
-        <div
-          key={i}
-          className="w-full h-full"
-          style={{ backgroundColor: COLORS[0] }}
-        />
-      );
-    } else if (i < (candidateA?.percent || 0) + (candidateB?.percent || 0)) {
-      return (
-        <div
-          key={i}
-          className="w-full h-full"
-          style={{ backgroundColor: COLORS[1] }}
-        />
-      );
-    } else {
-      return <div key={i} className="w-full h-full bg-gray-200" />;
-    }
-  });
+  const totalVotes = candidates.reduce(
+    (acc, candidate) => acc + candidate.count,
+    0
+  );
 
   return (
-    <ChartCard
-      title="투표 분포"
-      icon={<Users className="w-5 h-5 text-primary" />}
-    >
-      <div className="aspect-square w-full min-w-0 max-w-50 mx-auto">
-        <div className="grid grid-cols-10 grid-rows-10 gap-1 w-full h-full">
-          {cells}
-        </div>
-      </div>
-      <div className="flex justify-center mt-4 space-x-4">
-        <div className="flex items-center">
-          <div
-            className="w-4 h-4 mr-2"
-            style={{ backgroundColor: COLORS[0] }}
-          ></div>
-          <span>{candidateA?.name}</span>
-        </div>
-        <div className="flex items-center">
-          <div
-            className="w-4 h-4 mr-2"
-            style={{ backgroundColor: COLORS[1] }}
-          ></div>
-          <span>{candidateB?.name}</span>
-        </div>
-      </div>
+    <ChartCard title="최종 득표율" icon={Users} candidates={candidates}>
+      <WaffleChart
+        candidateA={{
+          name: candidateA.name,
+          votes: candidateA.count,
+          color: COLORS[0],
+        }}
+        candidateB={{
+          name: candidateB.name,
+          votes: candidateB.count,
+          color: COLORS[1],
+        }}
+        totalVotes={totalVotes}
+      />
     </ChartCard>
   );
 };
