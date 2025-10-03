@@ -198,8 +198,6 @@ const mockStatisticData: StatisticResponse = {
 
 export default function Statistics() {
   const data: StatisticResponse = mockStatisticData;
-  const candidateA = data.candidates[0];
-  const candidateB = data.candidates[1];
   return (
     <div className="flex flex-col gap-8 my-16">
       <h2 className="heading-1 text-center">최종 결과 분석</h2>

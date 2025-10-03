@@ -12,10 +12,16 @@ export type GenderChartData = {
 
 export function mapChartData<
   T extends { results: { id: number; count: number }[] },
-  U extends { [key: string]: any }
->(distribution: T[], candidates: Option[], labelKey: keyof T): U[] {
+  U extends Record<string, string | number>
+>(
+  distribution: T[],
+  candidates: Option[],
+  labelKey: Exclude<keyof T, "results">
+): U[] {
   return distribution.map((group) => {
-    const obj: any = { [labelKey]: group[labelKey] };
+    const obj: Record<string, string | number> = {
+      [labelKey as string]: group[labelKey] as string | number,
+    };
 
     group.results.forEach((result) => {
       const candidate = candidates.find((c) => c.id === result.id);
@@ -28,7 +34,7 @@ export function mapChartData<
       }
     });
 
-    return obj;
+    return obj as U;
   });
 }
 

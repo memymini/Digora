@@ -1,7 +1,7 @@
 "use client";
 
 import { AppProgressBar as ProgressBar } from "next-nprogress-bar";
-import { useIsFetching, useIsMutating } from "@tanstack/react-query";
+import { useIsFetching } from "@tanstack/react-query";
 import { useEffect } from "react";
 import NProgress from "nprogress";
 
