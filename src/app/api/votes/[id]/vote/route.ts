@@ -1,14 +1,14 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { ApiResponse, VoteRequest } from "@/lib/types";
+import { createErrorResponse } from "@/lib/api";
 
 export const revalidate = 0;
 
 export async function POST(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ): Promise<NextResponse<ApiResponse<null>>> {
-  const { id } = await params;
   try {
     const supabase = await createClient();
 
@@ -17,49 +17,30 @@ export async function POST(
       data: { user },
     } = await supabase.auth.getUser();
     if (!user) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: "UNAUTHORIZED",
-            message: "User is not authenticated.",
-          },
-        },
-        { status: 401 }
-      );
+      return createErrorResponse("UNAUTHORIZED", 401, "권한이 없습니다.");
     }
 
     // 2. Validate voteId
-    const voteId = parseInt(id, 10);
+    const voteId = parseInt(params.id, 10);
     if (isNaN(voteId)) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: "INVALID_INPUT",
-            message: "Vote ID must be a number.",
-          },
-        },
-        { status: 400 }
+      return createErrorResponse(
+        "INVALID_INPUT",
+        400,
+        "Vote ID must be a number."
       );
     }
 
     // 3. Validate request body
     const { optionId }: VoteRequest = await request.json();
     if (typeof optionId !== "number") {
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: "INVALID_INPUT",
-            message: "optionId must be a number.",
-          },
-        },
-        { status: 400 }
+      return createErrorResponse(
+        "INVALID_INPUT",
+        400,
+        "optionId must be a number."
       );
     }
 
-    // 4. Check vote status and if user has already voted
+    // 4. Check vote status
     const { data: vote, error: voteError } = await supabase
       .from("votes")
       .select("status")
@@ -68,27 +49,17 @@ export async function POST(
 
     if (voteError) throw voteError;
     if (!vote) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: "NOT_FOUND",
-            message: `Vote with ID ${voteId} not found.`,
-          },
-        },
-        { status: 404 }
+      return createErrorResponse(
+        "NOT_FOUND",
+        404,
+        `Vote with ID ${voteId} not found.`
       );
     }
     if (vote.status !== "ongoing") {
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: "VOTE_NOT_ONGOING",
-            message: "This vote is not open for participation.",
-          },
-        },
-        { status: 403 }
+      return createErrorResponse(
+        "VOTE_NOT_ONGOING",
+        403,
+        "This vote is not open for participation."
       );
     }
 
@@ -99,19 +70,13 @@ export async function POST(
       option_id: optionId,
     });
 
-    // Handle potential errors, e.g., user has already voted (violates unique constraint)
     if (ballotError) {
       if (ballotError.code === "23505") {
         // unique_violation
-        return NextResponse.json(
-          {
-            success: false,
-            error: {
-              code: "ALREADY_VOTED",
-              message: "You have already voted in this poll.",
-            },
-          },
-          { status: 409 }
+        return createErrorResponse(
+          "ALREADY_VOTED",
+          409,
+          "You have already voted in this poll."
         );
       }
       throw ballotError;
@@ -119,15 +84,8 @@ export async function POST(
 
     return NextResponse.json({ success: true, data: null });
   } catch (e: unknown) {
-    console.error("An unexpected error occurred during voting:", e);
-    const errorMessage =
+    const message =
       e instanceof Error ? e.message : "An unknown error occurred.";
-    return NextResponse.json(
-      {
-        success: false,
-        error: { code: "INTERNAL_SERVER_ERROR", message: errorMessage },
-      },
-      { status: 500 }
-    );
+    return createErrorResponse("INTERNAL_SERVER_ERROR", 500, message);
   }
 }

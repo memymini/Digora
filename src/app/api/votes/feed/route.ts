@@ -1,11 +1,13 @@
+import { createErrorResponse } from "@/lib/api";
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { ApiResponse, Candidate, VoteFeedResponse } from "@/lib/types";
 
 export const revalidate = 0;
 
-export async function GET(
-): Promise<NextResponse<ApiResponse<VoteFeedResponse[]>>> {
+export async function GET(): Promise<
+  NextResponse<ApiResponse<VoteFeedResponse[]>>
+> {
   try {
     const supabase = await createClient();
 
@@ -16,16 +18,7 @@ export async function GET(
 
     if (error) {
       console.error("Error fetching vote feed:", error);
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: "DB_ERROR",
-            message: `Database error: ${error.message}`,
-          },
-        },
-        { status: 500 }
-      );
+      return createErrorResponse("DB_ERROR", 500, error.message);
     }
 
     // Efficiently fetch all ballot counts for the retrieved votes
@@ -81,16 +74,8 @@ export async function GET(
     });
   } catch (e: unknown) {
     console.error("An unexpected error occurred:", e);
-    const errorMessage = e instanceof Error ? e.message : "An unknown error occurred.";
-    return NextResponse.json(
-      {
-        success: false,
-        error: {
-          code: "INTERNAL_SERVER_ERROR",
-          message: errorMessage,
-        },
-      },
-      { status: 500 }
-    );
+    const errorMessage =
+      e instanceof Error ? e.message : "An unknown error occurred.";
+    return createErrorResponse("INTERNAL_SERVER_ERROR", 500, errorMessage);
   }
 }
