@@ -4,20 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { useSession } from "@/app/SessionProvider";
+import { useLogin } from "@/hooks/useLogin";
 
 export const Header = () => {
   const session = useSession();
   const profile = session?.profile;
   const supabase = createClient();
-
-  const handleLogin = async () => {
-    await supabase.auth.signInWithOAuth({
-      provider: "kakao",
-      options: {
-        redirectTo: `${window.location.origin}/api/auth/callback`,
-      },
-    });
-  };
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -50,7 +42,7 @@ export const Header = () => {
               </Button>
             </>
           ) : (
-            <Button onClick={handleLogin} variant="kakao">
+            <Button onClick={useLogin} variant="kakao">
               <Image
                 src="/images/kakao-logo.png"
                 alt="kakao-logo"
