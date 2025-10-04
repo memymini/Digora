@@ -48,7 +48,30 @@ export default async function RootLayout({
           </ProgressBarProvider>
         </QueryProvider>
 
-        <Toaster />
+        <Toaster
+          toastOptions={{
+            className: "font-pretendard",
+            style: {
+              fontFamily: "var(--font-pretendard)",
+            },
+            iconTheme: {
+              primary: "var(--color-primary)",
+              secondary: "var(--color-secondary)",
+            },
+            success: {
+              iconTheme: {
+                primary: "var(--color-primary)",
+                secondary: "var(--color-secondary)",
+              },
+            },
+            error: {
+              iconTheme: {
+                primary: "var(--color-vote-red)",
+                secondary: "var(--color-secondary)",
+              },
+            },
+          }}
+        />
       </body>
     </html>
   );
