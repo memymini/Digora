@@ -1,30 +1,69 @@
-import { ApiResponse } from "./types";
+import { ApiResponse, ApiErrorResponse } from "./types";
+
+export class ApiError extends Error {
+  status: number;
+  code: string;
+
+  constructor(errorResponse: ApiErrorResponse) {
+    super(errorResponse.error.message);
+    this.status = errorResponse.status;
+    this.code = errorResponse.error.code;
+  }
+}
 
 export async function fetcher<T>(
   url: string,
   options?: RequestInit
 ): Promise<T> {
+  const isFormData = options?.body instanceof FormData;
+
+  const headers: HeadersInit = {
+    ...(isFormData ? {} : { "Content-Type": "application/json" }),
+    ...(options?.headers || {}),
+  };
+
   const res = await fetch(url, {
     ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...(options?.headers || {}),
-    },
+    headers,
   });
 
-  const result: ApiResponse<T> = await res.json();
-
-  // HTTP 요청이 실패했거나, API가 에러를 반환한 경우
-  if (!res.ok || !result.success) {
-    // result가 success:false를 포함하는 ApiErrorResponse 형태일 경우, 서버가 보낸 에러 메시지를 사용
-    const errorMessage = result.success === false
-      ? result.error.message
-      // 그렇지 않은 경우(네트워크 에러 등), HTTP 상태 기반의 기본 에러 메시지 생성
-      : `Request failed with status: ${res.status}`;
-
-    throw new Error(errorMessage);
+  // res.ok가 아닐 때, 서버는 항상 ApiErrorResponse 형식의 JSON을 보낸다고 가정
+  if (!res.ok) {
+    const errorResponse: ApiErrorResponse = await res.json();
+    throw new ApiError(errorResponse);
   }
 
-  // 성공한 경우, 실제 데이터인 result.data를 반환
+  // res.ok 이지만, 비즈니스 로직 상 에러일 경우 (success: false)
+  const result: ApiResponse<T> = await res.json();
+  if (!result.success) {
+    throw new ApiError(result as ApiErrorResponse);
+  }
+
   return result.data;
 }
+
+export const http = {
+  get: <T>(url: string, options?: RequestInit) =>
+    fetcher<T>(url, { ...options, method: "GET" }),
+
+  post: <T>(url: string, body: any, options?: RequestInit) => {
+    const isFormData = body instanceof FormData;
+    return fetcher<T>(url, {
+      ...options,
+      method: "POST",
+      body: isFormData ? body : JSON.stringify(body),
+    });
+  },
+
+  put: <T>(url: string, body: any, options?: RequestInit) => {
+    const isFormData = body instanceof FormData;
+    return fetcher<T>(url, {
+      ...options,
+      method: "PUT",
+      body: isFormData ? body : JSON.stringify(body),
+    });
+  },
+
+  delete: <T>(url: string, options?: RequestInit) =>
+    fetcher<T>(url, { ...options, method: "DELETE" }),
+};
