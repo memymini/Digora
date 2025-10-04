@@ -1,14 +1,14 @@
-import { useQuery } from "@tanstack/react-query";
-import { fetcher } from "@/lib/fetcher";
-import { VoteFeedResponse } from "@/lib/types";
-import { VOTE_QUERY_KEYS } from "./querykeys";
+import { useApiQuery } from '../useApiQuery';
+import { http } from '@/lib/fetcher';
+import { VoteFeedResponse } from '@/lib/types';
+import { VOTE_QUERY_KEYS } from './querykeys';
 
 const getVoteFeed = () => {
-  return fetcher<VoteFeedResponse[]>("/api/votes/feed");
+  return http.get<VoteFeedResponse[]>("/api/votes/feed");
 };
 
 export const useVoteFeedQuery = () => {
-  return useQuery({
+  return useApiQuery({
     queryKey: VOTE_QUERY_KEYS.feed(),
     queryFn: getVoteFeed,
   });
