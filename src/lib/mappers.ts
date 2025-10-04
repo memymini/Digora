@@ -10,6 +10,16 @@ export type GenderChartData = {
   [key: `c${number}`]: number;
 };
 
+export type PieChartData = Option & {
+  [key: string]: string | number | undefined;
+};
+
+export function mapPieChartData(candidates: Option[]): PieChartData[] {
+  return candidates.map((candidate) => ({
+    ...candidate,
+  }));
+}
+
 export function mapChartData<
   T extends { results: { id: number; count: number }[] },
   U extends Record<string, string | number>

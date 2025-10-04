@@ -9,6 +9,7 @@ import {
   Cell,
   Legend,
 } from "recharts";
+import { mapPieChartData } from "@/lib/mappers";
 import { Option } from "@/lib/types";
 
 interface PieChartProps {
@@ -16,12 +17,14 @@ interface PieChartProps {
 }
 const COLORS = ["#4169E1", "#DC143C"];
 export default function PieChart({ candidates }: PieChartProps) {
+  const pieData = mapPieChartData(candidates);
+
   return (
     <ChartCard title="투표 분포" icon={Users}>
       <ResponsiveContainer width="100%" height={256}>
         <RechartsPieChart>
           <Pie
-            data={candidates}
+            data={pieData}
             cx="50%"
             cy="50%"
             innerRadius={60}
@@ -29,7 +32,7 @@ export default function PieChart({ candidates }: PieChartProps) {
             paddingAngle={5}
             dataKey="count"
           >
-            {candidates.map((entry, index) => (
+            {pieData.map((entry, index) => (
               <Cell
                 key={`cell-${index}`}
                 fill={COLORS[index % COLORS.length]}
