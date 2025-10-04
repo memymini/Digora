@@ -7,6 +7,7 @@ import { CommentItem } from "./CommentItem";
 import { useState } from "react";
 import { useVoteCommentsQuery } from "@/hooks/queries/useVoteCommentsQuery";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useVoteCommentMutation } from "@/hooks/mutations/useVoteCommentMutation";
 
 const CommentSkeleton = () => (
   <div className="space-y-4">
@@ -34,9 +35,10 @@ export const CommentSection = ({
 }: CommentSectionProps) => {
   const { data: commentsData, isLoading, error } = useVoteCommentsQuery(voteId);
   const [comment, setComment] = useState("");
+  const { mutate: postComment } = useVoteCommentMutation({ voteId });
 
   const handleCommentSubmit = () => {
-    // TODO: Implement comment submission logic
+    postComment({ content: comment });
     setComment("");
   };
 
@@ -75,6 +77,7 @@ export const CommentSection = ({
             key={comment.id}
             comment={comment}
             userVoted={isUserVoted}
+            voteId={voteId}
           />
         ))}
       </div>

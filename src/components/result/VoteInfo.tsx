@@ -1,43 +1,62 @@
+"use client";
 import { CandidateProfile } from "@/components/common/CandidateProfile";
 import { Card } from "@/components/ui/card";
 import { VoteHeader } from "../common/VoteHeader";
-import { ResultResponse } from "@/lib/types";
+import { useVoteDetailQuery } from "@/hooks/queries/useVoteDetailQuery";
+import { Skeleton } from "@/components/ui/skeleton";
 
-// 투표 상세 및 전체 결과 데이터
-const mockResultData: ResultResponse = {
-  voteId: 1,
-  title: "2024년 대선, 누가 더 적합할까요?",
-  detail: "투표 설명 글이 여기에...",
-  totalCount: 30840,
-  duration: 7,
-  status: "closed",
-  candidates: [
-    {
-      id: 1,
-      name: "김정치",
-      imageUrl: "/images/politician-a.jpg",
-      count: 15420,
-      percent: 50,
-    },
-    {
-      id: 2,
-      name: "박정책",
-      imageUrl: "/images/politician-b.jpg",
-      count: 15420,
-      percent: 50,
-    },
-  ],
-};
+interface VoteInfoProps {
+  voteId: number;
+}
 
-export default function VoteInfo() {
-  const data = mockResultData;
-  const candidateA = data.candidates[0];
-  const candidateB = data.candidates[0];
+export default function VoteInfo({ voteId }: VoteInfoProps) {
+  const { data, isLoading, error } = useVoteDetailQuery(voteId);
+
+  if (isLoading) {
+    return (
+      <Card className="p-8 card-shadow mb-8">
+        <Skeleton className="h-8 w-3/4 mb-4" />
+        <Skeleton className="h-4 w-1/2 mb-8" />
+        <div className="flex flex-row items-center justify-around gap-4 sm:gap-8 mb-8">
+          <div className="flex flex-col items-center gap-4">
+            <Skeleton className="h-24 w-24 rounded-full" />
+            <Skeleton className="h-6 w-20" />
+          </div>
+          <div className="flex flex-col items-center gap-4">
+            <Skeleton className="h-24 w-24 rounded-full" />
+            <Skeleton className="h-6 w-20" />
+          </div>
+        </div>
+        <Skeleton className="h-8 w-full rounded-full" />
+      </Card>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card className="p-8 card-shadow mb-8 text-center text-red-500">
+        <p>투표 정보를 불러오는 중 오류가 발생했습니다.</p>
+        <p className="text-sm text-muted-foreground">{error.message}</p>
+      </Card>
+    );
+  }
+
+  if (!data) {
+    return (
+      <Card className="p-8 card-shadow mb-8 text-center text-muted-foreground">
+        투표 정보를 찾을 수 없습니다.
+      </Card>
+    );
+  }
+
+  const candidateA = data.options[0];
+  const candidateB = data.options[1];
+
   return (
     <Card className="p-8 card-shadow mb-8">
       <VoteHeader
         title={data.title}
-        description={data.detail}
+        description={data.details}
         totalVotes={data.totalCount}
         isActive={data.status === "ongoing"}
       />

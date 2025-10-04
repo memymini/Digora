@@ -5,23 +5,27 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Users, CornerDownRight } from "lucide-react";
 
+import { useVoteCommentMutation } from "@/hooks/mutations/useVoteCommentMutation";
+
 interface CommentItemProps {
   comment: CommentResponse;
   isReply?: boolean;
   userVoted: boolean;
+  voteId: number;
 }
 
 export const CommentItem = ({
   comment,
   isReply = false,
   userVoted,
+  voteId,
 }: CommentItemProps) => {
   const [showReplyInput, setShowReplyInput] = useState(false);
   const [replyContent, setReplyContent] = useState("");
+  const { mutate: postReply } = useVoteCommentMutation({ voteId });
 
   const handleReplySubmit = () => {
-    console.log(`Replying to comment ${comment.id}:`, replyContent);
-    // 실제로는 API 호출로 답글을 등록합니다.
+    postReply({ content: replyContent, parentId: comment.id });
     setReplyContent("");
     setShowReplyInput(false);
   };
@@ -41,7 +45,7 @@ export const CommentItem = ({
             <Users className="w-4 h-4 text-primary" />
           </div>
           <div>
-            <p className="label-text text-primary">{comment.badge}</p>
+            <p className="label-text text-primary">{comment.author}</p>
             <p className="caption-text text-muted-foreground">
               {comment.createdAt}
             </p>
@@ -98,6 +102,7 @@ export const CommentItem = ({
               comment={reply}
               isReply={true}
               userVoted={userVoted}
+              voteId={voteId}
             />
           ))}
         </div>

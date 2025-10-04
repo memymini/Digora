@@ -15,18 +15,18 @@ import {
 } from "recharts";
 
 interface AgeBarProps {
-  ageDistribution: AgeDistribution[];
+  data: AgeDistribution[];
   candidates: Option[];
 }
 const COLORS = ["#4169E1", "#DC143C"];
-export function AgeBarChart({ ageDistribution, candidates }: AgeBarProps) {
-  const data = mapAgeChartData(ageDistribution, candidates);
+export function AgeBarChart({ data, candidates }: AgeBarProps) {
+  const chartData = mapAgeChartData(data, candidates);
 
   return (
     <ChartCard title="연령대별 투표 현황" icon={Users}>
       <ResponsiveContainer width="100%" height={256}>
         <BarChart
-          data={data}
+          data={chartData}
           margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
         >
           <CartesianGrid strokeDasharray="3 3" stroke="#E9ECEF" />

@@ -15,22 +15,19 @@ import {
 } from "recharts";
 
 interface GenderBarProps {
-  genderDistribution: GenderDistribution[];
+  data: GenderDistribution[];
   candidates: Option[];
 }
 const COLORS = ["#4169E1", "#DC143C"];
 
-export function GenderBarChart({
-  genderDistribution,
-  candidates,
-}: GenderBarProps) {
-  const data = mapGenderChartData(genderDistribution, candidates);
+export function GenderBarChart({ data, candidates }: GenderBarProps) {
+  const chartData = mapGenderChartData(data, candidates);
 
   return (
     <ChartCard title="성별 투표 현황" icon={Users}>
       <ResponsiveContainer width="100%" height={256}>
         <BarChart
-          data={data}
+          data={chartData}
           margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
         >
           <CartesianGrid strokeDasharray="3 3" stroke="#E9ECEF" />
