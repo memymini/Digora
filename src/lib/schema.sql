@@ -93,3 +93,96 @@ CREATE TABLE comment_reports (
   created_at  timestamptz,
   updated_at  timestamptz
 );
+
+-- ========== RLS POLICIES ==========
+
+-- --- Profiles ---
+-- 1. Enable RLS
+ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
+-- 2. Policies
+CREATE POLICY "Allow public read access to profiles" ON profiles FOR SELECT USING (true);
+CREATE POLICY "Allow users to insert their own profile" ON profiles FOR INSERT WITH CHECK (auth.uid() = id);
+CREATE POLICY "Allow users to update their own profile" ON profiles FOR UPDATE USING (auth.uid() = id) WITH CHECK (auth.uid() = id);
+
+-- --- Votes ---
+-- 1. Enable RLS
+ALTER TABLE votes ENABLE ROW LEVEL SECURITY;
+-- 2. Policies
+CREATE POLICY "Allow public read access to votes" ON votes FOR SELECT USING (true);
+CREATE POLICY "Allow admin to manage votes" ON votes FOR ALL USING (exists(select 1 from profiles where profiles.id = auth.uid() and profiles.role = 'admin')) WITH CHECK (exists(select 1 from profiles where profiles.id = auth.uid() and profiles.role = 'admin'));
+
+
+-- --- Vote Options ---
+-- 1. Enable RLS
+ALTER TABLE vote_options ENABLE ROW LEVEL SECURITY;
+-- 2. Policies
+CREATE POLICY "Allow public read access to vote options" ON vote_options FOR SELECT USING (true);
+CREATE POLICY "Allow admin to manage vote options" ON vote_options FOR ALL USING (exists(select 1 from profiles where profiles.id = auth.uid() and profiles.role = 'admin')) WITH CHECK (exists(select 1 from profiles where profiles.id = auth.uid() and profiles.role = 'admin'));
+
+
+-- --- Ballots ---
+-- 1. Enable RLS
+ALTER TABLE ballots ENABLE ROW LEVEL SECURITY;
+-- 2. Policies
+CREATE POLICY "Allow users to insert their own ballot" ON ballots FOR INSERT TO authenticated WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Allow users to view their own ballot" ON ballots FOR SELECT USING (auth.uid() = user_id);
+
+-- --- Comments ---
+-- 1. Enable RLS
+ALTER TABLE comments ENABLE ROW LEVEL SECURITY;
+-- 2. Policies
+CREATE POLICY "Allow read access to active comments" ON comments FOR SELECT USING (visibility = 'active');
+CREATE POLICY "Allow users to insert their own comments" ON comments FOR INSERT TO authenticated WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Allow users to update their own comments" ON comments FOR UPDATE USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Allow admin to manage comments" ON comments FOR ALL USING (exists(select 1 from profiles where profiles.id = auth.uid() and profiles.role = 'admin')) WITH CHECK (exists(select 1 from profiles where profiles.id = auth.uid() and profiles.role = 'admin'));
+
+-- --- Comment Reactions ---
+-- 1. Enable RLS
+ALTER TABLE comment_reactions ENABLE ROW LEVEL SECURITY;
+-- 2. Policies
+CREATE POLICY "Allow users to insert their own reaction" ON comment_reactions FOR INSERT TO authenticated WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Allow users to delete their own reaction" ON comment_reactions FOR DELETE USING (auth.uid() = user_id);
+CREATE POLICY "Allow public read access" ON comment_reactions FOR SELECT USING (true);
+
+
+-- --- Comment Reports ---
+-- 1. Enable RLS
+ALTER TABLE comment_reports ENABLE ROW LEVEL SECURITY;
+-- 2. Policies
+CREATE POLICY "Allow users to insert their own report" ON comment_reports FOR INSERT TO authenticated WITH CHECK (auth.uid() = reporter_id);
+CREATE POLICY "Allow admin to manage reports" ON comment_reports FOR ALL USING (exists(select 1 from profiles where profiles.id = auth.uid() and profiles.role = 'admin')) WITH CHECK (exists(select 1 from profiles where profiles.id = auth.uid() and profiles.role = 'admin'));
+
+
+-- ========== DB FUNCTIONS ==========
+
+CREATE OR REPLACE FUNCTION handle_report(
+  p_report_id bigint,
+  p_new_status text,
+  p_admin_id uuid
+)
+RETURNS void AS $$
+DECLARE
+  v_comment_id bigint;
+BEGIN
+  -- Get the comment_id from the report
+  SELECT comment_id INTO v_comment_id
+  FROM public.comment_reports
+  WHERE id = p_report_id;
+
+  -- Update the report status
+  UPDATE public.comment_reports
+  SET
+    status = p_new_status,
+    handled_by = p_admin_id,
+    handled_at = now()
+  WHERE id = p_report_id;
+
+  -- If the report is approved ('hidden'), hide the comment
+  IF p_new_status = 'hidden' THEN
+    UPDATE public.comments
+    SET visibility = 'hidden'
+    WHERE id = v_comment_id;
+  END IF;
+
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
