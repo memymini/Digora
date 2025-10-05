@@ -1,17 +1,10 @@
+// =================================
+// 표준 API 응답 타입
+// =================================
 export interface UserPayload {
   userId: string;
   role: string;
   displayName: string;
-}
-
-// =================================
-// 표준 API 응답 타입
-// =================================
-
-// 표준 API 에러 객체 타입
-export interface ApiError {
-  code: string; // 예: 'INTERNAL_SERVER_ERROR', 'INVALID_INPUT'
-  message: string;
 }
 
 // 표준 API 성공 응답 타입
@@ -23,7 +16,11 @@ export interface ApiSuccessResponse<T> {
 // 표준 API 에러 응답 타입
 export interface ApiErrorResponse {
   success: false;
-  error: ApiError;
+  status: number;
+  error: {
+    code: string;
+    message: string;
+  };
 }
 
 // 표준 API 응답 유니온 타입
@@ -32,7 +29,9 @@ export type ApiResponse<T> = ApiSuccessResponse<T> | ApiErrorResponse;
 // =================================
 // Enum 타입
 // =================================
+export type Role = "admin" | "user";
 export type VoteStatus = "scheduled" | "ongoing" | "closed" | "archived";
+export type CommentStatus = "pending" | "hidden" | "rejected";
 export type AgeRange =
   | "10s"
   | "20s"
@@ -137,6 +136,7 @@ export interface ChartResult {
 // Vote 타입
 // =================================
 export interface VoteRequest {
+  voteId: number;
   optionId: number;
 }
 
@@ -181,9 +181,9 @@ export interface Profile {
   id: string;
   kakao_user_id: string | null;
   display_name: string | null;
-  role: "user" | "admin";
-  gender: "male" | "female" | "other" | "unknown";
-  age_group: "10s" | "20s" | "30s" | "40s" | "50s" | "60s_plus" | "unknown";
+  role: Role;
+  gender: Gender;
+  age_group: AgeRange;
   created_at: string | null;
 }
 
@@ -192,15 +192,18 @@ export interface Profile {
 // =================================
 export interface ReportedComment {
   id: number;
-  comment_id: number;
-  reporter_id: string;
   reason: string;
-  status: "pending" | "hidden" | "rejected";
-  handled_by: string | null;
-  handled_at: string | null;
-  notes: string | null;
-  created_at: string | null;
-  updated_at: string | null;
+  status: CommentStatus;
+  created_at: string;
+  comment: {
+    id: number;
+    body: string;
+    created_at: string;
+  };
+  reporter: {
+    id: string;
+    display_name: string | null;
+  };
 }
 
 // =================================
