@@ -46,7 +46,7 @@ export const http = {
   get: <T>(url: string, options?: RequestInit) =>
     fetcher<T>(url, { ...options, method: "GET" }),
 
-  post: <T>(url: string, body: any, options?: RequestInit) => {
+  post: <T>(url: string, body: unknown, options?: RequestInit) => {
     const isFormData = body instanceof FormData;
     return fetcher<T>(url, {
       ...options,
@@ -55,7 +55,7 @@ export const http = {
     });
   },
 
-  put: <T>(url: string, body: any, options?: RequestInit) => {
+  put: <T>(url: string, body: unknown, options?: RequestInit) => {
     const isFormData = body instanceof FormData;
     return fetcher<T>(url, {
       ...options,
