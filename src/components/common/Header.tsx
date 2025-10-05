@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { useSession } from "@/app/SessionProvider";
-import { useLogin } from "@/hooks/useLogin";
+import { handleLoginRedirect } from "@/hooks/useLogin";
 
 export const Header = () => {
   const session = useSession();
@@ -42,7 +42,7 @@ export const Header = () => {
               </Button>
             </>
           ) : (
-            <Button onClick={useLogin} variant="kakao">
+            <Button onClick={handleLoginRedirect} variant="kakao">
               <Image
                 src="/images/kakao-logo.png"
                 alt="kakao-logo"

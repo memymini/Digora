@@ -5,7 +5,7 @@ import {
   QueryKey,
   QueryFunction,
 } from "@tanstack/react-query";
-import { useApiError } from "./useApiError";
+import { handleApiError } from "./useApiError";
 import { ApiError } from "@/lib/fetcher";
 
 /**
@@ -32,7 +32,7 @@ export const useApiQuery = <
       }
       return await queryFn(context);
     } catch (error) {
-      useApiError(error);
+      handleApiError(error);
       throw error; // 에러를 다시 throw하여 React Query가 error 상태를 인지하도록 함
     }
   };
