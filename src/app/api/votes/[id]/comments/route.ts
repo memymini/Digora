@@ -8,10 +8,11 @@ export const revalidate = 0;
 // GET /api/votes/[id]/comments - 댓글 목록 조회
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse<ApiResponse<CommentResponse[]>>> {
+  const { id } = await params;
   try {
-    const voteId = parseInt(params.id, 10);
+    const voteId = parseInt(id, 10);
     if (isNaN(voteId)) {
       return createErrorResponse("INVALID_INPUT", 400, "Invalid vote ID");
     }
@@ -43,7 +44,6 @@ export async function GET(
     if (voteRes.error) throw voteRes.error;
     if (commentsRes.error) throw commentsRes.error;
 
-    const voteAuthorId = voteRes.data?.created_by;
     const commentsData = commentsRes.data || [];
 
     // 2. 댓글 작성자들의 고유 ID 목록 생성 및 익명 ID 매핑
@@ -60,21 +60,11 @@ export async function GET(
     const rootComments: CommentResponse[] = [];
 
     commentsData.forEach((comment) => {
-      const profile = Array.isArray(comment.profiles)
-        ? comment.profiles[0]
-        : comment.profiles;
-
       const anonymousId = comment.user_id
         ? userToAnonymousIdMap.get(comment.user_id)
         : 0;
       let authorName = `익명${anonymousId}`;
-      let badge = comment.badge_label || "";
-
-      // if (comment.user_id === voteAuthorId) {
-      //   badge = "작성자";
-      // } else if (profile?.role === "admin") {
-      //   badge = "관리자";
-      // }
+      const badge = comment.badge_label || "";
 
       if (badge) {
         authorName = `${authorName} (${badge})`;
@@ -113,10 +103,11 @@ export async function GET(
 // POST /api/votes/[id]/comments - 댓글 생성
 export async function POST(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse<ApiResponse<CommentResponse>>> {
+  const { id } = await params;
   try {
-    const voteId = parseInt(params.id, 10);
+    const voteId = parseInt(id, 10);
     if (isNaN(voteId)) {
       return createErrorResponse("INVALID_INPUT", 400, "Invalid vote ID");
     }
