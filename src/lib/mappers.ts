@@ -69,3 +69,48 @@ export function mapGenderChartData(
     "gender"
   );
 }
+
+// =============================================
+// Enum to Display String Mappers
+// =============================================
+
+export const GENDER_MAP: Record<string, string> = {
+  male: "남성",
+  female: "여성",
+  other: "기타",
+  unknown: "알 수 없음",
+};
+
+export const AGE_GROUP_MAP: Record<string, string> = {
+  "10s": "10대",
+  "20s": "20대",
+  "30s": "30대",
+  "40s": "40대",
+  "50s": "50대",
+  "60s_plus": "60대 이상",
+  unknown: "알 수 없음",
+};
+
+export const OVERALL_GROUP_MAP: Record<string, string> = {
+  "20s male": "20대 남성",
+  "20s female": "20대 여성",
+  "30s male": "30대 남성",
+  "30s female": "30대 여성",
+  "40s male": "40대 남성",
+  "40s female": "40대 여성",
+  "50s male": "50대 남성",
+  "50s female": "50대 여성",
+  unknown: "알 수 없음",
+};
+
+export const mapGender = (gender: string): string => {
+  return GENDER_MAP[gender] || gender;
+};
+
+export const mapAgeGroup = (ageGroup: string): string => {
+  return AGE_GROUP_MAP[ageGroup] || ageGroup;
+};
+
+export const mapOverallGroup = (group: string): string => {
+  return OVERALL_GROUP_MAP[group] || group;
+};
