@@ -1,56 +1,98 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
+import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
-interface MockReportedComment {
-  id: number;
-  comment: string;
-  reason: string;
-  reporter: string;
-  status: 'pending' | 'hidden' | 'dismissed';
-}
-
-const mockReportedComments: MockReportedComment[] = [
-  { id: 1, comment: "이런 의견은 정말 문제가 많네요. 동의할 수 없습니다.", reason: "부적절한 언어 사용", reporter: "user123", status: 'pending' },
-  { id: 2, comment: "말도 안 되는 소리 하지 마세요.", reason: "스팸 및 광고성 댓글", reporter: "user456", status: 'pending' },
-];
-
-const mockProcessedComments: MockReportedComment[] = [
-  { id: 3, comment: "이 후보는 절대 안 됩니다.", reason: "특정인에 대한 비방", reporter: "user789", status: 'hidden' },
-  { id: 4, comment: "광고 좀 그만하세요.", reason: "스팸 및 광고성 댓글", reporter: "user101", status: 'dismissed' },
-];
+import { useReportedCommentsQuery } from "@/hooks/queries/useReportedCommentsQuery";
+import { useHandleReportMutation } from "@/hooks/mutations/useHandleReportMutation";
+import { ReportedComment } from "@/lib/types";
 
 export const ReportedComments = () => {
-  const [activeTab, setActiveTab] = useState('pending');
+  const [activeTab, setActiveTab] = useState("pending");
+  const {
+    data: reports = [],
+    isLoading,
+    isError,
+    error,
+  } = useReportedCommentsQuery();
+  const handleReportMutation = useHandleReportMutation();
 
-  const handleHide = (id: number) => {
-    alert(`${id}번 댓글 숨김 처리 로직 구현 필요`);
+  const { pendingReports, processedReports } = useMemo(() => {
+    const pending = reports.filter((r) => r.status === "pending");
+    const processed = reports.filter((r) => r.status !== "pending");
+    return { pendingReports: pending, processedReports: processed };
+  }, [reports]);
+
+  const handleAction = (reportId: number, status: "hidden" | "rejected") => {
+    const action = status === "hidden" ? "숨김" : "기각";
+    if (window.confirm(`정말로 이 신고를 [${action}] 처리하시겠습니까?`)) {
+      handleReportMutation.mutate(
+        { reportId, status },
+        {
+          onSuccess: () => {
+            alert(`신고가 성공적으로 [${action}] 처리되었습니다.`);
+          },
+          onError: (err) => {
+            alert(`처리 중 오류가 발생했습니다: ${err.message}`);
+          },
+        }
+      );
+    }
   };
 
-  const handleDismiss = (id: number) => {
-    alert(`${id}번 댓글 신고 기각 로직 구현 필요`);
-  };
-
-  const renderCommentList = (comments: MockReportedComment[]) => {
+  const renderCommentList = (comments: ReportedComment[]) => {
+    if (isLoading) {
+      return (
+        <p className="text-center text-gray-500">신고 목록을 불러오는 중...</p>
+      );
+    }
+    if (isError) {
+      return (
+        <p className="text-center text-red-500">
+          오류가 발생했습니다: {error.message}
+        </p>
+      );
+    }
     if (comments.length === 0) {
-      return <p className="text-center text-gray-500">해당하는 댓글이 없습니다.</p>;
+      return (
+        <p className="text-center text-gray-500">해당하는 댓글이 없습니다.</p>
+      );
     }
     return comments.map((report) => (
       <div key={report.id} className="p-4 border rounded-md bg-gray-50">
         <p className="font-semibold">원본 댓글:</p>
-        <p className="mb-2 italic">&quot;{report.comment}&quot;</p>
-        <p><span className="font-semibold">신고 사유:</span> {report.reason}</p>
-        <p><span className="font-semibold">신고자:</span> {report.reporter}</p>
-        {activeTab === 'pending' ? (
+        <p className="mb-2 italic">&quot;{report.comment.body}&quot;</p>
+        <p>
+          <span className="font-semibold">신고 사유:</span> {report.reason}
+        </p>
+        <p>
+          <span className="font-semibold">신고자:</span>
+          {report.reporter.display_name || "알 수 없음"}
+        </p>
+        <p className="text-sm text-gray-400">
+          신고일: {new Date(report.created_at).toLocaleString()}
+        </p>
+        {activeTab === "pending" ? (
           <div className="flex justify-end space-x-2 mt-2">
-            <Button variant="destructive" size="sm" onClick={() => handleHide(report.id)}>숨김</Button>
-            <Button variant="secondary" size="sm" onClick={() => handleDismiss(report.id)}>기각</Button>
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={() => handleAction(report.id, "hidden")}
+            >
+              숨김
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => handleAction(report.id, "rejected")}
+            >
+              기각
+            </Button>
           </div>
         ) : (
           <p className="text-right font-semibold mt-2">
-            처리 상태: {report.status === 'hidden' ? '숨김 처리됨' : '신고 기각됨'}
+            처리 상태:{" "}
+            {report.status === "hidden" ? "숨김 처리됨" : "신고 기각됨"}
           </p>
         )}
       </div>
@@ -66,21 +108,31 @@ export const ReportedComments = () => {
         <div className="border-b mb-4">
           <nav className="-mb-px flex space-x-8" aria-label="Tabs">
             <button
-              onClick={() => setActiveTab('pending')}
-              className={`${activeTab === 'pending' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+              onClick={() => setActiveTab("pending")}
+              className={`${
+                activeTab === "pending"
+                  ? "border-indigo-500 text-indigo-600"
+                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+              } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
             >
               신고 접수
             </button>
             <button
-              onClick={() => setActiveTab('processed')}
-              className={`${activeTab === 'processed' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+              onClick={() => setActiveTab("processed")}
+              className={`${
+                activeTab === "processed"
+                  ? "border-indigo-500 text-indigo-600"
+                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+              } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
             >
               처리 완료
             </button>
           </nav>
         </div>
         <div className="space-y-4">
-          {activeTab === 'pending' ? renderCommentList(mockReportedComments) : renderCommentList(mockProcessedComments)}
+          {activeTab === "pending"
+            ? renderCommentList(pendingReports)
+            : renderCommentList(processedReports)}
         </div>
       </CardContent>
     </Card>
