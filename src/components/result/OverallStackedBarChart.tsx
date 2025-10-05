@@ -1,6 +1,7 @@
 import { Users } from "lucide-react";
 import { ChartCard } from "@/components/common/ChartCard";
 import { Option, OverallDistribution } from "@/lib/types";
+import { mapOverallGroup } from "@/lib/mappers";
 
 interface OverallStackedBarChartProps {
   data: OverallDistribution[];
@@ -23,7 +24,7 @@ export default function OverallStackedBarChart({
           return (
             <div key={item.group} className="flex items-center gap-3 w-full">
               <div className="caption-text text-right font-medium">
-                {item.group}
+                {mapOverallGroup(item.group)}
               </div>
               <div className="flex-1 relative h-4 bg-muted rounded-full overflow-hidden">
                 <div

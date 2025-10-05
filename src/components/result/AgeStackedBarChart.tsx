@@ -1,6 +1,7 @@
 import { Users } from "lucide-react";
 import { ChartCard } from "@/components/common/ChartCard";
 import { AgeDistribution, Option } from "@/lib/types";
+import { mapAgeGroup } from "@/lib/mappers";
 
 interface AgeStackedBarChartProps {
   data: AgeDistribution[];
@@ -19,7 +20,9 @@ export default function AgeStackedBarChart({
           return (
             <div key={group.age} className="group">
               <div className="flex justify-between items-center mb-1">
-                <span className="caption-text font-medium">{group.age}</span>
+                <span className="caption-text font-medium">
+                  {mapAgeGroup(group.age)}
+                </span>
                 <span className="caption-text text-muted-foreground">
                   {group.totalCount.toLocaleString()}명
                 </span>

@@ -4,7 +4,7 @@ import { VoteDistributionChart } from "./VoteDistributionChart";
 import { TimelineChart } from "./TimelineChart";
 import { AgeBarChart } from "./AgeBarChart";
 import { GenderBarChart } from "./GenderBarChart";
-import AgeStackedBarChart from "./AgeStackedBarChart.tsx";
+import AgeStackedBarChart from "./AgeStackedBarChart";
 import OverallStackedBarChart from "./OverallStackedBarChart";
 import { SummaryStatistics } from "./SummaryStatistics";
 import PieChart from "./PieChart";
@@ -56,9 +56,6 @@ export default function Statistics({ voteId }: StatisticsProps) {
       </div>
     );
   }
-
-  const candidateA = data.candidates[0];
-  const candidateB = data.candidates[1];
 
   return (
     <div className="flex flex-col gap-8 my-16">
