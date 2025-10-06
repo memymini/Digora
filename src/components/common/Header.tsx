@@ -2,10 +2,8 @@
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
 import { useSession } from "@/app/SessionProvider";
 import { handleLoginRedirect } from "@/hooks/useLogin";
-import { useRouter } from "next/navigation";
 import { useLogoutMutation } from "@/hooks/mutations/useLogoutMutation";
 
 export const Header = () => {

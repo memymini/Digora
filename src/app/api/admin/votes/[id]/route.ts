@@ -52,9 +52,9 @@ const uploadImage = async (supabase: SupabaseClient, file: File) => {
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = params;
+  const { id } = await params;
   try {
     const supabase = await createClient();
     const voteId = parseInt(id, 10);

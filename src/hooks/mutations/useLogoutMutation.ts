@@ -9,9 +9,6 @@ const logout = async () => {
 };
 
 export const useLogoutMutation = () => {
-  const router = useRouter();
-  const queryClient = useQueryClient();
-
   return useApiMutation(logout, {
     onSuccess: () => {
       window.location.assign("/");
