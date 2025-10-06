@@ -26,11 +26,15 @@ export function mapChartData<
 >(
   distribution: T[],
   candidates: Option[],
-  labelKey: Exclude<keyof T, "results">
+  labelKey: Exclude<keyof T, "results">,
+  labelMapper?: (label: string) => string
 ): U[] {
   return distribution.map((group) => {
+    const rawLabel = group[labelKey] as string;
+    const mappedLabel = labelMapper ? labelMapper(rawLabel) : rawLabel;
+
     const obj: Record<string, string | number> = {
-      [labelKey as string]: group[labelKey] as string | number,
+      [labelKey as string]: mappedLabel,
     };
 
     group.results.forEach((result) => {
@@ -55,7 +59,8 @@ export function mapAgeChartData(
   return mapChartData<AgeDistribution, AgeChartData>(
     ageDistribution,
     candidates,
-    "age"
+    "age",
+    mapAgeGroup
   );
 }
 
@@ -66,7 +71,8 @@ export function mapGenderChartData(
   return mapChartData<GenderDistribution, GenderChartData>(
     genderDistribution,
     candidates,
-    "gender"
+    "gender",
+    mapGender
   );
 }
 
@@ -82,7 +88,7 @@ export const GENDER_MAP: Record<string, string> = {
 };
 
 export const AGE_GROUP_MAP: Record<string, string> = {
-  "10s": "10대",
+  "10s": "20대 미만",
   "20s": "20대",
   "30s": "30대",
   "40s": "40대",
