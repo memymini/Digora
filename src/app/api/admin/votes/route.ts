@@ -78,6 +78,10 @@ export async function POST(req: NextRequest) {
     }
     // === END DEBUGGING BLOCK ===
 
+    console.log(
+      `[ADMIN VOTE CREATE] Auth check passed. User ID: ${user.id}, Profile Role: ${profile.role}`
+    );
+
     const formData = await req.formData();
 
     const title = formData.get("title") as string;
