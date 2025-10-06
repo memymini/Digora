@@ -164,6 +164,11 @@ export interface CommentResponse {
   replies?: CommentResponse[];
 }
 
+export interface CommentsApiResponse {
+  comments: CommentResponse[];
+  totalCount: number;
+}
+
 // =================================
 // Home 타입
 // =================================

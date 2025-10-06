@@ -1,7 +1,7 @@
 import { createErrorResponse } from "@/lib/api";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { ApiResponse, CommentResponse } from "@/lib/types";
+import { ApiResponse, CommentResponse, CommentsApiResponse } from "@/lib/types";
 
 export const revalidate = 0;
 
@@ -9,7 +9,7 @@ export const revalidate = 0;
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
-): Promise<NextResponse<ApiResponse<CommentResponse[]>>> {
+): Promise<NextResponse<ApiResponse<CommentsApiResponse>>> {
   const { id } = await params;
   try {
     const voteId = parseInt(id, 10);
@@ -19,34 +19,28 @@ export async function GET(
 
     const supabase = await createClient();
 
-    // 1. 투표 정보와 댓글 목록을 병렬로 조회
-    const [voteRes, commentsRes] = await Promise.all([
-      supabase.from("votes").select("created_by").eq("id", voteId).single(),
-      supabase
-        .from("comments")
-        .select(
-          `
-          id, 
-          body, 
-          created_at, 
-          parent_id, 
-          likes_count,
-          user_id,
-          badge_label,
-          profiles ( role )
+    const { data: commentsData, error } = await supabase
+      .from("comments")
+      .select(
         `
-        )
-        .eq("vote_id", voteId)
-        .eq("visibility", "active")
-        .order("created_at", { ascending: true }),
-    ]);
+        id, 
+        body, 
+        created_at, 
+        parent_id, 
+        likes_count,
+        user_id,
+        badge_label,
+        profiles ( role )
+      `
+      )
+      .eq("vote_id", voteId)
+      .eq("visibility", "active")
+      .order("created_at", { ascending: true });
 
-    if (voteRes.error) throw voteRes.error;
-    if (commentsRes.error) throw commentsRes.error;
+    if (error) throw error;
 
-    const commentsData = commentsRes.data || [];
+    const totalCount = commentsData.length;
 
-    // 2. 댓글 작성자들의 고유 ID 목록 생성 및 익명 ID 매핑
     const userToAnonymousIdMap = new Map<string, number>();
     let anonymousIdCounter = 1;
     commentsData.forEach((comment) => {
@@ -55,7 +49,6 @@ export async function GET(
       }
     });
 
-    // 3. 중첩 구조로 변환 및 익명 닉네임/뱃지 적용
     const commentsMap = new Map<number, CommentResponse>();
     const rootComments: CommentResponse[] = [];
 
@@ -74,7 +67,7 @@ export async function GET(
         id: comment.id,
         content: comment.body,
         author: authorName,
-        badge: badge, // badge 필드도 채워줌
+        badge: badge,
         likes: comment.likes_count ?? 0,
         createdAt: new Date(comment.created_at).toLocaleString(),
         replies: [],
@@ -93,7 +86,10 @@ export async function GET(
       }
     });
 
-    return NextResponse.json({ success: true, data: rootComments });
+    return NextResponse.json({
+      success: true,
+      data: { comments: rootComments, totalCount },
+    });
   } catch (e) {
     const error = e as Error;
     return createErrorResponse("DB_ERROR", 500, error.message);
