@@ -19,7 +19,11 @@ export interface UpdateVotePayload {
   title: string;
   details: string;
   ends_at: string;
-  options: { id: number; candidate_name: string }[];
+  options: {
+    id: number;
+    candidate_name: string;
+    file?: File | null;
+  }[];
 }
 
 // =============================================
@@ -31,8 +35,26 @@ export const getAdminVotes = async (): Promise<VoteWithOption[]> => {
 };
 
 export const updateVote = async (payload: UpdateVotePayload): Promise<null> => {
-  const { voteId, ...rest } = payload;
-  return http.put<null>(`/api/admin/votes/${voteId}`, rest);
+  const { voteId, title, details, ends_at, options } = payload;
+  const formData = new FormData();
+  formData.append("title", title);
+  formData.append("details", details);
+  formData.append("ends_at", ends_at);
+
+  const [candidateA, candidateB] = options;
+  formData.append("candidateAId", candidateA.id.toString());
+  formData.append("candidateAName", candidateA.candidate_name);
+  if (candidateA.file) {
+    formData.append("candidateAFile", candidateA.file);
+  }
+
+  formData.append("candidateBId", candidateB.id.toString());
+  formData.append("candidateBName", candidateB.candidate_name);
+  if (candidateB.file) {
+    formData.append("candidateBFile", candidateB.file);
+  }
+
+  return http.post<null>(`/api/admin/votes/${voteId}`, formData);
 };
 
 export const deleteVote = async (voteId: number): Promise<null> => {

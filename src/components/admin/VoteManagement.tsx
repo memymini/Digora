@@ -65,6 +65,9 @@ export const VoteManagement = () => {
 
     if (selectedVote) {
       // Update
+      const candidateAFile = formData.get("candidateA") as File | null;
+      const candidateBFile = formData.get("candidateB") as File | null;
+
       updateVoteMutation.mutate(
         {
           voteId: selectedVote.id,
@@ -75,10 +78,12 @@ export const VoteManagement = () => {
             {
               id: selectedVote.vote_options[0].id,
               candidate_name: candidateAName,
+              file: candidateAFile,
             },
             {
               id: selectedVote.vote_options[1].id,
               candidate_name: candidateBName,
+              file: candidateBFile,
             },
           ],
         },
