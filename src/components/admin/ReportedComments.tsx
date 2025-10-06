@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useReportedCommentsQuery } from "@/hooks/queries/useReportedCommentsQuery";
@@ -8,20 +8,16 @@ import { useHandleReportMutation } from "@/hooks/mutations/useHandleReportMutati
 import { ReportedComment } from "@/lib/types";
 
 export const ReportedComments = () => {
-  const [activeTab, setActiveTab] = useState("pending");
+  const [activeTab, setActiveTab] = useState("pending"); // 'pending' or 'processed'
+  const status = activeTab === "pending" ? "pending" : "completed";
+
   const {
     data: reports = [],
     isLoading,
     isError,
     error,
-  } = useReportedCommentsQuery();
+  } = useReportedCommentsQuery(status);
   const handleReportMutation = useHandleReportMutation();
-
-  const { pendingReports, processedReports } = useMemo(() => {
-    const pending = reports.filter((r) => r.status === "pending");
-    const processed = reports.filter((r) => r.status !== "pending");
-    return { pendingReports: pending, processedReports: processed };
-  }, [reports]);
 
   const handleAction = (reportId: number, status: "hidden" | "rejected") => {
     const action = status === "hidden" ? "숨김" : "기각";
@@ -129,11 +125,7 @@ export const ReportedComments = () => {
             </button>
           </nav>
         </div>
-        <div className="space-y-4">
-          {activeTab === "pending"
-            ? renderCommentList(pendingReports)
-            : renderCommentList(processedReports)}
-        </div>
+        <div className="space-y-4">{renderCommentList(reports)}</div>
       </CardContent>
     </Card>
   );

@@ -1,7 +1,6 @@
 import { useApiMutation } from "../useApiMutation";
 import { http } from "@/lib/fetcher";
 import { useQueryClient } from "@tanstack/react-query";
-import { ADMIN_REPORTS_QUERY_KEY } from "../queries/useReportedCommentsQuery";
 
 interface HandleReportPayload {
   reportId: number;
@@ -15,9 +14,13 @@ const handleReport = async ({ reportId, status }: HandleReportPayload) => {
 export const useHandleReportMutation = () => {
   const queryClient = useQueryClient();
 
-  return useApiMutation((payload: HandleReportPayload) => handleReport(payload), {
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ADMIN_REPORTS_QUERY_KEY });
-    },
-  });
+  return useApiMutation(
+    (payload: HandleReportPayload) => handleReport(payload),
+    {
+      onSuccess: () => {
+        // Invalidate both pending and completed queries by using the base key
+        queryClient.invalidateQueries({ queryKey: ["admin", "reports"] });
+      },
+    }
+  );
 };

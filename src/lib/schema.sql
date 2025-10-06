@@ -186,3 +186,77 @@ BEGIN
 
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
+
+CREATE OR REPLACE FUNCTION get_vote_details(p_vote_id bigint)
+RETURNS TABLE(total_count bigint, options jsonb) AS $$
+DECLARE
+    v_total_count bigint;
+    v_options jsonb;
+BEGIN
+    SELECT count(*) INTO v_total_count
+    FROM public.ballots
+    WHERE vote_id = p_vote_id;
+
+    SELECT jsonb_agg(
+        jsonb_build_object(
+            'id', o.id,
+            'name', o.candidate_name,
+            'imageUrl', o.image_path,
+            'count', COALESCE(b.count, 0),
+            'percent', CASE WHEN v_total_count > 0 THEN (COALESCE(b.count, 0)::float / v_total_count) * 100 ELSE 0 END
+        )
+    ) INTO v_options
+    FROM public.vote_options o
+    LEFT JOIN (
+        SELECT option_id, count(*) as count
+        FROM public.ballots
+        WHERE vote_id = p_vote_id
+        GROUP BY option_id
+    ) b ON o.id = b.option_id
+    WHERE o.vote_id = p_vote_id;
+
+    RETURN QUERY
+    SELECT v_total_count, COALESCE(v_options, '[]'::jsonb);
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION get_vote_feed()
+RETURNS json AS $$
+BEGIN
+  RETURN (
+    SELECT json_agg(
+      json_build_object(
+        'voteId', v.id,
+        'title', v.title,
+        'totalCount', vote_counts.total_count,
+        'candidates', (
+          SELECT json_agg(
+            json_build_object(
+              'name', vo.candidate_name,
+              'imageUrl', vo.image_path,
+              'count', option_counts.count,
+              'percent', CASE WHEN vote_counts.total_count > 0 THEN (option_counts.count::float / vote_counts.total_count) * 100 ELSE 0 END
+            )
+          )
+          FROM public.vote_options vo
+          LEFT JOIN (
+            SELECT option_id, count(*) as count
+            FROM public.ballots b2
+            WHERE b2.vote_id = v.id
+            GROUP BY option_id
+          ) option_counts ON vo.id = option_counts.option_id
+          WHERE vo.vote_id = v.id
+        )
+      )
+    )
+    FROM public.votes v
+    LEFT JOIN (
+      SELECT vote_id, count(*) as total_count
+      FROM public.ballots
+      GROUP BY vote_id
+    ) vote_counts ON v.id = vote_counts.vote_id
+    WHERE v.status = 'ongoing'
+    ORDER BY v.starts_at DESC
+  );
+END;
+$$ LANGUAGE plpgsql;

@@ -33,9 +33,12 @@ export const CommentSection = ({
   voteId,
   isUserVoted,
 }: CommentSectionProps) => {
-  const { data: commentsData, isLoading, error } = useVoteCommentsQuery(voteId);
+  const { data, isLoading, error } = useVoteCommentsQuery(voteId);
   const [comment, setComment] = useState("");
   const { mutate: postComment } = useVoteCommentMutation({ voteId });
+
+  const comments = data?.comments;
+  const totalCount = data?.totalCount;
 
   const handleCommentSubmit = () => {
     postComment({ content: comment });
@@ -56,7 +59,7 @@ export const CommentSection = ({
       );
     }
 
-    if (!commentsData || commentsData.length === 0) {
+    if (!comments || comments.length === 0) {
       return (
         <div className="text-center text-muted-foreground py-10">
           아직 댓글이 없습니다. 첫 번째 댓글을 남겨보세요!
@@ -67,12 +70,12 @@ export const CommentSection = ({
     return (
       <div
         className={`space-y-4 ${
-          commentsData.length >= 3
+          comments.length >= 3
             ? "overflow-y-auto max-h-[22rem] sm:max-h-[30rem] pr-3"
             : ""
         }`}
       >
-        {commentsData.map((comment) => (
+        {comments.map((comment) => (
           <CommentItem
             key={comment.id}
             comment={comment}
@@ -89,9 +92,9 @@ export const CommentSection = ({
       <div className="flex items-center gap-2 mb-6">
         <MessageCircle className="w-5 h-5 text-muted-foreground" />
         <h2 className="heading-2">댓글</h2>
-        {!isLoading && !error && commentsData && (
+        {!isLoading && !error && totalCount !== undefined && (
           <span className="caption-text text-muted-foreground">
-            ({commentsData.length})
+            ({totalCount})
           </span>
         )}
       </div>
