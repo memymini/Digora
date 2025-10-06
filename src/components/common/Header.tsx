@@ -5,16 +5,13 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { useSession } from "@/app/SessionProvider";
 import { handleLoginRedirect } from "@/hooks/useLogin";
+import { useRouter } from "next/navigation";
+import { useLogoutMutation } from "@/hooks/mutations/useLogoutMutation";
 
 export const Header = () => {
   const session = useSession();
   const profile = session?.profile;
-  const supabase = createClient();
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    window.location.reload();
-  };
+  const { mutate: logout } = useLogoutMutation();
 
   return (
     <header className="flex justify-center sticky top-0 z-50 w-full border-b bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60">
@@ -37,7 +34,7 @@ export const Header = () => {
               <span className="text-sm font-medium">
                 {profile.display_name}님
               </span>
-              <Button onClick={handleLogout} variant="outline" size="sm">
+              <Button onClick={() => logout()} variant="outline" size="sm">
                 로그아웃
               </Button>
             </>
