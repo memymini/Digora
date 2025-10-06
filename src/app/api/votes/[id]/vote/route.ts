@@ -72,6 +72,7 @@ export async function POST(
       user_id: user.id,
       vote_id: voteId,
       option_id: optionId,
+      created_at: new Date().toISOString(),
     });
 
     if (ballotError) {
