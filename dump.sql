@@ -258,6 +258,19 @@ $$;
 
 ALTER FUNCTION "public"."is_admin"("uid" "uuid") OWNER TO "postgres";
 
+
+CREATE OR REPLACE FUNCTION "public"."is_current_user_admin"() RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM public.profiles
+    WHERE id = auth.uid() AND role = 'admin'
+  );
+$$;
+
+
+ALTER FUNCTION "public"."is_current_user_admin"() OWNER TO "postgres";
+
 SET default_tablespace = '';
 
 SET default_table_access_method = "heap";
@@ -655,11 +668,11 @@ CREATE POLICY "Allow admin to manage reports" ON "public"."comment_reports" TO "
 
 
 
-CREATE POLICY "Allow admin to manage vote options" ON "public"."vote_options" TO "authenticated" USING ("public"."is_admin"("auth"."uid"())) WITH CHECK ("public"."is_admin"("auth"."uid"()));
+CREATE POLICY "Allow admin to manage vote options" ON "public"."vote_options" USING ("public"."is_current_user_admin"()) WITH CHECK ("public"."is_current_user_admin"());
 
 
 
-CREATE POLICY "Allow admin to manage votes" ON "public"."votes" TO "authenticated" USING ("public"."is_admin"("auth"."uid"())) WITH CHECK ("public"."is_admin"("auth"."uid"()));
+CREATE POLICY "Allow admin to manage votes" ON "public"."votes" USING ("public"."is_current_user_admin"()) WITH CHECK ("public"."is_current_user_admin"());
 
 
 
@@ -943,6 +956,12 @@ GRANT ALL ON FUNCTION "public"."handle_report"("p_report_id" bigint, "p_new_stat
 GRANT ALL ON FUNCTION "public"."is_admin"("uid" "uuid") TO "anon";
 GRANT ALL ON FUNCTION "public"."is_admin"("uid" "uuid") TO "authenticated";
 GRANT ALL ON FUNCTION "public"."is_admin"("uid" "uuid") TO "service_role";
+
+
+
+GRANT ALL ON FUNCTION "public"."is_current_user_admin"() TO "anon";
+GRANT ALL ON FUNCTION "public"."is_current_user_admin"() TO "authenticated";
+GRANT ALL ON FUNCTION "public"."is_current_user_admin"() TO "service_role";
 
 
 
