@@ -11,6 +11,51 @@ import ProgressBarProvider from "./ProgressBarProvider";
 export const metadata: Metadata = {
   title: "디고라",
   description: "상시적 직접 민주주의의 가능성을 실험하는 소셜 폴링 플랫폼",
+  keywords: [
+    "Digora",
+    "디고라",
+    "소셜 폴링",
+    "VeriBadge",
+    "정치인 월드컵",
+    "정치 여론조사",
+    "디지털 직접 민주주의",
+  ],
+  authors: [{ name: "Digora Project Team" }],
+  openGraph: {
+    title: "디고라",
+    description:
+      "21c 직접민주주의 구현 가능성 실험, ‘검증된 익명’이 만드는 디지털 토론 광장",
+    url: "https://digora.kr",
+    siteName: "디고라",
+    images: [
+      {
+        url: "/images/logo-2.png", // OpenGraph 대표 이미지
+        width: 1200,
+        height: 600,
+        alt: "Digora Open Graph Image",
+      },
+    ],
+    locale: "ko_KR",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Digora | Verified Social Polling Platform",
+    description:
+      "검증된 익명으로 참여하는 디지털 직접 민주주의 플랫폼, 디고라(Digora).",
+    images: ["/images/logo-2.png"],
+  },
+  metadataBase: new URL("https://digora.kr"),
+  category: "Politics",
+  applicationName: "Digora",
+  creator: "Digora Dev Team",
+  publisher: "Digora Project",
+  alternates: {
+    canonical: "https://digora.kr",
+    languages: {
+      ko: "https://digora.kr",
+    },
+  },
 };
 
 export default async function RootLayout({
