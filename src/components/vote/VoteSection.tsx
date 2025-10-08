@@ -37,18 +37,21 @@ export default function VoteSection({ data }: { data: VoteResponse }) {
 
       {/* Candidates Section */}
       <div className="mb-8">
-        <div className="flex flex-row items-center justify-center gap-2 sm:gap-4 mb-8">
+        <div className="flex flex-row items-center justify-center gap-2 sm:gap-4 mb-8 relative">
           <CandidateProfile
             candidate={data.options[0]}
             isSelected={selectedCandidate === data.options[0].id}
-            isVoted={!!data.isUserVoted}
+            isVoted={data.isUserVoted}
             onSelect={() => handleSelectCandidate(data.options[0].id)}
             color="blue"
           />
+          <span className="mb-20 text-3xl sm:text-4xl md:text-5xl font-black ">
+            VS
+          </span>
           <CandidateProfile
             candidate={data.options[1]}
             isSelected={selectedCandidate === data.options[1].id}
-            isVoted={!!data.isUserVoted}
+            isVoted={data.isUserVoted}
             onSelect={() => handleSelectCandidate(data.options[1].id)}
             color="red"
           />

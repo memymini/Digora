@@ -32,11 +32,10 @@ export const CandidateProfile = ({
     },
   };
 
-  const ringClass = isVoted
-    ? `${colorClasses[color].ring} ring-4`
-    : isSelected
-    ? colorClasses[color].ring
-    : colorClasses[color].ringHover;
+  const ringClass =
+    isVoted || (onSelect && !isVoted && isSelected)
+      ? colorClasses[color].ring
+      : "ring-transparent";
 
   return (
     <div
@@ -53,28 +52,33 @@ export const CandidateProfile = ({
             src={candidate.imageUrl}
             alt={candidate.name}
             fill
-            className="object-cover grayscale"
+            className="object-cover"
+          />
+
+          <div
+            className={`absolute inset-0 flex items-center ${
+              color === "blue" ? "bg-vote-blue/10" : "bg-vote-red/10"
+            }`}
           />
         </div>
       </div>
       <div className="text-center">
-        <p
-          className={`text-lg font-bold sm:heading-2 mb-1 sm:mb-2 ${colorClasses[color].text}`}
-        >
+        <p className={`text-lg font-bold sm:heading-2 mb-1 sm:mb-2`}>
           {candidate.name}
         </p>
-        {isVoted && (
-          <>
-            <p
-              className={`text-2xl sm:heading-1 font-bold ${colorClasses[color].text}`}
-            >
-              {candidate.percent}%
-            </p>
+
+        <>
+          <p
+            className={`text-2xl sm:heading-1 font-bold ${colorClasses[color].text}`}
+          >
+            {candidate.percent}%
+          </p>
+          {isVoted && (
             <p className="caption-text text-muted-foreground mt-1">
               {candidate.count}표
             </p>
-          </>
-        )}
+          )}
+        </>
       </div>
     </div>
   );
