@@ -9,8 +9,8 @@ import { Toaster } from "react-hot-toast";
 import ProgressBarProvider from "./ProgressBarProvider";
 
 export const metadata: Metadata = {
-  title: "디고라",
-  description: "상시적 직접 민주주의의 가능성을 실험하는 소셜 폴링 플랫폼",
+  title: "디고라(Digora) |  검증된 익명이 온라인에서 만들어가는 '진짜' 여론",
+  description: "상시적 직접민주주의의 가능성을 실험하는 온라인 정치 광장",
   keywords: [
     "Digora",
     "디고라",
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "Digora Project Team" }],
   openGraph: {
-    title: "디고라",
+    title: "디고라(Digora) |  검증된 익명이 온라인에서 만들어가는 '진짜' 여론",
     description:
       "21c 직접민주주의 구현 가능성 실험, ‘검증된 익명’이 만드는 디지털 토론 광장",
     url: "https://digora.kr",
@@ -40,9 +40,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Digora | Verified Social Polling Platform",
+    title: "디고라(Digora) | Verified Social Polling Platform",
     description:
-      "검증된 익명으로 참여하는 디지털 직접 민주주의 플랫폼, 디고라(Digora).",
+      "21c 직접민주주의 구현 가능성 실험, ‘검증된 익명’이 만드는 디지털 토론 광장",
     images: ["/images/logo-2.png"],
   },
   metadataBase: new URL("https://digora.kr"),
