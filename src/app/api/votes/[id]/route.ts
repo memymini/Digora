@@ -11,10 +11,15 @@ interface VoteDetailsRow {
 }
 
 export async function GET(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  req: Request,
+  {
+    params,
+  }: {
+    params: Promise<{ id: string }>;
+  }
 ): Promise<NextResponse<ApiResponse<VoteResponse>>> {
   const { id } = await params;
+
   try {
     const voteId = parseInt(id, 10);
     if (isNaN(voteId)) {
@@ -34,7 +39,7 @@ export async function GET(
     const [voteRes, resultsRes, userVoteRes] = await Promise.all([
       supabase
         .from("votes")
-        .select("id, title, details, status")
+        .select("id, title, details, status, ends_at")
         .eq("id", voteId)
         .single(),
       supabase.rpc("get_vote_details", { p_vote_id: voteId }),
@@ -44,7 +49,7 @@ export async function GET(
             .select("option_id")
             .eq("vote_id", voteId)
             .eq("user_id", user.id)
-            .single()
+            .maybeSingle()
         : Promise.resolve({ data: null, error: null }),
     ]);
 
@@ -70,8 +75,7 @@ export async function GET(
     };
 
     const { data: userVote, error: userVoteError } = userVoteRes;
-    if (userVoteError && userVoteError.code !== "PGRST116") {
-      // Ignore 'PGRST116' (no rows found)
+    if (userVoteError) {
       throw userVoteError;
     }
 
@@ -84,6 +88,7 @@ export async function GET(
       isUserVoted: !!userVote,
       userVotedOptionId: userVote?.option_id || null,
       options: results.options || [],
+      endsAt: vote.ends_at,
     };
 
     return NextResponse.json({ success: true, data: responseData });

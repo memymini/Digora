@@ -5,25 +5,24 @@ import { TrendingUp } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { CandidateProfile } from "../common/CandidateProfile";
 import { VoteFeedResponse } from "@/lib/types";
+import { VoteCountdown } from "../common/VoteCountdown";
 
 export const VoteCard = ({ data }: { data: VoteFeedResponse }) => {
   const router = useRouter();
   const candidateA = data.candidates[0];
   const candidateB = data.candidates[1];
+
   return (
     <Card className="p-6 card-shadow hover:card-shadow-hover hover:scale-[1.02] transition-all duration-300 cursor-pointer group flex flex-col scroll-snap-align-center w-full sm:w-100 flex-shrink-0">
       {/* Title */}
       <div className="mb-4">
         <h3 className="heading-2 mb-2 line-clamp-2 min-h-15">{data.title}</h3>
-        <div className="flex items-center gap-4 caption-text text-muted-foreground">
+        <div className="flex items-center justify-between gap-4 caption-text text-muted-foreground">
           <div className="flex items-center gap-1">
             <TrendingUp className="w-4 h-4" />
             <span>{data.totalCount}명 참여 중</span>
           </div>
-          <div className="flex items-center gap-1">
-            <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
-            <span>진행중</span>
-          </div>
+          <VoteCountdown endsAt={data.endsAt} />
         </div>
       </div>
 

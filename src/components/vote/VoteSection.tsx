@@ -33,6 +33,7 @@ export default function VoteSection({ data }: { data: VoteResponse }) {
         description={data.details}
         totalVotes={data.totalCount}
         isActive={data.status === "ongoing"}
+        endsAt={data.endsAt}
       />
 
       {/* Candidates Section */}

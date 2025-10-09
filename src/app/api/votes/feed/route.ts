@@ -17,9 +17,19 @@ export async function GET(): Promise<
       return createErrorResponse("DB_ERROR", 500, error.message);
     }
 
+    // Map snake_case from DB to camelCase for frontend
+    const responseData: VoteFeedResponse[] = data.map((item: any) => ({
+      voteId: item.voteId,
+      totalCount: item.totalCount || 0,
+      title: item.title,
+      candidates: item.candidates || [],
+      endsAt: item.ends_at,
+    }));
+    console.log(responseData);
+
     return NextResponse.json({
       success: true,
-      data: data || [], // The rpc returns the json array directly
+      data: responseData,
     });
   } catch (e: unknown) {
     console.error("An unexpected error occurred:", e);

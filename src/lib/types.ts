@@ -149,6 +149,7 @@ export interface VoteResponse {
   isUserVoted: boolean;
   userVotedOptionId: number | null;
   options: Option[];
+  endsAt: string;
 }
 
 // =================================
@@ -177,6 +178,7 @@ export interface VoteFeedResponse {
   totalCount: number;
   title: string;
   candidates: Candidate[];
+  endsAt: string;
 }
 
 // =================================
