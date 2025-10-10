@@ -1,7 +1,11 @@
 import { createErrorResponse } from "@/lib/api";
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { ApiResponse, VoteFeedResponse } from "@/lib/types";
+import {
+  ApiResponse,
+  VoteFeedResponse,
+  VoteFeedRpcResponse,
+} from "@/lib/types";
 
 export const revalidate = 0;
 
@@ -18,14 +22,17 @@ export async function GET(): Promise<
     }
 
     // Map snake_case from DB to camelCase for frontend
-    const responseData: VoteFeedResponse[] = data.map((item: any) => ({
-      voteId: item.voteId,
-      totalCount: item.totalCount || 0,
-      title: item.title,
-      candidates: item.candidates || [],
-      endsAt: item.ends_at,
-    }));
-    console.log(responseData);
+    const responseData: VoteFeedResponse[] = data.map(
+      (item: VoteFeedRpcResponse) => {
+        return {
+          voteId: item.voteId,
+          totalCount: item.totalCount || 0,
+          title: item.title,
+          candidates: item.candidates || [],
+          endsAt: item.ends_at,
+        };
+      }
+    );
 
     return NextResponse.json({
       success: true,

@@ -1,6 +1,12 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { ApiResponse, VoteResponse, VoteStatus, Option } from "@/lib/types";
+import {
+  ApiResponse,
+  VoteResponse,
+  VoteStatus,
+  Option,
+  VoteDetailsRpcOption,
+} from "@/lib/types";
 import { createErrorResponse } from "@/lib/api";
 import { getVoteDetails } from "@/services/voteService";
 
@@ -41,12 +47,13 @@ export async function GET(): Promise<
     const voteDetails = await getVoteDetails(supabase, vote.id, user?.id);
 
     const mappedOptions: Option[] = (voteDetails.options || []).map(
-      (option: any) => ({
-        ...option,
-        name: option.name,
-      })
+      (option: VoteDetailsRpcOption) => {
+        return {
+          ...option,
+          name: option.name,
+        };
+      }
     );
-
     const responseData: VoteResponse = {
       voteId: vote.id,
       title: vote.title,

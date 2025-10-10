@@ -34,7 +34,7 @@ export const DefaultHero = () => {
       >
         <div className="flex items-center w-full max-w-250 gap-4 justify-center sm:justify-around md:gap-8">
           <div className="relative w-[100%]">
-            <div className="relative aspect-[3/4] overflow-hidden transition-all duration-300">
+            <div className="relative aspect-[3/4] overflow-hidden transition-all duration-300 rounded-lg">
               <Image
                 src="/images/politician-a.jpg"
                 fill
@@ -46,7 +46,7 @@ export const DefaultHero = () => {
 
           <span className="text-2xl font-black md:text-4xl">vs</span>
           <div className="relative w-[100%]">
-            <div className="relative aspect-[3/4] overflow-hidden transition-all duration-300">
+            <div className="relative aspect-[3/4] overflow-hidden transition-all duration-300 rounded-lg">
               <Image
                 src="/images/politician-b.jpg"
                 fill

@@ -238,3 +238,41 @@ export interface VoteWithOption {
   created_by: string | null;
   vote_options: VoteOption[];
 }
+
+// =================================
+// RPC Response Raw Types
+// =================================
+export interface VoteFeedRpcResponse {
+  voteId: number;
+  title: string;
+  totalCount: number;
+  candidates: Candidate[];
+  ends_at: string;
+}
+
+export interface VoteDetailsRpcOption {
+  id: number;
+  name: string;
+  imageUrl: string | null;
+  count: number;
+  percent: number;
+}
+
+// =================================
+// RPC Response Raw Types
+// =================================
+export interface VoteFeedRpcResponse {
+  vote_id: number;
+  title: string;
+  total_count: number;
+  candidates: Candidate[];
+  ends_at: string;
+}
+
+export interface VoteDetailsRpcOption {
+  id: number;
+  candidate_name: string;
+  imageUrl: string | null;
+  count: number;
+  percent: number;
+}

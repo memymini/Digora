@@ -15,7 +15,6 @@ const HeroSectionSkeleton = () => (
           <Skeleton className="aspect-[3/4] w-full" />
           <Skeleton className="h-10 w-full" />
         </div>
-        <span className="mb-20 text-2xl sm:text-3xl font-black">VS</span>
         <div className="flex flex-col items-center gap-4 w-full">
           <Skeleton className="aspect-[3/4] w-full" />
           <Skeleton className="h-10 w-full" />

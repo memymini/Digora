@@ -6,12 +6,13 @@ import {
   TimelineDistribution,
   Option,
   Summary,
+  VoteDetailsRpcOption,
 } from "@/lib/types";
 import { SupabaseClient } from "@supabase/supabase-js";
 
 interface VoteDetailsRow {
   total_count: number;
-  options: Option[];
+  options: VoteDetailsRpcOption[];
 }
 
 export async function getVoteDetails(supabase: SupabaseClient, voteId: number, userId?: string) {
