@@ -6,16 +6,19 @@ import {
   TimelineDistribution,
   Option,
   Summary,
-  VoteDetailsRpcOption,
 } from "@/lib/types";
 import { SupabaseClient } from "@supabase/supabase-js";
-
+import { createClient } from "@/lib/supabase/server";
 interface VoteDetailsRow {
   total_count: number;
-  options: VoteDetailsRpcOption[];
+  options: Option[];
 }
 
-export async function getVoteDetails(supabase: SupabaseClient, voteId: number, userId?: string) {
+export async function getVoteDetails(
+  supabase: SupabaseClient,
+  voteId: number,
+  userId?: string
+) {
   const [resultsRes, userVoteRes] = await Promise.all([
     supabase.rpc("get_vote_details", { p_vote_id: voteId }),
     userId
@@ -39,15 +42,19 @@ export async function getVoteDetails(supabase: SupabaseClient, voteId: number, u
   };
 
   const { data: userVote, error: userVoteError } = userVoteRes;
-  if (userVoteError && userVoteError.code !== 'PGRST116') { // Ignore 'No rows found' error
+  if (userVoteError && userVoteError.code !== "PGRST116") {
+    // Ignore 'No rows found' error
     throw userVoteError;
   }
+
+  const isUserVoted = !!userVote;
+  const userVotedOptionId = userVote?.option_id || null;
 
   return {
     totalCount: results.total_count || 0,
     options: results.options || [],
-    isUserVoted: !!userVote,
-    userVotedOptionId: userVote?.option_id || null,
+    isUserVoted,
+    userVotedOptionId,
   };
 }
 
@@ -228,4 +235,49 @@ export async function getVoteStatistics(
     timeline,
     summary,
   };
+}
+
+export async function getHeroVote() {
+  const supabase = await createClient();
+
+  const { data: vote, error: voteError } = await supabase
+    .from("votes")
+    .select("id, title, status, ends_at")
+    .eq("status", "ongoing")
+    .order("starts_at", { ascending: false })
+    .limit(1)
+    .single();
+
+  if (voteError) {
+    if (voteError.code === "PGRST116") return null;
+    throw new Error(`DB_ERROR: ${voteError.message}`);
+  }
+
+  if (!vote) return null;
+  const { data: rpcData, error: rpcError } = await supabase.rpc(
+    "get_vote_details",
+    {
+      p_vote_id: vote.id,
+    }
+  );
+
+  if (rpcError) throw new Error(`DB_ERROR: ${rpcError.message}`);
+  console.log(rpcData);
+  return {
+    ...vote,
+    total_count: rpcData?.[0]?.total_count ?? 0,
+    options: rpcData?.[0]?.options ?? [],
+  };
+}
+
+export async function getVoteFeed() {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("get_vote_feed");
+
+  if (error) {
+    console.error("Supabase RPC error:", error);
+    throw new Error(error.message);
+  }
+
+  return data ?? [];
 }

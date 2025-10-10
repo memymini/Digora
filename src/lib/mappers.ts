@@ -2,10 +2,15 @@ import {
   AgeDistribution,
   GenderDistribution,
   Option,
-  VoteFeedResponse,
   VoteStatus,
+  VoteFeed,
+  HeroVote,
 } from "./types";
-
+import {
+  HeroVoteResponse,
+  VoteDetailsRpcResponse,
+  VoteFeedRpcResponse,
+} from "@/lib/types/db";
 export type AgeChartData = {
   age: string;
   [key: `c${number}`]: number;
@@ -127,9 +132,7 @@ export const mapOverallGroup = (group: string): string => {
   return OVERALL_GROUP_MAP[group] || group;
 };
 
-import { VoteFeedDto } from "@/lib/types/dto";
-
-export function voteFeedMapper(data: VoteFeedDto[]): VoteFeedResponse[] {
+export function voteFeedMapper(data: VoteFeedRpcResponse[]): VoteFeed[] {
   return data.map((item) => ({
     voteId: item.vote_id,
     totalCount: item.total_count,
@@ -138,4 +141,16 @@ export function voteFeedMapper(data: VoteFeedDto[]): VoteFeedResponse[] {
     endsAt: item.ends_at,
     options: item.options ?? [],
   }));
+}
+
+export function heroVoteMapper(data: HeroVoteResponse): HeroVote {
+  // 최종 도메인 객체 반환
+  return {
+    voteId: data.id,
+    title: data.title,
+    status: data.status as VoteStatus,
+    endsAt: data.ends_at,
+    totalCount: data.total_count,
+    options: data.options,
+  };
 }

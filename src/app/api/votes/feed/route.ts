@@ -1,13 +1,16 @@
 import { createErrorResponse, createSuccessResponse } from "@/lib/api";
 import { NextResponse } from "next/server";
-import { voteFeedService } from "@/services/voteFeedService";
+import { getVoteFeed } from "@/services/voteService";
+import { voteFeedMapper } from "@/lib/mappers";
 
 export const revalidate = 0;
 
 export async function GET(): Promise<NextResponse> {
   try {
-    const data = await voteFeedService();
-    return createSuccessResponse(data);
+    const data = await getVoteFeed();
+
+    const mappedData = voteFeedMapper(data);
+    return createSuccessResponse(mappedData);
   } catch (e: unknown) {
     console.error("An unexpected error occurred:", e);
     const errorMessage =

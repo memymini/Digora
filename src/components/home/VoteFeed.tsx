@@ -127,7 +127,6 @@ export const VoteFeed = () => {
       </div>
     );
   }
-  const voteData = voteFeedMapper(data);
   return (
     <div className="relative w-full">
       <div
@@ -136,7 +135,7 @@ export const VoteFeed = () => {
           "flex items-center gap-6 overflow-x-scroll hide-scrollbar scroll-snap-x-mandatory w-full p-6"
         )}
       >
-        {voteData.map((vote) => (
+        {data.map((vote) => (
           <Link
             key={vote.voteId}
             href={`/vote/${vote.voteId}`}
@@ -148,9 +147,9 @@ export const VoteFeed = () => {
       </div>
 
       {/* Dots Indicator */}
-      {isOverflowing && voteData.length > 1 && (
+      {isOverflowing && data.length > 1 && (
         <div className="flex sm:hidden absolute bottom-0 left-1/2 -translate-x-1/2 items-center justify-center gap-2">
-          {voteData.map((_, i) => (
+          {data.map((_, i) => (
             <button
               key={i}
               onClick={() => scrollToCard(i)}
