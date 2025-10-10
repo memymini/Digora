@@ -9,8 +9,8 @@ import { VoteCountdown } from "../common/VoteCountdown";
 
 export const VoteCard = ({ data }: { data: VoteFeedResponse }) => {
   const router = useRouter();
-  const candidateA = data.candidates[0];
-  const candidateB = data.candidates[1];
+  const candidateA = data.options[0];
+  const candidateB = data.options[1];
 
   return (
     <Card className="p-6 card-shadow hover:card-shadow-hover hover:scale-[1.02] transition-all duration-300 cursor-pointer group flex flex-col scroll-snap-align-center w-full sm:w-100 flex-shrink-0">

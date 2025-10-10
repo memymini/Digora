@@ -6,7 +6,7 @@ import { useRef, useState, useEffect, useCallback } from "react";
 import { useVoteFeedQuery } from "@/hooks/queries/useVoteFeedQuery";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { mapVoteFeedResponse } from "@/lib/mappers";
+import { voteFeedMapper } from "@/lib/mappers";
 
 const VoteFeedSkeleton = () => (
   <div className="flex items-center gap-6 overflow-x-hidden w-full sm:px-6">
@@ -23,7 +23,6 @@ const VoteFeedSkeleton = () => (
 
 export const VoteFeed = () => {
   const { data, isLoading, error } = useVoteFeedQuery();
-  const voteData = mapVoteFeedResponse(data ?? []);
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -93,7 +92,7 @@ export const VoteFeed = () => {
       observer.disconnect();
       clearTimeout(scrollTimeout);
     };
-  }, [handleScroll, isLoading, voteData]);
+  }, [handleScroll, isLoading, data]);
 
   const scrollToCard = (index: number) => {
     const container = scrollContainerRef.current;
@@ -121,14 +120,14 @@ export const VoteFeed = () => {
     );
   }
 
-  if (!voteData || voteData.length === 0) {
+  if (!data || data.length === 0) {
     return (
       <div className="text-center text-muted-foreground py-10">
         진행중인 투표가 없습니다.
       </div>
     );
   }
-
+  const voteData = voteFeedMapper(data);
   return (
     <div className="relative w-full">
       <div
