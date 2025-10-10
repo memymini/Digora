@@ -1,4 +1,10 @@
-import { AgeDistribution, GenderDistribution, Option } from "./types";
+import {
+  AgeDistribution,
+  GenderDistribution,
+  Option,
+  VoteFeedResponse,
+  VoteStatus,
+} from "./types";
 
 export type AgeChartData = {
   age: string;
@@ -120,3 +126,26 @@ export const mapAgeGroup = (ageGroup: string): string => {
 export const mapOverallGroup = (group: string): string => {
   return OVERALL_GROUP_MAP[group] || group;
 };
+
+export function mapVoteFeedResponse(data: any[]): VoteFeedResponse[] {
+  if (!Array.isArray(data)) return [];
+
+  return data.map((item) => ({
+    voteId: item.vote_id,
+    totalCount: item.total_count ?? 0,
+    title: item.title ?? "",
+    status: item.status as VoteStatus,
+    endsAt: item.ends_at ?? "",
+    options: Array.isArray(item.options)
+      ? item.options.map(
+          (opt: any): Option => ({
+            id: opt.id,
+            name: opt.name,
+            imageUrl: opt.imageUrl ?? null,
+            count: opt.count ?? 0,
+            percent: opt.percent ?? 0,
+          })
+        )
+      : [],
+  }));
+}
