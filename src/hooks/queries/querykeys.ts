@@ -4,5 +4,6 @@ export const VOTE_QUERY_KEYS = {
   detail: (voteId: number) => [...VOTE_QUERY_KEYS.all, 'detail', voteId] as const,
   comments: (voteId: number) => [...VOTE_QUERY_KEYS.all, 'comments', voteId] as const,
   statistics: (voteId: number) => [...VOTE_QUERY_KEYS.all, 'statistics', voteId] as const,
+  hero: () => [...VOTE_QUERY_KEYS.all, 'hero'] as const,
 };
 

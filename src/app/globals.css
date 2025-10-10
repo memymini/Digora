@@ -274,3 +274,31 @@
 @utility animate-competitive-pulse {
   animation: competitive-pulse 3s infinite ease-in-out;
 }
+
+/* Hero Vote Animations & Styles */
+@keyframes bounce-subtle {
+  0%, 100% {
+    transform: translateY(-2%);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+  }
+  50% {
+    transform: translateY(0);
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
+}
+
+@utility animate-bounce-subtle {
+  animation: bounce-subtle 2.5s ease-in-out infinite;
+}
+
+@utility shadow-glow-blue {
+  box-shadow: 0 0 20px 8px var(--color-vote-blue / 0.4);
+}
+
+@utility shadow-glow-red {
+  box-shadow: 0 0 20px 8px var(--color-vote-red / 0.4);
+}
+
+@utility fade-out-edges {
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}

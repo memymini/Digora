@@ -1,5 +1,6 @@
 import { Candidate } from "@/lib/types";
 import Image from "next/image";
+import { cn } from "@/lib/utils";
 
 interface CandidateProfileProps {
   candidate: Candidate;
@@ -8,6 +9,7 @@ interface CandidateProfileProps {
   onSelect?: () => void;
   color: "blue" | "red";
   isWinner?: boolean;
+  variant?: "hero" | null;
 }
 
 export const CandidateProfile = ({
@@ -16,40 +18,50 @@ export const CandidateProfile = ({
   isVoted,
   onSelect,
   color,
+  variant,
 }: CandidateProfileProps) => {
   const colorClasses = {
     blue: {
       text: "text-vote-blue",
-      ring: "ring-vote-blue",
-      ringHover: "ring-vote-blue/20",
-      bg: "bg-vote-blue/10",
+      ring: "ring-vote-blue ring-4 sm:ring-8",
+      shadow: "shadow-glow-blue",
     },
     red: {
       text: "text-vote-red",
-      ring: "ring-vote-red",
-      ringHover: "ring-vote-red/20",
-      bg: "bg-vote-red/10",
+      ring: "ring-vote-red ring-4 sm:ring-8",
+      shadow: "shadow-glow-red",
     },
   };
 
   const ringClass =
     isVoted || (onSelect && !isVoted && isSelected)
       ? colorClasses[color].ring
+      : variant === "hero"
+      ? colorClasses[color].shadow
       : "ring-transparent";
 
   return (
     <div
-      className={`flex flex-col items-center transition-all duration-300 w-full ${
-        isSelected ? "" : ""
-      } ${onSelect && !isVoted ? "cursor-pointer" : "cursor-default"}`}
+      className={cn(
+        "flex flex-col items-center w-full",
+        onSelect && !isVoted ? "cursor-pointer" : "cursor-default"
+      )}
       onClick={onSelect}
     >
-      <div className="relative w-[100%]">
+      <div
+        className={cn(
+          "relative w-[100%] transition-transform duration-300",
+          variant === "hero" && "animate-competitive-pulse hover:scale-105",
+          variant === "hero" && colorClasses[color].shadow
+        )}
+      >
         <div
-          className={`relative aspect-[3/4] overflow-hidden mb-4 md:mb-8 ring-4 sm:ring-8 transition-all duration-300 ${ringClass}`}
+          className={cn(
+            `relative aspect-[3/4] overflow-hidden mb-4 md:mb-8 transition-all rounded-lg duration-300 ${ringClass}`
+          )}
         >
           <Image
-            src={candidate.imageUrl}
+            src={candidate.imageUrl!}
             alt={candidate.name}
             fill
             className="object-cover"

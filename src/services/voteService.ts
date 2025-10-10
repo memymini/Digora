@@ -9,6 +9,47 @@ import {
 } from "@/lib/types";
 import { SupabaseClient } from "@supabase/supabase-js";
 
+interface VoteDetailsRow {
+  total_count: number;
+  options: Option[];
+}
+
+export async function getVoteDetails(supabase: SupabaseClient, voteId: number, userId?: string) {
+  const [resultsRes, userVoteRes] = await Promise.all([
+    supabase.rpc("get_vote_details", { p_vote_id: voteId }),
+    userId
+      ? supabase
+          .from("ballots")
+          .select("option_id")
+          .eq("vote_id", voteId)
+          .eq("user_id", userId)
+          .single()
+      : Promise.resolve({ data: null, error: null }),
+  ]);
+
+  const { data: resultsData, error: resultsError } = resultsRes;
+  if (resultsError) throw resultsError;
+
+  const results: VoteDetailsRow = (Array.isArray(resultsData) && resultsData[0]
+    ? (resultsData[0] as VoteDetailsRow)
+    : undefined) ?? {
+    total_count: 0,
+    options: [],
+  };
+
+  const { data: userVote, error: userVoteError } = userVoteRes;
+  if (userVoteError && userVoteError.code !== 'PGRST116') { // Ignore 'No rows found' error
+    throw userVoteError;
+  }
+
+  return {
+    totalCount: results.total_count || 0,
+    options: results.options || [],
+    isUserVoted: !!userVote,
+    userVotedOptionId: userVote?.option_id || null,
+  };
+}
+
 export async function getVoteStatistics(
   supabase: SupabaseClient,
   voteId: number

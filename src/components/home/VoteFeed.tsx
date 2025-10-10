@@ -4,6 +4,7 @@ import { VoteCard } from "./VoteCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRef, useState, useEffect, useCallback } from "react";
 import { useVoteFeedQuery } from "@/hooks/queries/useVoteFeedQuery";
+import { cn } from "@/lib/utils";
 
 const VoteFeedSkeleton = () => (
   <div className="flex items-center gap-6 overflow-x-hidden w-full sm:px-6">
@@ -53,7 +54,6 @@ export const VoteFeed = () => {
 
   useEffect(() => {
     const container = scrollContainerRef.current;
-    // Don't run effect if still loading or no data/container
     if (isLoading || !container || !voteData) return;
 
     const checkOverflow = () => {
@@ -69,7 +69,7 @@ export const VoteFeed = () => {
     };
 
     checkOverflow();
-    handleScroll(); // Initial check
+    handleScroll();
 
     container.addEventListener("scroll", debouncedScrollHandler);
     window.addEventListener("resize", checkOverflow);
@@ -90,7 +90,7 @@ export const VoteFeed = () => {
       observer.disconnect();
       clearTimeout(scrollTimeout);
     };
-  }, [handleScroll, isLoading, voteData]); // Rerun when data or loading state changes
+  }, [handleScroll, isLoading, voteData]);
 
   const scrollToCard = (index: number) => {
     const container = scrollContainerRef.current;
@@ -130,7 +130,9 @@ export const VoteFeed = () => {
     <div className="relative w-full">
       <div
         ref={scrollContainerRef}
-        className="flex items-center gap-6 overflow-x-auto hide-scrollbar py-6 scroll-snap-x-mandatory w-full sm:px-6"
+        className={cn(
+          "flex items-center gap-6 overflow-x-auto hide-scrollbar scroll-snap-x-mandatory w-full p-6"
+        )}
       >
         {voteData.map((vote) => (
           <VoteCard key={vote.voteId} data={vote} />
@@ -139,7 +141,7 @@ export const VoteFeed = () => {
 
       {/* Dots Indicator */}
       {isOverflowing && voteData.length > 1 && (
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 flex items-center justify-center gap-2">
+        <div className="flex sm:hidden absolute bottom-0 left-1/2 -translate-x-1/2 items-center justify-center gap-2">
           {voteData.map((_, i) => (
             <button
               key={i}
