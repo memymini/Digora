@@ -59,6 +59,7 @@ export default function VoteInfo({ voteId }: VoteInfoProps) {
         description={data.details}
         totalVotes={data.totalCount}
         isActive={data.status === "ongoing"}
+        endsAt={data.endsAt}
       />
 
       {/* Final Results Display */}
@@ -69,7 +70,7 @@ export default function VoteInfo({ voteId }: VoteInfoProps) {
           isVoted={true}
           color="blue"
         />
-
+        <span className="mb-20 text-2xl sm:text-3xl font-black">VS</span>
         <CandidateProfile
           candidate={candidateB}
           isWinner={candidateB.percent > candidateA.percent}
