@@ -37,7 +37,7 @@ export const VoteCard = ({ data }: { data: VoteFeedResponse }) => {
           <span className="mb-20 text-2xl font-black">VS</span>
           <CandidateProfile
             candidate={candidateB}
-            isWinner={candidateB.percent > candidateB.percent}
+            isWinner={candidateB.percent > candidateA.percent}
             color="red"
           />
         </div>

@@ -3,21 +3,19 @@ import { useState } from "react";
 interface WaffleChartProps {
   candidateA: {
     name: string;
-    votes: number;
+    percent: number;
     color: string;
   };
   candidateB: {
     name: string;
-    votes: number;
+    percent: number;
     color: string;
   };
-  totalVotes: number;
 }
 
 export function WaffleChart({
   candidateA,
   candidateB,
-  totalVotes,
 }: WaffleChartProps) {
   const [hoveredSquare, setHoveredSquare] = useState<{
     index: number;
@@ -25,7 +23,7 @@ export function WaffleChart({
     percentage: number;
   } | null>(null);
 
-  const candidateAPercent = Math.round((candidateA.votes / totalVotes) * 100);
+  const candidateAPercent = Math.round(candidateA.percent);
   const candidateBPercent = 100 - candidateAPercent;
 
   // 100개의 사각형을 생성하고 각각에 후보 할당

@@ -1,14 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import {
-  ApiResponse,
-  VoteResponse,
-  VoteStatus,
-  Option,
-  VoteDetailsRpcOption,
-} from "@/lib/types";
+import { ApiResponse, VoteResponse, VoteStatus, Option } from "@/lib/types";
 import { createErrorResponse } from "@/lib/api";
-import { getVoteDetails } from "@/services/voteService";
 
 export const revalidate = 0;
 
@@ -39,29 +32,50 @@ export async function GET(): Promise<
     if (!vote) {
       return NextResponse.json({ success: true, data: null });
     }
+    // const {
+    //   data: { user },
+    // } = await supabase.auth.getUser();
 
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    const voteDetails = await getVoteDetails(supabase, vote.id, user?.id);
-
-    const mappedOptions: Option[] = (voteDetails.options || []).map(
-      (option: VoteDetailsRpcOption) => {
-        return {
-          ...option,
-          name: option.name,
-        };
+    const { data: rpcData, error: rpcError } = await supabase.rpc(
+      "get_vote_details",
+      {
+        p_vote_id: vote.id,
       }
+    );
+
+    if (rpcError) {
+      console.error("Error calling get_vote_details RPC:", rpcError);
+      return createErrorResponse("DB_ERROR", 500, rpcError.message);
+    }
+
+    const rpcResult = rpcData?.[0];
+    const totalCount = rpcResult?.v_total_count || 0;
+    const optionsData = rpcResult?.v_options || [];
+
+    const mappedOptions: Option[] = optionsData.map(
+      (option: {
+        id: number;
+        name?: string;
+        candidate_name?: string;
+        imageUrl?: string;
+        count: number;
+        percent: number;
+      }) => ({
+        id: option.id,
+        name: option.name || option.candidate_name,
+        imageUrl: option.imageUrl,
+        count: option.count,
+        percent: option.percent || 0,
+      })
     );
     const responseData: VoteResponse = {
       voteId: vote.id,
       title: vote.title,
       details: vote.details || "",
-      totalCount: voteDetails.totalCount,
+      totalCount,
       status: vote.status as VoteStatus,
-      isUserVoted: voteDetails.isUserVoted,
-      userVotedOptionId: voteDetails.userVotedOptionId,
+      isUserVoted: false,
+      userVotedOptionId: null,
       options: mappedOptions,
       endsAt: vote.ends_at,
     };

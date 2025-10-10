@@ -40,7 +40,7 @@ export const HeroVote = ({ data }: HeroVoteProps) => {
             <Link href={`/vote/${data.voteId}`} className="w-full h-full">
               <CandidateProfile
                 candidate={candidateB}
-                isWinner={candidateB.percent > candidateB.percent}
+                isWinner={candidateB.percent > candidateA.percent}
                 color="red"
                 variant="hero"
               />

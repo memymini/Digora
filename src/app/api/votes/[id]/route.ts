@@ -6,8 +6,8 @@ import { createErrorResponse } from "@/lib/api";
 export const revalidate = 0;
 
 interface VoteDetailsRow {
-  total_count: number;
-  options: Option[];
+  v_total_count: number;
+  v_options: Option[];
 }
 
 export async function GET(
@@ -66,13 +66,22 @@ export async function GET(
     const { data: resultsData, error: resultsError } = resultsRes;
     if (resultsError) throw resultsError;
 
-    const results: VoteDetailsRow = (Array.isArray(resultsData) &&
-    resultsData[0]
-      ? (resultsData[0] as VoteDetailsRow)
-      : undefined) ?? {
-      total_count: 0,
-      options: [],
-    };
+    const results: VoteDetailsRow =
+      Array.isArray(resultsData) && resultsData[0]
+        ? (resultsData[0] as VoteDetailsRow)
+        : { v_total_count: 0, v_options: [] };
+
+    const totalCount = results.v_total_count || 0;
+    const options = results.v_options || [];
+    const safeOptions = options.map((option) => ({
+      ...option,
+      percent:
+        option.percent !== undefined &&
+        option.percent !== null &&
+        !isNaN(option.percent)
+          ? option.percent
+          : 0,
+    }));
 
     const { data: userVote, error: userVoteError } = userVoteRes;
     if (userVoteError) {
@@ -83,11 +92,11 @@ export async function GET(
       voteId: vote.id,
       title: vote.title,
       details: vote.details || "",
-      totalCount: results.total_count || 0,
+      totalCount,
       status: vote.status as VoteStatus,
       isUserVoted: !!userVote,
       userVotedOptionId: userVote?.option_id || null,
-      options: results.options || [],
+      options: safeOptions,
       endsAt: vote.ends_at,
     };
 

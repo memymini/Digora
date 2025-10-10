@@ -22,25 +22,19 @@ export const VoteDistributionChart = ({
   const candidateA = candidates[0];
   const candidateB = candidates[1];
 
-  const totalVotes = candidates.reduce(
-    (acc, candidate) => acc + candidate.count,
-    0
-  );
-
   return (
     <ChartCard title="최종 득표율" icon={Users} candidates={candidates}>
       <WaffleChart
         candidateA={{
           name: candidateA.name,
-          votes: candidateA.count,
+          percent: candidateA.percent,
           color: COLORS[0],
         }}
         candidateB={{
           name: candidateB.name,
-          votes: candidateB.count,
+          percent: candidateB.percent,
           color: COLORS[1],
         }}
-        totalVotes={totalVotes}
       />
     </ChartCard>
   );
