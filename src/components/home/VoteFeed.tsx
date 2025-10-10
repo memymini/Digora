@@ -5,6 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useRef, useState, useEffect, useCallback } from "react";
 import { useVoteFeedQuery } from "@/hooks/queries/useVoteFeedQuery";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 const VoteFeedSkeleton = () => (
   <div className="flex items-center gap-6 overflow-x-hidden w-full sm:px-6">
@@ -135,7 +136,13 @@ export const VoteFeed = () => {
         )}
       >
         {voteData.map((vote) => (
-          <VoteCard key={vote.voteId} data={vote} />
+          <Link
+            key={vote.voteId}
+            href={`/vote/${vote.voteId}`}
+            className="w-full h-full"
+          >
+            <VoteCard data={vote} />
+          </Link>
         ))}
       </div>
 
