@@ -132,14 +132,14 @@ export const VoteFeed = () => {
       <div
         ref={scrollContainerRef}
         className={cn(
-          "flex items-center gap-6 overflow-x-auto hide-scrollbar scroll-snap-x-mandatory w-full p-6"
+          "flex items-center gap-6 overflow-x-scroll hide-scrollbar scroll-snap-x-mandatory w-full p-6"
         )}
       >
         {voteData.map((vote) => (
           <Link
             key={vote.voteId}
             href={`/vote/${vote.voteId}`}
-            className="w-full h-full"
+            className="min-w-full w-full sm:min-w-fit sm:w-fit h-fit"
           >
             <VoteCard data={vote} />
           </Link>
