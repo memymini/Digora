@@ -1,12 +1,12 @@
-import { ApiResponse, ApiErrorResponse } from "./types";
+import { ApiResponse, ApiErrorResponse } from "./types/api";
 
 export class ApiError extends Error {
   status: number;
   code: string;
 
-  constructor(errorResponse: ApiErrorResponse) {
+  constructor(status: number, errorResponse: ApiErrorResponse) {
     super(errorResponse.error.message);
-    this.status = errorResponse.status;
+    this.status = status;
     this.code = errorResponse.error.code;
   }
 }
@@ -27,19 +27,19 @@ export async function fetcher<T>(
     headers,
   });
 
-  // res.ok가 아닐 때, 서버는 항상 ApiErrorResponse 형식의 JSON을 보낸다고 가정
+  // res.ok가 아닐 때, ApiErrorResponse 응답
   if (!res.ok) {
     const errorResponse: ApiErrorResponse = await res.json();
-    throw new ApiError(errorResponse);
+    throw new ApiError(res.status, errorResponse);
   }
 
   // res.ok 이지만, 비즈니스 로직 상 에러일 경우 (success: false)
-  const result: ApiResponse<T> = await res.json();
+  const result: ApiErrorResponse | ApiResponse<T> = await res.json();
   if (!result.success) {
-    throw new ApiError(result as ApiErrorResponse);
+    throw new ApiError(res.status, result as ApiErrorResponse);
   }
 
-  return result.data;
+  return (result as ApiResponse<T>).data;
 }
 
 export const http = {
@@ -54,7 +54,6 @@ export const http = {
       body: isFormData ? body : JSON.stringify(body),
     });
   },
-
   put: <T>(url: string, body: unknown, options?: RequestInit) => {
     const isFormData = body instanceof FormData;
     return fetcher<T>(url, {
