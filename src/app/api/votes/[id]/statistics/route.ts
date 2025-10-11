@@ -1,26 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
-import { ApiResponse, StatisticResponse } from "@/lib/types";
-import { getVoteStatistics } from "@/services/voteService";
-import { createErrorResponse } from "@/lib/api";
+import { getVoteStatistics } from "@/services/statisticService";
+import { createErrorResponse, createSuccessResponse } from "@/lib/api";
 
 export const revalidate = 0;
 
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
-): Promise<NextResponse<ApiResponse<StatisticResponse>>> {
+): Promise<NextResponse> {
   const { id } = await params;
   try {
     const voteId = parseInt(id, 10);
     if (isNaN(voteId)) {
       return createErrorResponse("INVALID_INPUT", 400, "Invalid vote ID");
     }
-
-    const supabase = await createClient();
-    const statistics = await getVoteStatistics(supabase, voteId);
-
-    return NextResponse.json({ success: true, data: statistics });
+    const statistics = await getVoteStatistics(voteId);
+    return createSuccessResponse(statistics);
   } catch (e: unknown) {
     const error = e as Error;
     // Assuming the service layer throws errors that can be displayed to the user

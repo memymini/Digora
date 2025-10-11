@@ -30,20 +30,20 @@ export default function AgeStackedBarChart({
               <div className="relative h-6 bg-muted rounded-full overflow-hidden cursor-pointer group-hover:scale-[1.02] transition-transform">
                 <div
                   className="absolute left-0 top-0 h-full bg-vote-blue transition-all duration-300"
-                  style={{ width: `${candidateA.percent}%` }}
-                  title={`${candidates[0].name}: ${candidateA.percent}%`}
+                  style={{ width: `${candidateA.percent || 0}%` }}
+                  title={`${candidates[0].name}: ${candidateA?.percent || 0}%`}
                 />
                 <div
                   className="absolute right-0 top-0 h-full bg-vote-red transition-all duration-300"
-                  style={{ width: `${candidateB.percent}%` }}
-                  title={`${candidates[1]}: ${candidateB.percent}%`}
+                  style={{ width: `${candidateB?.percent || 0}%` }}
+                  title={`${candidates[1].name}: ${candidateB?.percent || 0}%`}
                 />
                 <div className="absolute inset-0 flex items-center justify-between px-2 text-xs font-medium text-white">
-                  {candidateA.percent > 15 && (
-                    <span>{candidateA.percent}%</span>
+                  {(candidateA?.percent || 0) > 15 && (
+                    <span>{candidateA?.percent || 0}%</span>
                   )}
-                  {candidateB.percent > 15 && (
-                    <span>{candidateB.percent}%</span>
+                  {(candidateB?.percent || 0) > 15 && (
+                    <span>{candidateB?.percent || 0}%</span>
                   )}
                 </div>
               </div>

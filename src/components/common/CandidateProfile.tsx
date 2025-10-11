@@ -1,9 +1,9 @@
-import { Candidate } from "@/lib/types";
+import { Option } from "@/lib/types";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 interface CandidateProfileProps {
-  candidate: Candidate;
+  candidate: Option;
   isSelected?: boolean;
   isVoted?: boolean;
   onSelect?: () => void;
