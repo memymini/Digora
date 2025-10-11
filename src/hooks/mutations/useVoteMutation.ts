@@ -2,7 +2,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import { VOTE_QUERY_KEYS } from "../queries/querykeys";
 import toast from "react-hot-toast";
 import { http } from "@/lib/fetcher";
-import { VoteRequest } from "@/lib/types";
 import { useApiMutation } from "../useApiMutation";
 
 export const submitVote = async ({
@@ -14,14 +13,14 @@ export const submitVote = async ({
 }) => {
   return http.post<null>(`/api/votes/${voteId}`, {
     optionId,
-  } as VoteRequest);
+  });
 };
 
-interface UseVoteMutationParams {
+interface VoteMutationParams {
   voteId: number;
 }
 
-export function useVoteMutation({ voteId }: UseVoteMutationParams) {
+export function useVoteMutation({ voteId }: VoteMutationParams) {
   const queryClient = useQueryClient();
 
   return useApiMutation(
