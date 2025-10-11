@@ -78,3 +78,28 @@ export async function createComment(
   // 🧩 단일 댓글 포맷으로 변환
   return singleCommentMapper(newComment);
 }
+
+export async function reportComment(
+  commentId: number,
+  userId: string,
+  reason: string
+) {
+  const supabase = await createClient();
+
+  const { error } = await supabase.from("comment_reports").insert({
+    comment_id: commentId,
+    reporter_id: userId,
+    reason: reason,
+    status: "pending",
+    created_at: new Date().toISOString(),
+  });
+
+  if (error) {
+    if (error.code === "23503") {
+      throw new Error("NOT_FOUND:존재하지 않는 댓글입니다.");
+    }
+    throw error;
+  }
+
+  return { message: "신고가 접수되었습니다." };
+}

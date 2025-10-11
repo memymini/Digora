@@ -36,7 +36,7 @@ export const CommentItem = ({
     const reason = prompt("신고 사유를 입력해주세요.");
     if (reason && reason.trim()) {
       reportComment(
-        { commentId: comment.id, reason },
+        { voteId, commentId: comment.id, reason },
         {
           onSuccess: () => {
             alert("신고가 접수되었습니다.");

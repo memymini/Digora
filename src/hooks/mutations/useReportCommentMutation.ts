@@ -1,15 +1,32 @@
+import { ReportCommentRequest } from "@/lib/types";
 import { useApiMutation } from "../useApiMutation";
 import { http } from "@/lib/fetcher";
 
-interface ReportCommentPayload {
+const reportComment = async ({
+  voteId,
+  commentId,
+  reason,
+}: {
+  voteId: number;
   commentId: number;
   reason: string;
-}
-
-const reportComment = async ({ commentId, reason }: ReportCommentPayload) => {
-  return http.post<null>(`/api/comments/${commentId}/report`, { reason });
+}) => {
+  return http.post<null>(`/api/votes/${voteId}/comments/report`, {
+    commentId,
+    reason,
+  });
 };
 
 export const useReportCommentMutation = () => {
-  return useApiMutation((payload: ReportCommentPayload) => reportComment(payload));
+  return useApiMutation(
+    ({
+      voteId,
+      commentId,
+      reason,
+    }: {
+      voteId: number;
+      commentId: number;
+      reason: string;
+    }) => reportComment({ voteId, commentId, reason })
+  );
 };
