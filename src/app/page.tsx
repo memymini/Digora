@@ -1,7 +1,7 @@
 "use client";
 import { VoteFeed } from "@/components/home/VoteFeed";
 import { useHeroVoteQuery } from "@/hooks/queries/useHeroVoteQuery";
-import { HeroVote } from "@/components/home/HeroVote";
+import { HeroVoteSection } from "@/components/home/HeroVote";
 import { DefaultHero } from "@/components/home/DefaultHero";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -26,7 +26,6 @@ const HeroSectionSkeleton = () => (
 
 export default function Home() {
   const { data: heroVote, isLoading } = useHeroVoteQuery();
-
   return (
     <div className="min-h-screen bg-background w-full">
       <main className="container mx-auto px-6 pt-24 w-full gap-4 flex flex-col sm:gap-12 items-center">
@@ -37,7 +36,7 @@ export default function Home() {
         {isLoading ? (
           <HeroSectionSkeleton />
         ) : heroVote ? (
-          <HeroVote data={heroVote} />
+          <HeroVoteSection data={heroVote} />
         ) : (
           <DefaultHero />
         )}

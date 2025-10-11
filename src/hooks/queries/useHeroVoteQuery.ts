@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { http } from "@/lib/fetcher";
-import { VoteResponse } from "@/lib/types";
+import { HeroVote } from "@/lib/types";
 import { VOTE_QUERY_KEYS } from "./querykeys";
 
 const getHeroVote = () => {
-  return http.get<VoteResponse | null>("/api/votes/hero");
+  return http.get<HeroVote | null>("/api/votes/hero");
 };
 
 export const useHeroVoteQuery = () => {

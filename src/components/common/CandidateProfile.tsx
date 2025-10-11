@@ -83,7 +83,7 @@ export const CandidateProfile = ({
           <p
             className={`text-2xl sm:heading-1 font-bold ${colorClasses[color].text}`}
           >
-            {candidate.percent}%
+            {candidate.percent || 0}%
           </p>
           {isVoted && (
             <p className="caption-text text-muted-foreground mt-1">

@@ -1,14 +1,14 @@
 "use client";
 
-import { VoteResponse } from "@/lib/types";
+import { HeroVote } from "@/lib/types";
 import { CandidateProfile } from "../common/CandidateProfile";
 import Link from "next/link";
 
 interface HeroVoteProps {
-  data: VoteResponse;
+  data: HeroVote;
 }
 
-export const HeroVote = ({ data }: HeroVoteProps) => {
+export const HeroVoteSection = ({ data }: HeroVoteProps) => {
   const candidateA = data.options[0];
   const candidateB = data.options[1];
 
