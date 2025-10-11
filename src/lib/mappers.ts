@@ -1,3 +1,4 @@
+import { Comment, Comments, VoteDetails, VoteDetailsResponse } from "./types";
 import {
   AgeDistribution,
   GenderDistribution,
@@ -7,10 +8,11 @@ import {
   HeroVote,
 } from "./types";
 import {
+  CommentResponse,
   HeroVoteResponse,
-  VoteDetailsRpcResponse,
+  SingleCommentResponse,
   VoteFeedRpcResponse,
-} from "@/lib/types/db";
+} from "@/lib/types";
 export type AgeChartData = {
   age: string;
   [key: `c${number}`]: number;
@@ -148,9 +150,99 @@ export function heroVoteMapper(data: HeroVoteResponse): HeroVote {
   return {
     voteId: data.id,
     title: data.title,
+    details: data.details,
     status: data.status as VoteStatus,
     endsAt: data.ends_at,
     totalCount: data.total_count,
     options: data.options,
+  };
+}
+
+// voteMapper: getVoteDetails 서비스 결과를 도메인 타입(Vote)으로 변환
+export function voteDetailsMapper(data: VoteDetailsResponse): VoteDetails {
+  return {
+    voteId: data.id,
+    title: data.title,
+    status: data.status as VoteStatus,
+    details: data.details ?? "",
+    endsAt: data.ends_at,
+    totalCount: data.total_count,
+    isUserVoted: !!data.isUserVoted,
+    userVotedOptionId: data.option_id ?? null,
+    options: data.options ?? [],
+  };
+}
+
+export function commentsMapper(commentsData: CommentResponse[]): Comments {
+  const totalCount = commentsData.length;
+
+  // 👤 유저별 익명 ID 매핑
+  const userToAnonymousIdMap = new Map<string, number>();
+  let anonymousCounter = 1;
+  commentsData.forEach((comment) => {
+    if (comment.user_id && !userToAnonymousIdMap.has(comment.user_id)) {
+      userToAnonymousIdMap.set(comment.user_id, anonymousCounter++);
+    }
+  });
+
+  const commentsMap = new Map<number, Comment>();
+  const rootComments: Comment[] = [];
+
+  // 🧩 1차 변환 (DB → Domain)
+  commentsData.forEach((comment) => {
+    const anonymousId = comment.user_id
+      ? userToAnonymousIdMap.get(comment.user_id)
+      : 0;
+    let author = `익명${anonymousId}`;
+    const badge = comment.badge_label || "";
+
+    if (badge) {
+      author = `${author} (${badge})`;
+    }
+
+    const formatted: Comment = {
+      id: comment.id,
+      content: comment.body,
+      author,
+      badge,
+      likes: comment.likes_count ?? 0,
+      createdAt: new Date(comment.created_at).toLocaleString(),
+      replies: [],
+    };
+
+    commentsMap.set(comment.id, formatted);
+  });
+
+  // 🧩 2차 변환 (트리 구조 구성)
+  commentsData.forEach((comment) => {
+    const formatted = commentsMap.get(comment.id);
+    if (formatted) {
+      if (comment.parent_id && commentsMap.has(comment.parent_id)) {
+        commentsMap.get(comment.parent_id)!.replies!.push(formatted);
+      } else {
+        rootComments.push(formatted);
+      }
+    }
+  });
+
+  return { comments: rootComments, totalCount };
+}
+
+/**
+ * 단일 댓글 Mapper
+ */
+export function singleCommentMapper(comment: SingleCommentResponse): Comment {
+  const profile = Array.isArray(comment.profiles)
+    ? comment.profiles[0]
+    : comment.profiles;
+
+  return {
+    id: comment.id,
+    content: comment.body,
+    author: profile?.display_name ?? "익명",
+    badge: profile?.role ?? "",
+    likes: comment.likes_count ?? 0,
+    createdAt: new Date(comment.created_at).toLocaleString(),
+    replies: [],
   };
 }

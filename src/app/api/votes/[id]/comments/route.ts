@@ -1,7 +1,6 @@
-import { createErrorResponse } from "@/lib/api";
+import { createErrorResponse, createSuccessResponse } from "@/lib/api";
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
-import { ApiResponse, CommentResponse, CommentsApiResponse } from "@/lib/types";
+import { getComments, createComment } from "@/services/commentService";
 
 export const revalidate = 0;
 
@@ -9,87 +8,15 @@ export const revalidate = 0;
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
-): Promise<NextResponse<ApiResponse<CommentsApiResponse>>> {
+): Promise<NextResponse> {
   const { id } = await params;
   try {
     const voteId = parseInt(id, 10);
     if (isNaN(voteId)) {
       return createErrorResponse("INVALID_INPUT", 400, "Invalid vote ID");
     }
-
-    const supabase = await createClient();
-
-    const { data: commentsData, error } = await supabase
-      .from("comments")
-      .select(
-        `
-        id, 
-        body, 
-        created_at, 
-        parent_id, 
-        likes_count,
-        user_id,
-        badge_label,
-        profiles ( role )
-      `
-      )
-      .eq("vote_id", voteId)
-      .eq("visibility", "active")
-      .order("created_at", { ascending: true });
-
-    if (error) throw error;
-
-    const totalCount = commentsData.length;
-
-    const userToAnonymousIdMap = new Map<string, number>();
-    let anonymousIdCounter = 1;
-    commentsData.forEach((comment) => {
-      if (comment.user_id && !userToAnonymousIdMap.has(comment.user_id)) {
-        userToAnonymousIdMap.set(comment.user_id, anonymousIdCounter++);
-      }
-    });
-
-    const commentsMap = new Map<number, CommentResponse>();
-    const rootComments: CommentResponse[] = [];
-
-    commentsData.forEach((comment) => {
-      const anonymousId = comment.user_id
-        ? userToAnonymousIdMap.get(comment.user_id)
-        : 0;
-      let authorName = `익명${anonymousId}`;
-      const badge = comment.badge_label || "";
-
-      if (badge) {
-        authorName = `${authorName} (${badge})`;
-      }
-
-      const formattedComment: CommentResponse = {
-        id: comment.id,
-        content: comment.body,
-        author: authorName,
-        badge: badge,
-        likes: comment.likes_count ?? 0,
-        createdAt: new Date(comment.created_at).toLocaleString(),
-        replies: [],
-      };
-      commentsMap.set(comment.id, formattedComment);
-    });
-
-    commentsData.forEach((comment) => {
-      const formattedComment = commentsMap.get(comment.id);
-      if (formattedComment) {
-        if (comment.parent_id && commentsMap.has(comment.parent_id)) {
-          commentsMap.get(comment.parent_id)!.replies!.push(formattedComment);
-        } else {
-          rootComments.push(formattedComment);
-        }
-      }
-    });
-
-    return NextResponse.json({
-      success: true,
-      data: { comments: rootComments, totalCount },
-    });
+    const data = await getComments(voteId);
+    return createSuccessResponse(data);
   } catch (e) {
     const error = e as Error;
     return createErrorResponse("DB_ERROR", 500, error.message);
@@ -100,69 +27,19 @@ export async function GET(
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
-): Promise<NextResponse<ApiResponse<CommentResponse>>> {
+): Promise<NextResponse> {
   const { id } = await params;
   try {
     const voteId = parseInt(id, 10);
     if (isNaN(voteId)) {
       return createErrorResponse("INVALID_INPUT", 400, "Invalid vote ID");
     }
-
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      return createErrorResponse("UNAUTHORIZED", 401, "로그인이 필요합니다.");
-    }
-
     const { content, parentId } = await req.json();
     if (!content) {
       return createErrorResponse("INVALID_INPUT", 400, "댓글 내용이 없습니다.");
     }
-
-    const { data: newComment, error } = await supabase
-      .from("comments")
-      .insert({
-        vote_id: voteId,
-        user_id: user.id,
-        body: content,
-        parent_id: parentId,
-        visibility: "active",
-        created_at: new Date().toISOString(),
-      })
-      .select(
-        `
-        id, 
-        body, 
-        created_at, 
-        parent_id, 
-        likes_count,
-        profiles ( display_name, role )
-      `
-      )
-      .single();
-
-    if (error) throw error;
-
-    // POST 응답에서는 익명 처리를 하지 않고, 생성된 댓글의 정보를 그대로 반환합니다.
-    // GET 요청 시 목록 전체가 다시 조회되면서 익명화가 적용됩니다.
-    const profile = Array.isArray(newComment.profiles)
-      ? newComment.profiles[0]
-      : newComment.profiles;
-
-    const formattedComment: CommentResponse = {
-      id: newComment.id,
-      content: newComment.body,
-      author: profile?.display_name ?? "익명",
-      badge: profile?.role ?? "user",
-      likes: newComment.likes_count ?? 0,
-      createdAt: new Date(newComment.created_at).toLocaleString(),
-      replies: [],
-    };
-
-    return NextResponse.json({ success: true, data: formattedComment });
+    const newComment = await createComment(voteId, content, parentId);
+    return createSuccessResponse(newComment);
   } catch (e) {
     const error = e as Error;
     return createErrorResponse("DB_ERROR", 500, error.message);

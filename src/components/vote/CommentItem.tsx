@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { CommentResponse } from "@/lib/types";
+import { Comment } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Users, CornerDownRight } from "lucide-react";
@@ -9,7 +9,7 @@ import { useVoteCommentMutation } from "@/hooks/mutations/useVoteCommentMutation
 import { useReportCommentMutation } from "@/hooks/mutations/useReportCommentMutation";
 
 interface CommentItemProps {
-  comment: CommentResponse;
+  comment: Comment;
   isReply?: boolean;
   userVoted: boolean;
   voteId: number;
@@ -35,14 +35,17 @@ export const CommentItem = ({
   const handleReport = () => {
     const reason = prompt("신고 사유를 입력해주세요.");
     if (reason && reason.trim()) {
-      reportComment({ commentId: comment.id, reason }, {
-        onSuccess: () => {
-          alert("신고가 접수되었습니다.");
-        },
-        onError: (err) => {
-          alert(`신고 중 오류가 발생했습니다: ${err.message}`);
+      reportComment(
+        { commentId: comment.id, reason },
+        {
+          onSuccess: () => {
+            alert("신고가 접수되었습니다.");
+          },
+          onError: (err) => {
+            alert(`신고 중 오류가 발생했습니다: ${err.message}`);
+          },
         }
-      });
+      );
     }
   };
 
