@@ -17,7 +17,7 @@ export const COMMENT_STATUS = {
 } as const;
 export type CommentStatus = "pending" | "hidden" | "rejected";
 export const AGE_RANGE = {
-  10: "10s",
+  10: "20s_under",
   20: "20s",
   30: "30s",
   40: "40s",
@@ -36,7 +36,6 @@ export type AgeRange =
 export const GENDER = {
   MALE: "male",
   FEMALE: "female",
-  OTHER: "other",
   UNKNOWN: "unknown",
 } as const;
-export type Gender = "male" | "female" | "other" | "unknown";
+export type Gender = "male" | "female" | "unknown";
