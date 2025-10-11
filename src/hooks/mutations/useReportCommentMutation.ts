@@ -1,4 +1,3 @@
-import { ReportCommentRequest } from "@/lib/types";
 import { useApiMutation } from "../useApiMutation";
 import { http } from "@/lib/fetcher";
 

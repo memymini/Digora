@@ -6,7 +6,6 @@ import { useRef, useState, useEffect, useCallback } from "react";
 import { useVoteFeedQuery } from "@/hooks/queries/useVoteFeedQuery";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { voteFeedMapper } from "@/lib/mappers";
 
 const VoteFeedSkeleton = () => (
   <div className="flex items-center gap-6 overflow-x-hidden w-full sm:px-6">
