@@ -12,7 +12,7 @@ export const submitVote = async ({
   voteId: number;
   optionId: number;
 }) => {
-  return http.post<null>(`/api/votes/${voteId}/vote`, {
+  return http.post<null>(`/api/votes/${voteId}`, {
     optionId,
   } as VoteRequest);
 };

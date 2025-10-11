@@ -1,10 +1,10 @@
 import { useApiQuery } from "../useApiQuery";
 import { http } from "@/lib/fetcher";
-import { VoteResponse } from "@/lib/types";
+import { VoteDetails } from "@/lib/types";
 import { VOTE_QUERY_KEYS } from "./querykeys";
 
 const getVoteDetail = (voteId: number) => {
-  return http.get<VoteResponse>(`/api/votes/${voteId}`);
+  return http.get<VoteDetails>(`/api/votes/${voteId}`);
 };
 
 export const useVoteDetailQuery = (voteId: number) => {

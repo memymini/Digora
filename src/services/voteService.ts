@@ -9,54 +9,54 @@ import {
 } from "@/lib/types";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
-interface VoteDetailsRow {
-  total_count: number;
-  options: Option[];
-}
+// interface VoteDetailsRow {
+//   total_count: number;
+//   options: Option[];
+// }
 
-export async function getVoteDetails(
-  supabase: SupabaseClient,
-  voteId: number,
-  userId?: string
-) {
-  const [resultsRes, userVoteRes] = await Promise.all([
-    supabase.rpc("get_vote_details", { p_vote_id: voteId }),
-    userId
-      ? supabase
-          .from("ballots")
-          .select("option_id")
-          .eq("vote_id", voteId)
-          .eq("user_id", userId)
-          .single()
-      : Promise.resolve({ data: null, error: null }),
-  ]);
+// export async function getVoteDetails(
+//   supabase: SupabaseClient,
+//   voteId: number,
+//   userId?: string
+// ) {
+//   const [resultsRes, userVoteRes] = await Promise.all([
+//     supabase.rpc("get_vote_details", { p_vote_id: voteId }),
+//     userId
+//       ? supabase
+//           .from("ballots")
+//           .select("option_id")
+//           .eq("vote_id", voteId)
+//           .eq("user_id", userId)
+//           .single()
+//       : Promise.resolve({ data: null, error: null }),
+//   ]);
 
-  const { data: resultsData, error: resultsError } = resultsRes;
-  if (resultsError) throw resultsError;
+//   const { data: resultsData, error: resultsError } = resultsRes;
+//   if (resultsError) throw resultsError;
 
-  const results: VoteDetailsRow = (Array.isArray(resultsData) && resultsData[0]
-    ? (resultsData[0] as VoteDetailsRow)
-    : undefined) ?? {
-    total_count: 0,
-    options: [],
-  };
+//   const results: VoteDetailsRow = (Array.isArray(resultsData) && resultsData[0]
+//     ? (resultsData[0] as VoteDetailsRow)
+//     : undefined) ?? {
+//     total_count: 0,
+//     options: [],
+//   };
 
-  const { data: userVote, error: userVoteError } = userVoteRes;
-  if (userVoteError && userVoteError.code !== "PGRST116") {
-    // Ignore 'No rows found' error
-    throw userVoteError;
-  }
+//   const { data: userVote, error: userVoteError } = userVoteRes;
+//   if (userVoteError && userVoteError.code !== "PGRST116") {
+//     // Ignore 'No rows found' error
+//     throw userVoteError;
+//   }
 
-  const isUserVoted = !!userVote;
-  const userVotedOptionId = userVote?.option_id || null;
+//   const isUserVoted = !!userVote;
+//   const userVotedOptionId = userVote?.option_id || null;
 
-  return {
-    totalCount: results.total_count || 0,
-    options: results.options || [],
-    isUserVoted,
-    userVotedOptionId,
-  };
-}
+//   return {
+//     totalCount: results.total_count || 0,
+//     options: results.options || [],
+//     isUserVoted,
+//     userVotedOptionId,
+//   };
+// }
 
 export async function getVoteStatistics(
   supabase: SupabaseClient,
@@ -242,7 +242,7 @@ export async function getHeroVote() {
 
   const { data: vote, error: voteError } = await supabase
     .from("votes")
-    .select("id, title, status, ends_at")
+    .select("id, title, details,status, ends_at")
     .eq("status", "ongoing")
     .order("starts_at", { ascending: false })
     .limit(1)
@@ -280,4 +280,77 @@ export async function getVoteFeed() {
   }
 
   return data ?? [];
+}
+
+export async function getVoteDetails(voteId: number, userId?: string) {
+  const supabase = await createClient();
+
+  const [voteRes, rpcRes, userVoteRes] = await Promise.all([
+    supabase
+      .from("votes")
+      .select("id, title, status, ends_at, details")
+      .eq("id", voteId)
+      .single(),
+    supabase.rpc("get_vote_details", { p_vote_id: voteId }),
+    userId
+      ? supabase
+          .from("ballots")
+          .select("option_id")
+          .eq("vote_id", voteId)
+          .eq("user_id", userId)
+          .maybeSingle()
+      : Promise.resolve({ data: null, error: null }),
+  ]);
+
+  const { data: vote, error: voteError } = voteRes;
+  if (voteError) throw voteError;
+  if (!vote) return null;
+
+  const { data: rpcData, error: rpcError } = rpcRes;
+  if (rpcError) throw rpcError;
+
+  const { data: userVote, error: userVoteError } = userVoteRes;
+  if (userVoteError && userVoteError.code !== "PGRST116") {
+    throw userVoteError;
+  }
+  const userVotedOptionId = userVote?.option_id ?? null;
+  const userVoted = Boolean(userVotedOptionId);
+
+  return {
+    ...vote,
+    total_count: rpcData?.[0]?.total_count ?? 0,
+    isUserVoted: userVoted,
+    optionId: userVotedOptionId,
+    options: rpcData?.[0]?.options ?? [],
+  };
+}
+
+export async function handleVote(
+  userId: string,
+  voteId: number,
+  optionId: number
+) {
+  const supabase = await createClient();
+
+  const { data: vote, error: voteError } = await supabase
+    .from("votes")
+    .select("status")
+    .eq("id", voteId)
+    .single();
+
+  if (voteError) throw voteError;
+  if (!vote) throw new Error("NOT_FOUND");
+  if (vote.status !== "ongoing") throw new Error("VOTE_NOT_ONGOING");
+
+  const { error: ballotError } = await supabase.from("ballots").insert({
+    user_id: userId,
+    vote_id: voteId,
+    option_id: optionId,
+    created_at: new Date().toISOString(),
+  });
+
+  if (ballotError?.code === "23505") throw new Error("ALREADY_VOTED");
+  if (ballotError) throw ballotError;
+
+  return { success: true };
 }

@@ -4,10 +4,10 @@ import { Card } from "@/components/ui/card";
 import { CandidateProfile } from "@/components/common/CandidateProfile";
 import { Button } from "../ui/button";
 import { useState } from "react";
-import { VoteResponse } from "@/lib/types";
+import { VoteDetails } from "@/lib/types";
 import { useVoteMutation } from "@/hooks/mutations/useVoteMutation";
 
-export default function VoteSection({ data }: { data: VoteResponse }) {
+export default function VoteSection({ data }: { data: VoteDetails }) {
   const [selectedCandidate, setSelectedCandidate] = useState<number | null>();
 
   const { mutate, isPending } = useVoteMutation({
