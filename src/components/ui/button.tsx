@@ -16,7 +16,7 @@ const buttonVariants = cva(
         secondary:
           "bg-primary/20 text-primary hover:bg-primary/30 card-shadow hover:card-shadow-hover",
         ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
+        link: "text-primary underline-offset-4",
         // Digora specific variants
         vote: "bg-primary text-primary-foreground hover:bg-primary/90 card-shadow hover:card-shadow-hover",
         "vote-blue": "bg-vote-blue text-white hover:bg-vote-blue/90",

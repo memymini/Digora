@@ -1,12 +1,12 @@
-"use client";
 import { useState } from "react";
 import { Comment } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Users, CornerDownRight } from "lucide-react";
+import { Users, CornerDownRight, ThumbsUp } from "lucide-react"; // ThumbsUp 아이콘 추가
 
 import { useVoteCommentMutation } from "@/hooks/mutations/useVoteCommentMutation";
 import { useReportCommentMutation } from "@/hooks/mutations/useReportCommentMutation";
+import { useLikeCommentMutation } from "@/hooks/mutations/useLikeCommentMutation"; // '좋아요' 훅 추가
 
 interface CommentItemProps {
   comment: Comment;
@@ -25,6 +25,7 @@ export const CommentItem = ({
   const [replyContent, setReplyContent] = useState("");
   const { mutate: postReply } = useVoteCommentMutation({ voteId });
   const { mutate: reportComment } = useReportCommentMutation();
+  const { mutate: likeComment, isPending: isLiking } = useLikeCommentMutation(); // '좋아요' 훅 사용
 
   const handleReplySubmit = () => {
     postReply({ content: replyContent, parentId: comment.id });
@@ -49,6 +50,10 @@ export const CommentItem = ({
     }
   };
 
+  const handleLike = () => {
+    likeComment({ commentId: comment.id, voteId });
+  };
+
   return (
     <div
       className={`w-full ${
@@ -69,10 +74,16 @@ export const CommentItem = ({
               {comment.createdAt}
             </p>
           </div>
-        </div>
-        <span className="caption-text text-muted-foreground">
-          👍 {comment.likes}
-        </span>
+        </div>{" "}
+        <Button
+          variant="link"
+          className="p-0 h-auto text-muted-foreground label-text flex items-center gap-1"
+          onClick={handleLike}
+          disabled={isLiking}
+        >
+          <ThumbsUp className="w-4 h-4" />
+          {comment.likes > 0 && comment.likes}
+        </Button>
       </div>
       <div className={`pl-10 ${isReply ? "pl-4" : ""}`}>
         <p className="body-text mb-2">{comment.content}</p>

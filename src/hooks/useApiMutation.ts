@@ -6,7 +6,7 @@ import {
   MutationFunction,
 } from "@tanstack/react-query";
 import { ApiError } from "@/lib/fetcher";
-import { handleApiError } from "./useApiError";
+import { useApiError } from "./useApiError";
 
 /**
  * useMutation을 래핑하여 공통 에러 처리를 추가한 커스텀 훅
@@ -17,6 +17,8 @@ export const useApiMutation = <TData = unknown, TVariables = void>(
   mutationFn: MutationFunction<TData, TVariables>,
   options?: Omit<UseMutationOptions<TData, ApiError, TVariables>, "mutationFn">
 ): UseMutationResult<TData, ApiError, TVariables> => {
+  const { handleApiError } = useApiError();
+
   return useMutation<TData, ApiError, TVariables>({
     mutationFn,
     // 옵션 설정

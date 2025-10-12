@@ -5,7 +5,7 @@ import {
   QueryKey,
   QueryFunction,
 } from "@tanstack/react-query";
-import { handleApiError } from "./useApiError";
+import { useApiError } from "./useApiError";
 import { ApiError } from "@/lib/fetcher";
 
 /**
@@ -20,8 +20,8 @@ export const useApiQuery = <
 >(
   options: UseQueryOptions<TQueryFnData, ApiError, TData, TQueryKey>
 ): UseQueryResult<TData, ApiError> => {
+  const { handleApiError } = useApiError();
   const { queryFn, ...restOptions } = options;
-
   const wrappedQueryFn: QueryFunction<TQueryFnData, TQueryKey> = async (
     context
   ) => {

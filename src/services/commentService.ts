@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { commentsMapper, singleCommentMapper } from "@/utils/mappers";
-
+import { SupabaseClient } from "@supabase/supabase-js";
 /**
  * 특정 투표의 댓글 목록 조회
  */
@@ -92,6 +92,31 @@ export const commentService = {
     }
 
     return { message: "신고가 접수되었습니다." };
+  },
+  /**
+   * Toggles a 'like' on a comment for a given user.
+   * Calls the `toggle_like` RPC function in the database.
+   * @param supabase - A Supabase client instance with appropriate authorization.
+   * @param commentId - The ID of the comment to like/unlike.
+   * @param userId - The ID of the user performing the action.
+   * @returns The new liked status (true if liked, false if unliked).
+   */
+  async toggleLike(
+    supabase: SupabaseClient,
+    commentId: number,
+    userId: string
+  ) {
+    const { data, error } = await supabase.rpc("toggle_like", {
+      p_comment_id: commentId,
+      p_user_id: userId,
+    });
+
+    if (error) {
+      console.error("Error toggling like:", error);
+      throw new Error(error.message);
+    }
+
+    return data as boolean;
   },
 };
 
