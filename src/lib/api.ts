@@ -14,7 +14,7 @@ export function createErrorResponse(
   );
 }
 
-export function createSuccessResponse<T>(data: T, status = 200) {
+export function createSuccessResponse<T>(data?: T, status = 200) {
   return NextResponse.json(
     {
       success: true,
