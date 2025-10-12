@@ -27,7 +27,7 @@ export function AgeBarChart({ data, candidates }: AgeBarProps) {
       <ResponsiveContainer width="100%" height={256}>
         <BarChart
           data={chartData}
-          margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+          margin={{ top: 20, right: 10, left: 0, bottom: 5 }}
         >
           <CartesianGrid strokeDasharray="3 3" stroke="#E9ECEF" />
           <XAxis dataKey="age" tick={{ fontSize: 12 }} />

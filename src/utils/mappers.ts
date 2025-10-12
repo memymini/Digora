@@ -110,12 +110,12 @@ export const GENDER_MAP: Record<string, string> = {
 };
 
 export const AGE_GROUP_MAP: Record<string, string> = {
-  "20s_under": "20대 미만",
+  "20s_under": "20미만",
   "20s": "20대",
   "30s": "30대",
   "40s": "40대",
   "50s": "50대",
-  "60s_plus": "60대 이상",
+  "60s_plus": "60대+",
   unknown: "알 수 없음",
 };
 

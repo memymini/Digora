@@ -36,7 +36,7 @@ export default function OverallStackedBarChart({
                   style={{ width: `${candidateB.percent}%` }}
                 />
               </div>
-              <div className=" caption-text text-muted-foreground">
+              <div className=" caption-text text-muted-foreground w-12">
                 {candidateA.count > candidateB.count
                   ? `+${candidateA.percent - candidateB.percent}`
                   : `-${candidateB.percent - candidateA.percent}`}

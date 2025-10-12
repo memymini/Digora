@@ -79,7 +79,7 @@ export default function VoteInfo({ voteId }: VoteInfoProps) {
         />
       </div>
       {/* Final Vote Bar */}
-      <div className="relative h-8 bg-muted rounded-full overflow-hidden">
+      <div className="relative h-6 sm:h-8 bg-muted rounded-full overflow-hidden">
         <div
           className="absolute left-0 top-0 h-full bg-vote-blue transition-all duration-500"
           style={{ width: `${candidateA.percent}%` }}
