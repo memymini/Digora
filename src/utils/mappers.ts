@@ -7,7 +7,7 @@ import {
   HeroVoteResponse,
   SingleCommentResponse,
   VoteFeedResponse,
-} from "@/lib/types/response";
+} from "@/types/response";
 import {
   AgeDistribution,
   GenderDistribution,
@@ -20,8 +20,8 @@ import {
   ReportedComment,
   AdminVoteOption,
   AdminVotes,
-} from "@/lib/types/domain";
-import { VoteStatus } from "@/lib/types/enums";
+} from "@/types/domain";
+import { VoteStatus } from "@/types/enums";
 export type AgeChartData = {
   age: string;
   [key: `c${number}`]: number;
