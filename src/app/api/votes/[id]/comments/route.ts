@@ -1,6 +1,6 @@
 import { createErrorResponse, createSuccessResponse } from "@/lib/api";
 import { NextRequest, NextResponse } from "next/server";
-import { getComments, createComment } from "@/services/commentService";
+import { commentService } from "@/services/commentService";
 
 export const revalidate = 0;
 
@@ -15,7 +15,7 @@ export async function GET(
     if (isNaN(voteId)) {
       return createErrorResponse("INVALID_INPUT", 400, "Invalid vote ID");
     }
-    const data = await getComments(voteId);
+    const data = await commentService.getComments(voteId);
     return createSuccessResponse(data);
   } catch (e) {
     const error = e as Error;
@@ -38,7 +38,11 @@ export async function POST(
     if (!content) {
       return createErrorResponse("INVALID_INPUT", 400, "댓글 내용이 없습니다.");
     }
-    const newComment = await createComment(voteId, content, parentId);
+    const newComment = await commentService.createComment(
+      voteId,
+      content,
+      parentId
+    );
     return createSuccessResponse(newComment);
   } catch (e) {
     const error = e as Error;

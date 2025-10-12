@@ -1,6 +1,6 @@
 import { createErrorResponse, createSuccessResponse } from "@/lib/api";
 import { createClient } from "@/lib/supabase/server";
-import { reportComment } from "@/services/commentService";
+import { commentService } from "@/services/commentService";
 import { NextRequest } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -27,7 +27,11 @@ export async function POST(req: NextRequest) {
     }
 
     // 3. Report comment via service
-    const result = await reportComment(commentId, user.id, reason);
+    const result = await commentService.reportComment(
+      commentId,
+      user.id,
+      reason
+    );
 
     return createSuccessResponse(result);
   } catch (e: unknown) {
