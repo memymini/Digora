@@ -68,10 +68,7 @@ export const VoteCard = ({ data }: { data: VoteFeed }) => {
 
       {/* Action Button */}
       {isEnded ? (
-        <Button
-          className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors label-text"
-          variant="vote"
-        >
+        <Button className="w-full label-text" variant="secondary">
           투표 결과보기
         </Button>
       ) : (
