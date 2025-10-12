@@ -13,16 +13,14 @@ export const VoteCard = ({ data }: { data: VoteFeed }) => {
   const candidateA = data.options[0];
   const candidateB = data.options[1];
   const [isEnded, setIsEnded] = useState(false);
-  const [routePath, setRoutePath] = useState("vote");
 
   useEffect(() => {
     const ended = new Date(data.endsAt) < new Date();
     setIsEnded(ended);
-    setRoutePath(ended ? "result" : "vote");
   }, [data.endsAt]);
   return (
     <Card
-      onClick={() => router.push(`/${routePath}/${data.voteId}`)}
+      onClick={() => router.push(`/vote/${data.voteId}`)}
       className="p-6 card-shadow hover:card-shadow-hover hover:scale-[1.02] transition-all duration-300 cursor-pointer group flex flex-col scroll-snap-align-center w-full sm:w-100 flex-shrink-0"
     >
       {/* Title */}
@@ -68,11 +66,19 @@ export const VoteCard = ({ data }: { data: VoteFeed }) => {
 
       {/* Action Button */}
       {isEnded ? (
-        <Button className="w-full label-text" variant="secondary">
+        <Button
+          onClick={(e) => {
+            e.stopPropagation();
+            router.push(`/result/${data.voteId}`);
+          }}
+          className="w-full label-text"
+          variant="secondary"
+        >
           투표 결과보기
         </Button>
       ) : (
         <Button
+          onClick={() => router.push(`/vote/${data.voteId}`)}
           className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors label-text"
           variant="vote"
         >
