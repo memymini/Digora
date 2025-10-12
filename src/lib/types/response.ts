@@ -1,4 +1,4 @@
-import { Option, VoteStatus } from "@/lib/types";
+import { CommentStatus, Option, VoteStatus } from "@/lib/types";
 
 // VoteFeed Dto
 export interface VoteFeedRpcResponse {
@@ -56,4 +56,35 @@ export interface SingleCommentResponse {
   parent_id: number | null;
   likes_count: number | null;
   profiles: { role: string | null; display_name: string | null }[];
+}
+
+export interface AdminOptionResponse {
+  id: number;
+  candidate_name: string;
+  party: string | null;
+  image_path: string | null;
+}
+export interface AdminVotesResponse {
+  id: number;
+  title: string;
+  details: string | null;
+  status: VoteStatus;
+  ends_at: string;
+  vote_options: AdminOptionResponse[];
+}
+
+export interface ReportedCommentResponse {
+  id: number;
+  reason: string;
+  status: CommentStatus;
+  created_at: string;
+  comment: {
+    id: number;
+    body: string;
+    created_at: string;
+  };
+  reporter: {
+    id: string;
+    display_name: string | null;
+  };
 }
