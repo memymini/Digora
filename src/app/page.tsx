@@ -34,7 +34,7 @@ export default function Home() {
           <br className="sm:hidden" />
           디고라(Digital + Agora)
         </h1>
-        <p className="max-w-2xl mx-auto body-text text-muted-foreground md:body-text-1 text-center">
+        <p className="max-w-2xl mx-auto body-text text-muted-foreground md:body-text-1 text-center mb-8">
           온라인 커뮤니티는 <strong>신뢰</strong>를,
           <br className="sm:hidden" /> 전통 여론조사는
           <strong>시대</strong>를 잃었습니다.

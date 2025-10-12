@@ -21,7 +21,7 @@ export const HeroVoteSection = ({ data }: HeroVoteProps) => {
       <h1 className="mb-2 text-2xl sm:text-2xl font-extrabold leading-tight text-center md:text-4xl animate-fade-in-up">
         {data.title}
       </h1>
-      <p className="max-w-2xl mx-auto body-text text-muted-foreground md:body-text-1 animate-fade-in-up animation-delay-200">
+      <p className="max-w-2xl mx-auto body-text text-muted-foreground md:body-text-1 animate-fade-in-up animation-delay-200 mb-8">
         {data.details}
       </p>
 
