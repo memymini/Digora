@@ -1,4 +1,4 @@
-import { createErrorResponse, createSuccessResponse } from "@/lib/api";
+import { createErrorResponse, createSuccessResponse } from "@/utils/api";
 import { NextRequest, NextResponse } from "next/server";
 import { commentService } from "@/services/commentService";
 

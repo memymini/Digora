@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getVoteStatistics } from "@/services/statisticService";
-import { createErrorResponse, createSuccessResponse } from "@/lib/api";
+import { createErrorResponse, createSuccessResponse } from "@/utils/api";
 
 export const revalidate = 0;
 
