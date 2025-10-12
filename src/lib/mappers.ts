@@ -1,29 +1,27 @@
 import {
   AdminOptionResponse,
-  AdminVoteOption,
-  AdminVotes,
   AdminVotesResponse,
-  Comment,
-  Comments,
-  ReportedComment,
   ReportedCommentResponse,
-  VoteDetails,
   VoteDetailsResponse,
-} from "./types";
+  CommentResponse,
+  HeroVoteResponse,
+  SingleCommentResponse,
+  VoteFeedResponse,
+} from "@/lib/types/response";
 import {
   AgeDistribution,
   GenderDistribution,
   Option,
-  VoteStatus,
   VoteFeed,
   HeroVote,
-} from "./types";
-import {
-  CommentResponse,
-  HeroVoteResponse,
-  SingleCommentResponse,
-  VoteFeedRpcResponse,
-} from "@/lib/types";
+  VoteDetails,
+  Comment,
+  Comments,
+  ReportedComment,
+  AdminVoteOption,
+  AdminVotes,
+} from "@/lib/types/domain";
+import { VoteStatus } from "@/lib/types/enums";
 export type AgeChartData = {
   age: string;
   [key: `c${number}`]: number;
@@ -145,7 +143,7 @@ export const mapOverallGroup = (group: string): string => {
   return OVERALL_GROUP_MAP[group] || group;
 };
 
-export function voteFeedMapper(data: VoteFeedRpcResponse[]): VoteFeed[] {
+export function voteFeedMapper(data: VoteFeedResponse[]): VoteFeed[] {
   return data.map((item) => ({
     voteId: item.vote_id,
     totalCount: item.total_count,
