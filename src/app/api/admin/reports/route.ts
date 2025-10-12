@@ -1,7 +1,7 @@
-import { createErrorResponse, createSuccessResponse } from "@/lib/api";
+import { createErrorResponse, createSuccessResponse } from "@/utils/api";
 import { adminReportService } from "@/services/adminReportService";
-import { reportedCommentsMapper } from "@/lib/mappers";
-import { ReportedComment } from "@/lib/types";
+import { reportedCommentsMapper } from "@/utils/mappers";
+import { ReportedComment } from "@/types";
 
 export async function GET(request: Request) {
   try {

@@ -1,9 +1,9 @@
 import { NextResponse, NextRequest } from "next/server";
-import { createErrorResponse, createSuccessResponse } from "@/lib/api";
+import { createErrorResponse, createSuccessResponse } from "@/utils/api";
 import { voteService } from "@/services/voteService";
 import { createClient } from "@/lib/supabase/server";
-import { voteDetailsMapper } from "@/lib/mappers";
-import { VoteRequest } from "@/lib/types";
+import { voteDetailsMapper } from "@/utils/mappers";
+import { VoteRequest } from "@/types";
 
 export const revalidate = 0;
 

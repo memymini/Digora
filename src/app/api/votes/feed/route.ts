@@ -1,7 +1,7 @@
-import { createErrorResponse, createSuccessResponse } from "@/lib/api";
+import { createErrorResponse, createSuccessResponse } from "@/utils/api";
 import { NextResponse } from "next/server";
 import { voteService } from "@/services/voteService";
-import { voteFeedMapper } from "@/lib/mappers";
+import { voteFeedMapper } from "@/utils/mappers";
 
 export const revalidate = 0;
 

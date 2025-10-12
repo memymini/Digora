@@ -1,8 +1,8 @@
-import { createErrorResponse, createSuccessResponse } from "@/lib/api";
+import { createErrorResponse, createSuccessResponse } from "@/utils/api";
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest } from "next/server";
 import { adminVoteService } from "@/services/adminVoteService";
-import { AdminVotes } from "@/lib/types";
+import { AdminVotes } from "@/types";
 
 // GET handler
 export async function GET() {
