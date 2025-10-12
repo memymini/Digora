@@ -1,6 +1,6 @@
 "use client";
 
-import { HeroVote } from "@/lib/types";
+import { HeroVote } from "@/types";
 import { CandidateProfile } from "../common/CandidateProfile";
 import Link from "next/link";
 

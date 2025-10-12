@@ -1,6 +1,6 @@
 import { useApiQuery } from "../useApiQuery";
 import { http } from "@/lib/fetcher";
-import { VoteDetails } from "@/lib/types";
+import { VoteDetails } from "@/types";
 import { VOTE_QUERY_KEYS } from "./querykeys";
 
 const getVoteDetail = (voteId: number) => {

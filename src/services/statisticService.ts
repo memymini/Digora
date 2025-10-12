@@ -5,7 +5,7 @@ import {
   TimelineDistribution,
   Option,
   Summary,
-} from "@/lib/types";
+} from "@/types";
 
 import { createClient } from "@/lib/supabase/server";
 

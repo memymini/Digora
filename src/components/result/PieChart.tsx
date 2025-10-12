@@ -9,8 +9,8 @@ import {
   Cell,
   Legend,
 } from "recharts";
-import { mapPieChartData } from "@/lib/mappers";
-import { Option } from "@/lib/types";
+import { mapPieChartData } from "@/utils/mappers";
+import { Option } from "@/types";
 
 interface PieChartProps {
   candidates: Option[];

@@ -1,5 +1,5 @@
 import { http } from "@/lib/fetcher";
-import { ReportedComment } from "@/lib/types";
+import { ReportedComment } from "@/types";
 import { useApiQuery } from "../useApiQuery";
 
 export const getAdminReportsQueryKey = (status: string) => [

@@ -4,7 +4,7 @@ import { VoteCard } from "./VoteCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRef, useState, useEffect, useCallback } from "react";
 import { useVoteFeedQuery } from "@/hooks/queries/useVoteFeedQuery";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/cn";
 import Link from "next/link";
 
 const VoteFeedSkeleton = () => (

@@ -2,7 +2,7 @@ import { useApiMutation } from "../useApiMutation";
 import { useQueryClient } from "@tanstack/react-query";
 import { VOTE_ADMIN_QUERY_KEY } from "../queries/useAdminVotesQuery";
 import { http } from "@/lib/fetcher";
-import { CreateVoteRequest } from "@/lib/types";
+import { CreateVoteRequest } from "@/types";
 
 export const createVote = async (payload: CreateVoteRequest) => {
   const formData = new FormData();

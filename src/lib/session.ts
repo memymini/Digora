@@ -1,5 +1,5 @@
 import { headers } from "next/headers";
-import type { UserPayload } from "./types";
+import type { UserPayload } from "../types";
 
 /**
  * This is a server-side utility to get the user payload from the request headers

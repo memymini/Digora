@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { Comment } from "@/lib/types";
+import { Comment } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Users, CornerDownRight } from "lucide-react";

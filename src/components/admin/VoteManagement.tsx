@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { VoteForm } from "./VoteForm";
-import { AdminVotes } from "@/lib/types";
+import { AdminVotes } from "@/types";
 import { useAdminVotesQuery } from "@/hooks/queries/useAdminVotesQuery";
 import { useDeleteVoteMutation } from "@/hooks/mutations/useDeleteVoteMutation";
 import { useCreateVoteMutation } from "@/hooks/mutations/useCreateVoteMutation";

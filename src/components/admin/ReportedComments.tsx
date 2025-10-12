@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useReportedCommentsQuery } from "@/hooks/queries/useReportedCommentsQuery";
 import { useHandleReportMutation } from "@/hooks/mutations/useHandleReportMutation";
-import { ReportedComment } from "@/lib/types";
+import { ReportedComment } from "@/types";
 
 export const ReportedComments = () => {
   const [activeTab, setActiveTab] = useState("pending"); // 'pending' or 'processed'

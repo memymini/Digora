@@ -1,7 +1,7 @@
 "use client";
 import { ChartCard } from "@/components/common/ChartCard";
-import { mapGenderChartData } from "@/lib/mappers";
-import { GenderDistribution, Option } from "@/lib/types";
+import { mapGenderChartData } from "@/utils/mappers";
+import { GenderDistribution, Option } from "@/types";
 import { Users } from "lucide-react";
 import {
   ResponsiveContainer,

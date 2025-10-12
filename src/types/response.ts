@@ -1,4 +1,4 @@
-import { CommentStatus, Option, VoteStatus } from "@/lib/types";
+import { CommentStatus, Option, VoteStatus } from "@/types";
 
 export interface VoteFeedResponse {
   vote_id: number;

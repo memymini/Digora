@@ -1,4 +1,4 @@
-import { adminVotesMapper } from "@/lib/mappers";
+import { adminVotesMapper } from "@/utils/mappers";
 import { createClient } from "@/lib/supabase/server";
 import { SupabaseClient } from "@supabase/supabase-js";
 

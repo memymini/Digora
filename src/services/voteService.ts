@@ -25,7 +25,6 @@ export const voteService = {
     );
 
     if (rpcError) throw new Error(`DB_ERROR: ${rpcError.message}`);
-    console.log(rpcData);
     return {
       ...vote,
       total_count: rpcData?.[0]?.total_count ?? 0,

@@ -1,6 +1,6 @@
 "use client";
 import { Card } from "@/components/ui/card";
-import { Summary } from "@/lib/types";
+import { Summary } from "@/types";
 import { TrendingUp, Users, MessageCircle } from "lucide-react";
 
 interface SummaryStatisticsProps {

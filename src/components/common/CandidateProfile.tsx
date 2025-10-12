@@ -1,6 +1,6 @@
-import { Option } from "@/lib/types";
+import { Option } from "@/types";
 import Image from "next/image";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/cn";
 
 interface CandidateProfileProps {
   candidate: Option;

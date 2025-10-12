@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { AdminVotes } from "@/lib/types";
+import { AdminVotes } from "@/types";
 
 export const VoteList = ({
   votes,

@@ -1,7 +1,7 @@
 import { Users } from "lucide-react";
 import { ChartCard } from "@/components/common/ChartCard";
-import { Option, OverallDistribution } from "@/lib/types";
-import { mapOverallGroup } from "@/lib/mappers";
+import { Option, OverallDistribution } from "@/types";
+import { mapOverallGroup } from "@/utils/mappers";
 
 interface OverallStackedBarChartProps {
   data: OverallDistribution[];

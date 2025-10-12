@@ -1,6 +1,6 @@
 "use client";
 import { ChartCard } from "@/components/common/ChartCard";
-import { Option } from "@/lib/types";
+import { Option } from "@/types";
 import { Users } from "lucide-react";
 import { WaffleChart } from "./WaffleChart";
 

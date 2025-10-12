@@ -1,6 +1,6 @@
 import { useApiQuery } from "../useApiQuery";
 import { http } from "@/lib/fetcher";
-import { VoteFeed } from "@/lib/types";
+import { VoteFeed } from "@/types";
 import { VOTE_QUERY_KEYS } from "./querykeys";
 
 const getVoteFeed = () => {

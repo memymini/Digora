@@ -2,7 +2,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { VOTE_QUERY_KEYS } from "../queries/querykeys";
 import toast from "react-hot-toast";
 import { http } from "@/lib/fetcher";
-import { CommentResponse } from "@/lib/types";
+import { CommentResponse } from "@/types";
 import { useApiMutation } from "../useApiMutation";
 
 interface PostVoteCommentParams {

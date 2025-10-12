@@ -1,7 +1,7 @@
 "use client";
 import { ChartCard } from "@/components/common/ChartCard";
-import { mapAgeChartData } from "@/lib/mappers";
-import { AgeDistribution, Option } from "@/lib/types";
+import { mapAgeChartData } from "@/utils/mappers";
+import { AgeDistribution, Option } from "@/types";
 import { Users } from "lucide-react";
 import {
   ResponsiveContainer,

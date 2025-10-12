@@ -11,7 +11,7 @@ import {
 } from "recharts";
 import { TrendingUp } from "lucide-react";
 import { ChartCard } from "@/components/common/ChartCard";
-import { Option, TimelineDistribution } from "@/lib/types";
+import { Option, TimelineDistribution } from "@/types";
 
 // 후보자 정보를 담는 타입
 interface TimelineChartProps {

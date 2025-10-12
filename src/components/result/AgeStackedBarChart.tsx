@@ -1,7 +1,7 @@
 import { Users } from "lucide-react";
 import { ChartCard } from "@/components/common/ChartCard";
-import { AgeDistribution, Option } from "@/lib/types";
-import { mapAgeGroup } from "@/lib/mappers";
+import { AgeDistribution, Option } from "@/types";
+import { mapAgeGroup } from "@/utils/mappers";
 
 interface AgeStackedBarChartProps {
   data: AgeDistribution[];

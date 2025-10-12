@@ -1,4 +1,4 @@
-import { AdminVotes } from "@/lib/types";
+import { AdminVotes } from "@/types";
 import { http } from "@/lib/fetcher";
 import { useApiQuery } from "../useApiQuery";
 

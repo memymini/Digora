@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { CandidateProfile } from "@/components/common/CandidateProfile";
 import { Button } from "../ui/button";
 import { useState } from "react";
-import { VoteDetails } from "@/lib/types";
+import { VoteDetails } from "@/types";
 import { useVoteMutation } from "@/hooks/mutations/useVoteMutation";
 
 export default function VoteSection({ data }: { data: VoteDetails }) {

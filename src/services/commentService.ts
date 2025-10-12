@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { commentsMapper, singleCommentMapper } from "@/lib/mappers";
+import { commentsMapper, singleCommentMapper } from "@/utils/mappers";
 
 /**
  * 특정 투표의 댓글 목록 조회

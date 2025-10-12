@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { AdminVotes } from "@/lib/types";
+import { AdminVotes } from "@/types";
 
 export const VoteForm = ({
   selectedVote,
