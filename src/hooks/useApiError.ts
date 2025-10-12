@@ -19,7 +19,13 @@ export function handleApiError(error: unknown) {
     // 2. 사용자에게는 HTTP 상태 코드에 따라 일관된 메시지를 보여줍니다.
     switch (error.status) {
       case 401:
-        handleLoginRedirect();
+        if (
+          window.confirm(
+            "로그인이 필요한 서비스입니다. 로그인 페이지로 이동하시겠습니까?"
+          )
+        ) {
+          handleLoginRedirect();
+        }
         break;
       case 403: // Forbidden
         toast.error("접근 권한이 없습니다.");
