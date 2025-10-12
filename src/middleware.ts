@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
   const response = NextResponse.next();
-
+  const { pathname } = request.nextUrl;
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
@@ -27,7 +27,7 @@ export async function middleware(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   // Protect /admin route
-  if (request.nextUrl.pathname.startsWith("/admin")) {
+  if (pathname.startsWith("/admin")) {
     if (!user) {
       return NextResponse.redirect(new URL("/", request.url));
     }
@@ -41,6 +41,13 @@ export async function middleware(request: NextRequest) {
     if (error || profile?.role !== "admin") {
       const redirectUrl = new URL("/", request.url);
       redirectUrl.searchParams.set("error", "unauthorized_admin");
+      return NextResponse.redirect(redirectUrl);
+    }
+  }
+  if (pathname.startsWith("/result")) {
+    if (!user) {
+      const redirectUrl = new URL("/login", request.url);
+      redirectUrl.searchParams.set("returnTo", pathname);
       return NextResponse.redirect(redirectUrl);
     }
   }
