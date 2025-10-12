@@ -110,7 +110,7 @@ export const GENDER_MAP: Record<string, string> = {
 };
 
 export const AGE_GROUP_MAP: Record<string, string> = {
-  "10s": "20대 미만",
+  "20s_under": "20대 미만",
   "20s": "20대",
   "30s": "30대",
   "40s": "40대",
@@ -122,13 +122,16 @@ export const AGE_GROUP_MAP: Record<string, string> = {
 export const OVERALL_GROUP_MAP: Record<string, string> = {
   "20s male": "20대 남성",
   "20s female": "20대 여성",
+  "20s unknown": "20대 기타",
   "30s male": "30대 남성",
   "30s female": "30대 여성",
+  "30s unknown": "30대 기타",
   "40s male": "40대 남성",
   "40s female": "40대 여성",
+  "40s unknown": "40대 기타",
   "50s male": "50대 남성",
   "50s female": "50대 여성",
-  unknown: "알 수 없음",
+  "50s unknown": "50대 기타",
 };
 
 export const mapGender = (gender: string): string => {
