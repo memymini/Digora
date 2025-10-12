@@ -29,7 +29,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-background w-full">
       <main className="container mx-auto px-6 pt-24 w-full gap-4 flex flex-col sm:gap-12 items-center">
-        <h1 className="w-fit mb-2 text-3xl md:text-5xl font-extrabold leading-tight text-center text-transparent bg-gradient-to-r from-vote-blue via-primary to-vote-red bg-clip-text ">
+        <h1 className="w-fit mb-2 text-3xl md:text-5xl font-black leading-tight text-center text-transparent bg-gradient-to-r from-vote-blue via-primary to-vote-red bg-clip-text ">
           디지털 시대의 <br className="sm:hidden" />
           새로운 민주주의
         </h1>
