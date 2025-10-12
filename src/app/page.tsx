@@ -39,7 +39,7 @@ export default function Home() {
           <br className="sm:hidden" /> 전통 여론조사는
           <strong>시대</strong>를 잃었습니다.
           <br />
-          디고라에서 왜곡 없는 '진짜' 여론을 확인하세요.
+          디고라에서 왜곡 없는 진짜 여론을 확인하세요.
         </p>
         {/* Hero Section */}
         {isLoading ? (
