@@ -3,14 +3,14 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { VoteWithOption } from "@/lib/types";
+import { AdminVotes } from "@/lib/types";
 
 export const VoteForm = ({
   selectedVote,
   onSubmit,
   onCancel,
 }: {
-  selectedVote: VoteWithOption | null;
+  selectedVote: AdminVotes | null;
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   onCancel: () => void;
 }) => {
@@ -22,8 +22,8 @@ export const VoteForm = ({
   );
 
   useEffect(() => {
-    setCandidateAPreview(selectedVote?.vote_options[0].image_path || null);
-    setCandidateBPreview(selectedVote?.vote_options[1].image_path || null);
+    setCandidateAPreview(selectedVote?.voteOptions[0].imageUrl || null);
+    setCandidateBPreview(selectedVote?.voteOptions[1].imageUrl || null);
   }, [selectedVote]);
 
   const handleFileChange = (
@@ -86,7 +86,7 @@ export const VoteForm = ({
             type="text"
             name="candidateAName"
             id="candidateAName"
-            defaultValue={selectedVote?.vote_options?.[0]?.candidate_name}
+            defaultValue={selectedVote?.voteOptions?.[0]?.name}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
             required
           />
@@ -125,7 +125,7 @@ export const VoteForm = ({
             type="text"
             name="candidateBName"
             id="candidateBName"
-            defaultValue={selectedVote?.vote_options?.[1]?.candidate_name}
+            defaultValue={selectedVote?.voteOptions?.[1]?.name}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
             required
           />
@@ -165,7 +165,7 @@ export const VoteForm = ({
           type="date"
           name="duration"
           id="duration"
-          defaultValue={selectedVote?.ends_at}
+          defaultValue={selectedVote?.endsAt}
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
           required
         />

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { VoteForm } from "./VoteForm";
-import { VoteWithOption } from "@/lib/types";
+import { AdminVotes } from "@/lib/types";
 import { useAdminVotesQuery } from "@/hooks/queries/useAdminVotesQuery";
 import { useDeleteVoteMutation } from "@/hooks/mutations/useDeleteVoteMutation";
 import { useCreateVoteMutation } from "@/hooks/mutations/useCreateVoteMutation";
@@ -17,13 +17,13 @@ export const VoteManagement = () => {
     isError,
     error: queryError,
   } = useAdminVotesQuery();
-  const [selectedVote, setSelectedVote] = useState<VoteWithOption | null>(null);
+  const [selectedVote, setSelectedVote] = useState<AdminVotes | null>(null);
 
   const deleteVoteMutation = useDeleteVoteMutation();
   const createVoteMutation = useCreateVoteMutation();
   const updateVoteMutation = useUpdateVoteMutation();
 
-  const handleEdit = (vote: VoteWithOption) => {
+  const handleEdit = (vote: AdminVotes) => {
     setSelectedVote(vote);
   };
 
@@ -42,6 +42,7 @@ export const VoteManagement = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const form = e.currentTarget;
     const formData = new FormData(e.currentTarget);
     const title = formData.get("title") as string;
     const details = formData.get("subtitle") as string;
@@ -57,6 +58,7 @@ export const VoteManagement = () => {
             : "새로운 투표가 생성되었습니다."
         );
         setSelectedVote(null);
+        form.reset();
       },
       onError: (err: Error) => {
         alert(`작업 중 오류가 발생했습니다: ${err.message}`);
@@ -76,12 +78,12 @@ export const VoteManagement = () => {
           ends_at,
           options: [
             {
-              id: selectedVote.vote_options[0].id,
+              id: selectedVote.voteOptions[0].id,
               candidate_name: candidateAName,
               file: candidateAFile,
             },
             {
-              id: selectedVote.vote_options[1].id,
+              id: selectedVote.voteOptions[1].id,
               candidate_name: candidateBName,
               file: candidateBFile,
             },
@@ -152,7 +154,7 @@ export const VoteManagement = () => {
                 <div>
                   <p className="font-bold">{vote.title}</p>
                   <p className="text-sm text-gray-600">
-                    종료일: {new Date(vote.ends_at).toLocaleString()}
+                    종료일: {new Date(vote.endsAt).toLocaleString()}
                   </p>
                 </div>
                 <div className="space-x-2">

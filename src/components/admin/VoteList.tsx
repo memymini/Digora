@@ -1,16 +1,15 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-
-import { VoteWithOption } from "@/lib/types";
+import { AdminVotes } from "@/lib/types";
 
 export const VoteList = ({
   votes,
   onEdit,
   onDelete,
 }: {
-  votes: VoteWithOption[];
-  onEdit: (vote: VoteWithOption) => void;
+  votes: AdminVotes[];
+  onEdit: (vote: AdminVotes) => void;
   onDelete: (id: number) => void;
 }) => {
   return (
@@ -24,7 +23,9 @@ export const VoteList = ({
           >
             <div>
               <p className="font-bold">{vote.title}</p>
-              <p className="text-sm text-gray-600">종료일: {vote.ends_at}</p>
+              <p className="text-sm text-gray-600">
+                종료일: {new Date(vote.endsAt).toLocaleDateString("ko-KR")}
+              </p>
             </div>
             <div className="space-x-2">
               <Button size="sm" variant="outline" onClick={() => onEdit(vote)}>

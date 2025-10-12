@@ -1,4 +1,15 @@
-import { Comment, Comments, VoteDetails, VoteDetailsResponse } from "./types";
+import {
+  AdminOptionResponse,
+  AdminVoteOption,
+  AdminVotes,
+  AdminVotesResponse,
+  Comment,
+  Comments,
+  ReportedComment,
+  ReportedCommentResponse,
+  VoteDetails,
+  VoteDetailsResponse,
+} from "./types";
 import {
   AgeDistribution,
   GenderDistribution,
@@ -245,4 +256,54 @@ export function singleCommentMapper(comment: SingleCommentResponse): Comment {
     createdAt: new Date(comment.created_at).toLocaleString(),
     replies: [],
   };
+}
+
+export function adminVoteOptionMapper(
+  option: AdminOptionResponse
+): AdminVoteOption {
+  return {
+    id: option.id,
+    name: option.candidate_name,
+    party: option.party,
+    imageUrl: option.image_path,
+  };
+}
+
+export function adminVotesMapper(votes: AdminVotesResponse[]): AdminVotes[] {
+  return votes.map((vote) => ({
+    id: vote.id,
+    title: vote.title,
+    details: vote.details,
+    status: vote.status as VoteStatus,
+    endsAt: vote.ends_at,
+    voteOptions: vote.vote_options.map((option) => ({
+      ...adminVoteOptionMapper(option),
+    })),
+  }));
+}
+
+export function reportedCommentMapper(
+  response: ReportedCommentResponse
+): ReportedComment {
+  return {
+    id: response.id,
+    reason: response.reason,
+    status: response.status,
+    createdAt: response.created_at,
+    comment: {
+      id: response.comment.id,
+      body: response.comment.body,
+      createdAt: response.comment.created_at,
+    },
+    reporter: {
+      id: response.reporter.id,
+      name: response.reporter.display_name ?? null,
+    },
+  };
+}
+
+export function reportedCommentsMapper(
+  responses: ReportedCommentResponse[]
+): ReportedComment[] {
+  return responses.map(reportedCommentMapper);
 }

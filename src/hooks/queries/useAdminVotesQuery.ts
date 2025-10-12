@@ -1,12 +1,16 @@
-import { useQuery } from "@tanstack/react-query";
-import { VoteWithOption } from "@/lib/types";
-import { getAdminVotes } from "@/services/adminVoteService";
+import { AdminVotes } from "@/lib/types";
+import { http } from "@/lib/fetcher";
+import { useApiQuery } from "../useApiQuery";
+
+export const getAdminVotes = async (): Promise<AdminVotes[]> => {
+  return http.get<AdminVotes[]>("/api/admin/votes");
+};
 
 export const VOTE_ADMIN_QUERY_KEY = ["admin", "votes"];
 
 export const useAdminVotesQuery = () => {
-  return useQuery<VoteWithOption[], Error>({ 
+  return useApiQuery({
     queryKey: VOTE_ADMIN_QUERY_KEY,
-    queryFn: getAdminVotes 
+    queryFn: getAdminVotes,
   });
 };
