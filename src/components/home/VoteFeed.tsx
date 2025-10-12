@@ -131,7 +131,7 @@ export const VoteFeed = () => {
       <div
         ref={scrollContainerRef}
         className={cn(
-          "flex items-center gap-6 overflow-x-scroll hide-scrollbar scroll-snap-x-mandatory w-full p-6"
+          "flex items-center gap-6 overflow-x-scroll hide-scrollbar scroll-snap-x-mandatory w-full py-6 sm:p-6"
         )}
       >
         {data.map((vote) => (
