@@ -79,8 +79,6 @@ export async function getVoteStatistics(voteId: number) {
       }),
     };
   });
-  console.log(ageDistribution);
-
   const genders = ["male", "female", "unknown"];
   const genderDistribution: GenderDistribution[] = genders.map((gender) => {
     const genderBallots = ballots.filter((b) => {
