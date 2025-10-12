@@ -110,28 +110,32 @@ export async function getVoteStatistics(voteId: number) {
     ["20s", "30s", "40s", "50s"].includes(age)
   );
   filteredAgeGroups.forEach((age) => {
-    genders.forEach((gender) => {
-      const groupBallots = ballots.filter((b) => {
-        const profile = Array.isArray(b.profiles) ? b.profiles[0] : b.profiles;
-        return profile?.age_group === age && profile?.gender === gender;
+    genders
+      .filter((gender) => gender !== "unknown")
+      .forEach((gender) => {
+        const groupBallots = ballots.filter((b) => {
+          const profile = Array.isArray(b.profiles)
+            ? b.profiles[0]
+            : b.profiles;
+          return profile?.age_group === age && profile?.gender === gender;
+        });
+        const total = groupBallots.length;
+        overallDistribution.push({
+          group: `${age} ${gender}`,
+          totalCount: total,
+          totalPercent: totalCount > 0 ? (total / totalCount) * 100 : 0,
+          results: options.map((opt) => {
+            const count = groupBallots.filter(
+              (b) => b.option_id === opt.id
+            ).length;
+            return {
+              id: opt.id,
+              count,
+              percent: total > 0 ? (count / total) * 100 : 0,
+            };
+          }),
+        });
       });
-      const total = groupBallots.length;
-      overallDistribution.push({
-        group: `${age} ${gender}`,
-        totalCount: total,
-        totalPercent: totalCount > 0 ? (total / totalCount) * 100 : 0,
-        results: options.map((opt) => {
-          const count = groupBallots.filter(
-            (b) => b.option_id === opt.id
-          ).length;
-          return {
-            id: opt.id,
-            count,
-            percent: total > 0 ? (count / total) * 100 : 0,
-          };
-        }),
-      });
-    });
   });
 
   const timeline: TimelineDistribution[] = [];
