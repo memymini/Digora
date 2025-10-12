@@ -35,7 +35,11 @@ export default function Statistics({ voteId }: StatisticsProps) {
           <ChartSkeleton />
           <ChartSkeleton />
         </div>
-        <Skeleton className="h-24 w-full" />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <Skeleton className="h-36 w-full" />
+          <Skeleton className="h-36 w-full" />
+          <Skeleton className="h-36 w-full" />
+        </div>
       </div>
     );
   }

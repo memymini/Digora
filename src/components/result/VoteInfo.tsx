@@ -14,17 +14,17 @@ export default function VoteInfo({ voteId }: VoteInfoProps) {
 
   if (isLoading) {
     return (
-      <Card className="p-8 card-shadow mb-8">
-        <Skeleton className="h-8 w-3/4 mb-4" />
-        <Skeleton className="h-4 w-1/2 mb-8" />
-        <div className="flex flex-row items-center justify-around gap-4 sm:gap-8 mb-8">
-          <div className="flex flex-col items-center gap-4">
-            <Skeleton className="h-24 w-24 rounded-full" />
-            <Skeleton className="h-6 w-20" />
+      <Card className="p-8 card-shadow mb-8 w-full">
+        <Skeleton className="h-10 w-2/3 mb-4" />
+        <Skeleton className="h-6 w-1/2 mb-8" />
+        <div className="flex flex-row items-center justify-around gap-8 mb-8 w-full">
+          <div className="flex flex-col items-center gap-6 w-full">
+            <Skeleton className="h-auto w-full aspect-[3/4] " />
+            <Skeleton className="h-6 w-24" />
           </div>
-          <div className="flex flex-col items-center gap-4">
-            <Skeleton className="h-24 w-24 rounded-full" />
-            <Skeleton className="h-6 w-20" />
+          <div className="flex flex-col items-center gap-6 w-full">
+            <Skeleton className="h-auto w-full aspect-[3/4] " />
+            <Skeleton className="h-6 w-24" />
           </div>
         </div>
         <Skeleton className="h-8 w-full rounded-full" />
