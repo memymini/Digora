@@ -1,7 +1,6 @@
 import { CommentStatus, Option, VoteStatus } from "@/lib/types";
 
-// VoteFeed Dto
-export interface VoteFeedRpcResponse {
+export interface VoteFeedResponse {
   vote_id: number;
   total_count: number;
   title: string;
@@ -10,7 +9,6 @@ export interface VoteFeedRpcResponse {
   options: Option[];
 }
 
-//
 export interface VoteDetailsRpcResponse {
   total_count: number;
   options: Option[];
