@@ -44,13 +44,13 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(redirectUrl);
     }
   }
-  if (pathname.startsWith("/result")) {
-    if (!user) {
-      const redirectUrl = new URL("/login", request.url);
-      redirectUrl.searchParams.set("returnTo", pathname);
-      return NextResponse.redirect(redirectUrl);
-    }
-  }
+  // if (pathname.startsWith("/result")) {
+  //   if (!user) {
+  //     const redirectUrl = new URL("/login", request.url);
+  //     redirectUrl.searchParams.set("returnTo", pathname);
+  //     return NextResponse.redirect(redirectUrl);
+  //   }
+  // }
 
   return response;
 }
