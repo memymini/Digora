@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
 import { createErrorResponse, createSuccessResponse } from "@/lib/api";
-import { getHeroVote } from "@/services/voteService";
+import { voteService } from "@/services/voteService";
 import { heroVoteMapper } from "@/lib/mappers";
 
 export const revalidate = 0;
 
 export async function GET(): Promise<NextResponse> {
   try {
-    const data = await getHeroVote();
+    const data = await voteService.getHeroVote();
 
     if (!data) {
       return createSuccessResponse(null);
