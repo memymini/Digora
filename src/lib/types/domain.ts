@@ -1,4 +1,13 @@
 import { AgeRange, CommentStatus, Gender, Role, VoteStatus } from "./enums";
+export interface Profile {
+  id: string;
+  kakao_user_id: string | null;
+  display_name: string | null;
+  role: Role;
+  gender: Gender;
+  age_group: AgeRange;
+  created_at: string | null;
+}
 
 // 랜딩 페이지 - 투표 목록 타입
 export interface VoteFeed {
