@@ -19,7 +19,7 @@ export async function PUT(
     }
 
     const { status } = await req.json();
-    const result = await adminReportService.updateReportStatus(
+    await adminReportService.updateReportStatus(
       supabase,
       user.id,
       parseInt(id, 10),
