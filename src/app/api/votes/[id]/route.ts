@@ -1,6 +1,6 @@
 import { NextResponse, NextRequest } from "next/server";
 import { createErrorResponse, createSuccessResponse } from "@/lib/api";
-import { getVoteDetails, handleVote } from "@/services/voteService";
+import { voteService } from "@/services/voteService";
 import { createClient } from "@/lib/supabase/server";
 import { voteDetailsMapper } from "@/lib/mappers";
 import { VoteRequest } from "@/lib/types";
@@ -30,7 +30,7 @@ export async function GET(
     } = await supabase.auth.getUser();
 
     // ✅ userId를 서비스로 전달
-    const data = await getVoteDetails(voteId, user?.id);
+    const data = await voteService.getVoteDetails(voteId, user?.id);
     if (!data) {
       return createErrorResponse(
         "NOT_FOUND",
@@ -81,7 +81,7 @@ export async function POST(
       );
     }
 
-    const data = await handleVote(user.id, voteId, optionId);
+    const data = await voteService.handleVote(user.id, voteId, optionId);
     return createSuccessResponse(data);
   } catch (e: unknown) {
     const message = e instanceof Error ? e.message : JSON.stringify(e);

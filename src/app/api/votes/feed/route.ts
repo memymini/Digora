@@ -1,13 +1,13 @@
 import { createErrorResponse, createSuccessResponse } from "@/lib/api";
 import { NextResponse } from "next/server";
-import { getVoteFeed } from "@/services/voteService";
+import { voteService } from "@/services/voteService";
 import { voteFeedMapper } from "@/lib/mappers";
 
 export const revalidate = 0;
 
 export async function GET(): Promise<NextResponse> {
   try {
-    const data = await getVoteFeed();
+    const data = await voteService.getVoteFeed();
 
     const mappedData = voteFeedMapper(data);
     return createSuccessResponse(mappedData);
