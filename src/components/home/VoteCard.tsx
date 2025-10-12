@@ -6,14 +6,25 @@ import { useRouter } from "next/navigation";
 import { CandidateProfile } from "../common/CandidateProfile";
 import { VoteFeed } from "@/types";
 import { VoteCountdown } from "../common/VoteCountdown";
+import { useEffect, useState } from "react";
 
 export const VoteCard = ({ data }: { data: VoteFeed }) => {
   const router = useRouter();
   const candidateA = data.options[0];
   const candidateB = data.options[1];
+  const [isEnded, setIsEnded] = useState(false);
+  const [routePath, setRoutePath] = useState("vote");
 
+  useEffect(() => {
+    const ended = new Date(data.endsAt) < new Date();
+    setIsEnded(ended);
+    setRoutePath(ended ? "result" : "vote");
+  }, [data.endsAt]);
   return (
-    <Card className="p-6 card-shadow hover:card-shadow-hover hover:scale-[1.02] transition-all duration-300 cursor-pointer group flex flex-col scroll-snap-align-center w-full sm:w-100 flex-shrink-0">
+    <Card
+      onClick={() => router.push(`/${routePath}/${data.voteId}`)}
+      className="p-6 card-shadow hover:card-shadow-hover hover:scale-[1.02] transition-all duration-300 cursor-pointer group flex flex-col scroll-snap-align-center w-full sm:w-100 flex-shrink-0"
+    >
       {/* Title */}
       <div className="mb-4">
         <h3 className="heading-2 mb-2 line-clamp-2 min-h-15">{data.title}</h3>
@@ -56,13 +67,21 @@ export const VoteCard = ({ data }: { data: VoteFeed }) => {
       </div>
 
       {/* Action Button */}
-      <Button
-        onClick={() => router.push(`/vote/${data.voteId}`)}
-        className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors label-text"
-        variant="vote"
-      >
-        투표 참여하기
-      </Button>
+      {isEnded ? (
+        <Button
+          className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors label-text"
+          variant="vote"
+        >
+          투표 결과보기
+        </Button>
+      ) : (
+        <Button
+          className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors label-text"
+          variant="vote"
+        >
+          투표 참여하기
+        </Button>
+      )}
     </Card>
   );
 };

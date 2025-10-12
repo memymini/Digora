@@ -126,6 +126,7 @@ export const VoteFeed = () => {
       </div>
     );
   }
+
   return (
     <div className="relative w-full">
       <div
@@ -135,13 +136,7 @@ export const VoteFeed = () => {
         )}
       >
         {data.map((vote) => (
-          <Link
-            key={vote.voteId}
-            href={`/vote/${vote.voteId}`}
-            className="min-w-full w-full sm:min-w-fit sm:w-fit h-fit"
-          >
-            <VoteCard data={vote} />
-          </Link>
+          <VoteCard key={vote.voteId} data={vote} />
         ))}
       </div>
 

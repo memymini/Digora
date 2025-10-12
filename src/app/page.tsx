@@ -44,7 +44,7 @@ export default function Home() {
         {/* Active Votes Section */}
         <section className="mt-24 w-full">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="heading-2 sm:heading-1">진행중인 투표🔥</h2>
+            <h2 className="heading-2 sm:heading-1">실시간 인기 투표🔥</h2>
             <div className="flex items-center gap-2 caption-text text-muted-foreground">
               <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
               <span>실시간 업데이트</span>
