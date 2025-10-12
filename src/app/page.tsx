@@ -30,9 +30,17 @@ export default function Home() {
     <div className="min-h-screen bg-background w-full">
       <main className="container mx-auto px-6 pt-24 w-full gap-4 flex flex-col sm:gap-12 items-center">
         <h1 className="w-fit mb-2 text-3xl md:text-5xl font-black leading-tight text-center text-transparent bg-gradient-to-r from-vote-blue via-primary to-vote-red bg-clip-text ">
-          디지털 시대의 <br className="sm:hidden" />
-          새로운 민주주의
+          여론의 새로운 기준,
+          <br className="sm:hidden" />
+          디고라(Digital + Agora)
         </h1>
+        <p className="max-w-2xl mx-auto body-text text-muted-foreground md:body-text-1 text-center">
+          온라인 커뮤니티는 <strong>신뢰</strong>를,
+          <br className="sm:hidden" /> 전통 여론조사는
+          <strong>시대</strong>를 잃었습니다.
+          <br />
+          디고라에서 왜곡 없는 '진짜' 여론을 확인하세요.
+        </p>
         {/* Hero Section */}
         {isLoading ? (
           <HeroSectionSkeleton />
