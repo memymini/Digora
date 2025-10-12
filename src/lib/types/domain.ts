@@ -210,40 +210,55 @@ export interface ReportedComment {
   id: number;
   reason: string;
   status: CommentStatus;
-  created_at: string;
+  createdAt: string;
   comment: {
     id: number;
     body: string;
-    created_at: string;
+    createdAt: string;
   };
   reporter: {
     id: string;
-    display_name: string | null;
+    name: string | null;
   };
 }
 
 // =================================
 // Vote Option 타입
 // =================================
-export interface VoteOption {
+// export interface VoteOption {
+//   id: number;
+//   vote_id: number;
+//   candidate_name: string;
+//   party: string | null;
+//   image_path: string | null;
+//   position: number | null;
+// }
+
+// // =================================
+// // Vote With Options 타입
+// // =================================
+// export interface VoteWithOption {
+//   id: number;
+//   title: string;
+//   details: string | null;
+//   status: VoteStatus;
+//   starts_at: string;
+//   ends_at: string;
+//   created_by: string | null;
+//   vote_options: VoteOption[];
+// }
+export interface AdminVoteOption {
   id: number;
-  vote_id: number;
-  candidate_name: string;
+  name: string;
   party: string | null;
-  image_path: string | null;
-  position: number | null;
+  imageUrl: string | null;
 }
 
-// =================================
-// Vote With Options 타입
-// =================================
-export interface VoteWithOption {
+export interface AdminVotes {
   id: number;
   title: string;
   details: string | null;
   status: VoteStatus;
-  starts_at: string;
-  ends_at: string;
-  created_by: string | null;
-  vote_options: VoteOption[];
+  endsAt: string;
+  voteOptions: AdminVoteOption[];
 }

@@ -4,10 +4,10 @@ import { Card } from "@/components/ui/card";
 import { TrendingUp } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { CandidateProfile } from "../common/CandidateProfile";
-import { VoteFeedResponse } from "@/lib/types";
+import { VoteFeed } from "@/lib/types";
 import { VoteCountdown } from "../common/VoteCountdown";
 
-export const VoteCard = ({ data }: { data: VoteFeedResponse }) => {
+export const VoteCard = ({ data }: { data: VoteFeed }) => {
   const router = useRouter();
   const candidateA = data.options[0];
   const candidateB = data.options[1];
