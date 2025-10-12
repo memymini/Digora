@@ -17,6 +17,7 @@ export const ReportedComments = () => {
     isError,
     error,
   } = useReportedCommentsQuery(status);
+
   const handleReportMutation = useHandleReportMutation();
 
   const handleAction = (reportId: number, status: "hidden" | "rejected") => {
@@ -63,10 +64,10 @@ export const ReportedComments = () => {
         </p>
         <p>
           <span className="font-semibold">신고자:</span>
-          {report.reporter.display_name || "알 수 없음"}
+          {report.reporter.name || "알 수 없음"}
         </p>
         <p className="text-sm text-gray-400">
-          신고일: {new Date(report.created_at).toLocaleString()}
+          신고일: {new Date(report.createdAt).toLocaleString()}
         </p>
         {activeTab === "pending" ? (
           <div className="flex justify-end space-x-2 mt-2">
