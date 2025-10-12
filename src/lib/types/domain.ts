@@ -1,6 +1,6 @@
 import { AgeRange, CommentStatus, Gender, Role, VoteStatus } from "./enums";
 
-// VoteFeed Response
+// 랜딩 페이지 - 투표 목록 타입
 export interface VoteFeed {
   voteId: number;
   totalCount: number;
@@ -18,7 +18,7 @@ export interface Option {
   percent: number;
 }
 
-// HeroVote Response
+// 랜딩 페이지 - 메인 투표 타입
 export interface HeroVote {
   voteId: number;
   title: string;
@@ -29,7 +29,7 @@ export interface HeroVote {
   options: Option[];
 }
 
-// Vote Response
+// 투표 페이지 - 투표 상세 정보 타입
 export interface VoteDetails {
   voteId: number;
   title: string;
@@ -42,7 +42,7 @@ export interface VoteDetails {
   options: Option[];
 }
 
-// Comments Response
+// 투표 페이지 - 댓글 타입
 export interface Comment {
   id: number;
   content: string;
@@ -70,45 +70,14 @@ export interface SingleComment {
   } | null;
 }
 
-// =================================
-// 표준 API 응답 타입
-// =================================
+// 세션 타입
 export interface UserPayload {
   userId: string;
   role: string;
   displayName: string;
 }
 
-// =================================
-// Common 타입
-// =================================
-// export interface CountPercent {
-//   count: number;
-//   percent: number;
-// }
-
-// export interface Candidate extends CountPercent {
-//   name: string;
-//   imageUrl?: string;
-// }
-
-// export interface Group {
-//   key: AgeRange | Gender;
-//   totalCount: number;
-//   totalPercent: number;
-//   results: CountPercent[];
-// }
-
-// export interface DailyTrend {
-//   time: string;
-//   candidateA: number;
-//   candidateB: number;
-// }
-
-// =================================
-// Result 타입
-// =================================
-
+// 결과 분석 페이지 - 통계 타입
 export interface Statistics {
   totalCount: number;
   candidates: Option[];
@@ -156,56 +125,8 @@ export interface ChartResult {
   count: number;
   percent: number;
 }
-// =================================
-// Vote 타입
-// =================================
 
-// =================================
-// Comment 타입
-// =================================
-// export interface CommentResponse {
-//   id: number;
-//   content: string;
-//   author: string;
-//   badge: string;
-//   likes: number;
-//   createdAt: string;
-//   replies?: CommentResponse[];
-// }
-
-// export interface CommentsApiResponse {
-//   comments: CommentResponse[];
-//   totalCount: number;
-// }
-
-// =================================
-// Home 타입
-// =================================
-export interface VoteFeedResponse {
-  voteId: number;
-  totalCount: number;
-  title: string;
-  status: string;
-  endsAt: string;
-  options: Option[];
-}
-
-// =================================
-// Profile 타입
-// =================================
-export interface Profile {
-  id: string;
-  kakao_user_id: string | null;
-  display_name: string | null;
-  role: Role;
-  gender: Gender;
-  age_group: AgeRange;
-  created_at: string | null;
-}
-
-// =================================
-// Reported Comment 타입
-// =================================
+// 관리자 페이지 - 신고된 댓글 타입
 export interface ReportedComment {
   id: number;
   reason: string;
@@ -222,31 +143,7 @@ export interface ReportedComment {
   };
 }
 
-// =================================
-// Vote Option 타입
-// =================================
-// export interface VoteOption {
-//   id: number;
-//   vote_id: number;
-//   candidate_name: string;
-//   party: string | null;
-//   image_path: string | null;
-//   position: number | null;
-// }
-
-// // =================================
-// // Vote With Options 타입
-// // =================================
-// export interface VoteWithOption {
-//   id: number;
-//   title: string;
-//   details: string | null;
-//   status: VoteStatus;
-//   starts_at: string;
-//   ends_at: string;
-//   created_by: string | null;
-//   vote_options: VoteOption[];
-// }
+// 관리자 페이지 - 투표 목록 타입
 export interface AdminVoteOption {
   id: number;
   name: string;
