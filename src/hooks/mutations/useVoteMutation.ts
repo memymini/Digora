@@ -23,7 +23,7 @@ interface VoteMutationParams {
 
 export function useVoteMutation({ voteId }: VoteMutationParams) {
   const queryClient = useQueryClient();
-  const router = useRouter();
+  //const router = useRouter();
   return useApiMutation(
     ({ optionId }: { optionId: number }) => submitVote({ voteId, optionId }),
     {
@@ -33,7 +33,7 @@ export function useVoteMutation({ voteId }: VoteMutationParams) {
           queryKey: VOTE_QUERY_KEYS.detail(voteId),
         });
         queryClient.invalidateQueries({ queryKey: VOTE_QUERY_KEYS.feed() });
-        router.push(`/result/${voteId}`);
+        // router.push(`/result/${voteId}`);
       },
     }
   );

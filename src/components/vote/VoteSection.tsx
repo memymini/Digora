@@ -6,10 +6,11 @@ import { Button } from "../ui/button";
 import { useState } from "react";
 import { VoteDetails } from "@/types";
 import { useVoteMutation } from "@/hooks/mutations/useVoteMutation";
+import { useRouter } from "next/navigation";
 
 export default function VoteSection({ data }: { data: VoteDetails }) {
   const [selectedCandidate, setSelectedCandidate] = useState<number | null>();
-
+  const router = useRouter();
   const { mutate, isPending } = useVoteMutation({
     voteId: data.voteId,
   });
@@ -25,6 +26,7 @@ export default function VoteSection({ data }: { data: VoteDetails }) {
       setSelectedCandidate(optionId);
     }
   };
+  console.log(data.userVotedOptionId);
 
   return (
     <Card className="p-8 md:p-12 card-shadow mb-8">
@@ -43,6 +45,7 @@ export default function VoteSection({ data }: { data: VoteDetails }) {
             candidate={data.options[0]}
             isSelected={selectedCandidate === data.options[0].id}
             isVoted={data.isUserVoted}
+            optionId={data.userVotedOptionId}
             onSelect={() => handleSelectCandidate(data.options[0].id)}
             color="blue"
           />
@@ -53,6 +56,7 @@ export default function VoteSection({ data }: { data: VoteDetails }) {
             candidate={data.options[1]}
             isSelected={selectedCandidate === data.options[1].id}
             isVoted={data.isUserVoted}
+            optionId={data.userVotedOptionId}
             onSelect={() => handleSelectCandidate(data.options[1].id)}
             color="red"
           />
@@ -72,7 +76,7 @@ export default function VoteSection({ data }: { data: VoteDetails }) {
 
         {/* Vote Button */}
         {!data.isUserVoted ? (
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col items-center font-bold">
             <Button
               onClick={handleVote}
               disabled={!selectedCandidate || isPending}
@@ -91,15 +95,14 @@ export default function VoteSection({ data }: { data: VoteDetails }) {
             </Button>
           </div>
         ) : (
-          <div className="text-center p-4 bg-primary/10 rounded-lg">
-            <p className="label-text text-primary">
-              투표가 완료되었습니다!
-              {data.userVotedOptionId === data.options[0].id
-                ? data.options[0].name
-                : data.options[1].name}
-              에게 투표하셨습니다.
-            </p>
-          </div>
+          <Button
+            onClick={() => router.push(`/result/${data.voteId}`)}
+            disabled={isPending}
+            className="w-full h-12 label-text mb-2 font-bold"
+            variant="secondary"
+          >
+            투표 결과 확인하기
+          </Button>
         )}
       </div>
     </Card>

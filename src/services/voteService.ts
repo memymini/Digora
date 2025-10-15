@@ -76,12 +76,11 @@ export const voteService = {
     }
     const userVotedOptionId = userVote?.option_id ?? null;
     const userVoted = Boolean(userVotedOptionId);
-
     return {
       ...vote,
       total_count: rpcData?.[0]?.total_count ?? 0,
-      isUserVoted: userVoted,
-      optionId: userVotedOptionId,
+      is_user_voted: userVoted,
+      option_id: userVotedOptionId,
       options: rpcData?.[0]?.options ?? [],
     };
   },

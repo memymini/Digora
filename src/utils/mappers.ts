@@ -179,7 +179,7 @@ export function voteDetailsMapper(data: VoteDetailsResponse): VoteDetails {
     details: data.details ?? "",
     endsAt: data.ends_at,
     totalCount: data.total_count,
-    isUserVoted: !!data.isUserVoted,
+    isUserVoted: !!data.is_user_voted,
     userVotedOptionId: data.option_id ?? null,
     options: data.options ?? [],
   };

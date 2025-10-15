@@ -32,7 +32,7 @@ export interface VoteDetailsResponse {
   ends_at: string;
   total_count: number;
   options: Option[];
-  isUserVoted: boolean;
+  is_user_voted: boolean;
   option_id?: number | null;
 }
 
