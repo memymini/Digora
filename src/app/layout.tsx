@@ -31,7 +31,7 @@ export const metadata: Metadata = {
       {
         url: "/images/logo-2.png", // OpenGraph 대표 이미지
         width: 1200,
-        height: 600,
+        height: 630,
         alt: "Digora Open Graph Image",
       },
     ],
