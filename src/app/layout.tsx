@@ -82,6 +82,20 @@ export default async function RootLayout({
 
   return (
     <html lang="ko">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: "디고라(Digora)",
+              url: "https://digora.kr",
+              logo: "https://digora.kr/logo.svg",
+            }),
+          }}
+        />
+      </head>
       <body className="">
         <QueryProvider>
           <ProgressBarProvider>
