@@ -6,6 +6,7 @@ interface CandidateProfileProps {
   candidate: Option;
   isSelected?: boolean;
   isVoted?: boolean;
+  optionId?: number | null;
   onSelect?: () => void;
   color: "blue" | "red";
   isWinner?: boolean;
@@ -16,6 +17,7 @@ export const CandidateProfile = ({
   candidate,
   isSelected,
   isVoted,
+  optionId,
   onSelect,
   color,
   variant,
@@ -32,9 +34,9 @@ export const CandidateProfile = ({
       shadow: "shadow-glow-red",
     },
   };
-
   const ringClass =
-    isVoted || (onSelect && !isVoted && isSelected)
+    (isVoted && optionId === candidate.id) ||
+    (onSelect && !isVoted && isSelected)
       ? colorClasses[color].ring
       : variant === "hero"
       ? colorClasses[color].shadow
