@@ -190,13 +190,13 @@
   @apply text-base font-medium leading-relaxed; /* 16px */
 }
 @utility label-text-1 {
-  @apply text-xl font-semibold leading-normal;
+  @apply text-xl font-semibold leading-normal; /* 20px */
 }
 @utility label-text {
-  @apply text-[15px] font-semibold leading-normal;
+  @apply text-base font-semibold leading-normal; /* 16px */
 }
 @utility caption-text {
-  @apply text-[13px] font-normal leading-normal;
+  @apply text-sm font-normal leading-normal; /* 14px */
 }
 
 /* 커스텀 유틸 */
@@ -277,7 +277,8 @@
 
 /* Hero Vote Animations & Styles */
 @keyframes bounce-subtle {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(-2%);
     animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
   }
@@ -300,5 +301,11 @@
 }
 
 @utility fade-out-edges {
-  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 10%,
+    black 90%,
+    transparent
+  );
 }
