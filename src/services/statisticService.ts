@@ -54,7 +54,10 @@ export async function getVoteStatistics(voteId: number) {
       id: opt.id,
       name: opt.candidate_name,
       count,
-      percent: totalCount > 0 ? (count / totalCount) * 100 : 0,
+      percent:
+        totalCount > 0
+          ? parseFloat(((count / totalCount) * 100).toFixed(1))
+          : 0,
     } as Option;
   });
 
@@ -68,13 +71,17 @@ export async function getVoteStatistics(voteId: number) {
     return {
       age,
       totalCount: total,
-      totalPercent: totalCount > 0 ? (total / totalCount) * 100 : 0,
+      totalPercent:
+        totalCount > 0
+          ? parseFloat(((total / totalCount) * 100).toFixed(1))
+          : 0,
       results: options.map((opt) => {
         const count = ageBallots.filter((b) => b.option_id === opt.id).length;
         return {
           id: opt.id,
           count,
-          percent: total > 0 ? (count / total) * 100 : 0,
+          percent:
+            total > 0 ? parseFloat(((count / total) * 100).toFixed(1)) : 0,
         };
       }),
     };
@@ -89,7 +96,10 @@ export async function getVoteStatistics(voteId: number) {
     return {
       gender,
       totalCount: total,
-      totalPercent: totalCount > 0 ? (total / totalCount) * 100 : 0,
+      totalPercent:
+        totalCount > 0
+          ? parseFloat(((total / totalCount) * 100).toFixed(1))
+          : 0,
       results: options.map((opt) => {
         const count = genderBallots.filter(
           (b) => b.option_id === opt.id
@@ -97,7 +107,8 @@ export async function getVoteStatistics(voteId: number) {
         return {
           id: opt.id,
           count,
-          percent: total > 0 ? (count / total) * 100 : 0,
+          percent:
+            total > 0 ? parseFloat(((count / total) * 100).toFixed(1)) : 0,
         };
       }),
     };
@@ -121,7 +132,10 @@ export async function getVoteStatistics(voteId: number) {
         overallDistribution.push({
           group: `${age} ${gender}`,
           totalCount: total,
-          totalPercent: totalCount > 0 ? (total / totalCount) * 100 : 0,
+          totalPercent:
+            totalCount > 0
+              ? parseFloat(((total / totalCount) * 100).toFixed(1))
+              : 0,
           results: options.map((opt) => {
             const count = groupBallots.filter(
               (b) => b.option_id === opt.id
@@ -129,7 +143,8 @@ export async function getVoteStatistics(voteId: number) {
             return {
               id: opt.id,
               count,
-              percent: total > 0 ? (count / total) * 100 : 0,
+              percent:
+                total > 0 ? parseFloat(((count / total) * 100).toFixed(1)) : 0,
             };
           }),
         });
@@ -160,7 +175,9 @@ export async function getVoteStatistics(voteId: number) {
           id: opt.id,
           count,
           percent:
-            dateBallots.length > 0 ? (count / dateBallots.length) * 100 : 0,
+            dateBallots.length > 0
+              ? parseFloat(((count / dateBallots.length) * 100).toFixed(1))
+              : 0,
         };
       }),
     });
