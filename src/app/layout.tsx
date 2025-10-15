@@ -91,7 +91,7 @@ export default async function RootLayout({
               "@type": "Organization",
               name: "디고라(Digora)",
               url: "https://digora.kr",
-              logo: "https://digora.kr/logo.svg",
+              logo: "https://digora.kr/icon.svg",
             }),
           }}
         />
