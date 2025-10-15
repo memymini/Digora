@@ -18,12 +18,12 @@ export const HeroVoteSection = ({ data }: HeroVoteProps) => {
 
   return (
     <section className="flex flex-col items-center justify-start w-full gap-4 md:gap-6 text-center h-auto">
-      <h1 className="mb-2 text-2xl sm:text-2xl font-extrabold leading-tight text-center md:text-4xl animate-fade-in-up">
+      <h1 className="mb-4 sm:mb-12 text-2xl sm:text-2xl font-extrabold leading-tight text-center md:text-4xl animate-fade-in-up">
         {data.title}
       </h1>
-      <p className="max-w-2xl mx-auto body-text text-muted-foreground md:body-text-1 animate-fade-in-up animation-delay-200 mb-8">
+      {/* <p className="max-w-2xl mx-auto body-text text-muted-foreground md:body-text-1 animate-fade-in-up animation-delay-200 mb-8">
         {data.details}
-      </p>
+      </p> */}
 
       <div className="w-full max-w-250 animate-fade-in-up animation-delay-400">
         <div className="w-full">
