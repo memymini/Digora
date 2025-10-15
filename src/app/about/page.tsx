@@ -31,15 +31,15 @@ export default function AboutPage() {
               디지털 시대의 공론장
             </span>
             <h1 className="text-3xl sm:text-4xl font-black leading-tight text-foreground md:text-5xl text-center">
-              디고라는 "Digital Agora"를 꿈꾸는{" "}
+              디고라는 <strong>Digital Agora</strong>를 꿈꾸는{" "}
               <br className="hidden lg:flex" /> 새로운 소셜 폴링 플랫폼입니다.
             </h1>
             <p className="body-text text-muted-foreground md:body-text-1 text-center">
               특정 유튜브 채널이나 온라인 커뮤니티, 편향된 언론 보도를 통해
-              세상을 접하다 보면 "진짜 여론은 무엇일까?"라는 의문이 들 때가
-              많습니다. "20대 남성", "40대 여성" 등 하나의 생각으로 묶여버린
-              고정관념 속에서 우리 사회의 진짜 목소리는 점점 더 멀어지고
-              있습니다.
+              세상을 접하다 보면 <strong>진짜 여론은 무엇일까?</strong> 라는
+              의문이 들 때가 많습니다. <strong>20대 남성</strong>,{" "}
+              <strong>40대 여성 </strong>등 하나의 생각으로 묶여버린 고정관념
+              속에서 우리 사회의 진짜 목소리는 점점 더 멀어지고 있습니다.
             </p>
           </div>
         </section>
@@ -89,11 +89,12 @@ export default function AboutPage() {
               검증된 익명성이 만드는 신뢰
             </h2>
             <p className="body-text text-muted-foreground md:body-text-1 text-justify">
-              디고라의 가장 큰 특징은 <strong>"검증된 익명성"</strong>입니다.
+              디고라의 가장 큰 특징은 <strong>검증된 익명성</strong>입니다.
               개인정보는 철저히 보호되지만, 원한다면 베리뱃지(VeriBadge)
               시스템을 통해 자신의 직업, 학력, 연령대 등 검증된 정보를
-              선택적으로 댓글에 표시할 수 있습니다. 예를 들어 "변호사" 뱃지를
-              사용하면 내 신원은 익명으로 유지되면서도
+              선택적으로 댓글에 표시할 수 있습니다. 예를 들어{" "}
+              <strong>변호사 </strong>뱃지를 사용하면 내 신원은 익명으로
+              유지되면서도
               <span className="rounded-md bg-muted px-2 py-1 font-semibold text-foreground">
                 익명123 (변호사)
               </span>
@@ -132,7 +133,7 @@ export default function AboutPage() {
           </h2>
           <p className="max-w-3xl body-text text-muted-foreground md:body-text-1 text-center">
             저희의 궁극적인 목표는 단순히 투표 결과를 보여주는 것을 넘어,{" "}
-            <strong>"어떤 배경을 가진 사람들이, 왜 그렇게 생각하는지"</strong>에
+            <strong>어떤 배경을 가진 사람들이, 왜 그렇게 생각하는지</strong>에
             대한 깊이 있는 데이터를 제공하는 것입니다. 디고라는 신뢰할 수 있는
             데이터에 기반한 건강한 공론장을 만들어, 우리 사회가 더 나은 직접
             민주주의의 가능성을 실험하는 첫 번째 무대가 되고자 합니다.
