@@ -139,7 +139,7 @@ export default function AboutPage() {
             민주주의의 가능성을 실험하는 첫 번째 무대가 되고자 합니다.
           </p>
           <Button variant="vote" size="lg" asChild>
-            <Link href="/vote">실시간 투표 보러가기</Link>
+            <Link href="/#vote">실시간 투표 보러가기</Link>
           </Button>
         </section>
       </main>
