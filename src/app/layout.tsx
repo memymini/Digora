@@ -82,21 +82,7 @@ export default async function RootLayout({
 
   return (
     <html lang="ko">
-      <head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "Organization",
-              name: "디고라(Digora)",
-              url: "https://digora.kr",
-              logo: "https://digora.kr/icon.svg",
-            }),
-          }}
-        />
-      </head>
-      <body className="">
+      <body>
         <QueryProvider>
           <ProgressBarProvider>
             <SessionProvider session={session}>
@@ -106,7 +92,6 @@ export default async function RootLayout({
             </SessionProvider>
           </ProgressBarProvider>
         </QueryProvider>
-
         <Toaster
           toastOptions={{
             className: "font-pretendard",
