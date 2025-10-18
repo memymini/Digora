@@ -6,7 +6,13 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "vitest",
+    "perf:frontend": "tsx scripts/perf/measure-frontend.ts",
+    "perf:api": "tsx scripts/perf/measure-api.ts",
+    "perf:bundle": "tsx scripts/perf/analyze-bundle.ts",
+    "perf:report": "tsx scripts/perf/save-report.ts",
+    "perf:all": "npm run perf:frontend && npm run perf:api && npm run perf:bundle && npm run perf:report"
   },
   "dependencies": {
     "@supabase/auth-helpers-nextjs": "^0.10.0",
@@ -32,13 +38,25 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@next/bundle-analyzer": "^15.5.6",
     "@tailwindcss/postcss": "^4.1.13",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^5.0.4",
+    "autocannon": "^8.0.0",
     "eslint": "^9",
     "eslint-config-next": "15.5.3",
+    "jsdom": "^27.0.1",
+    "lighthouse": "^12.8.2",
+    "pretty-bytes": "^7.1.0",
     "tailwindcss": "^4.1.13",
-    "typescript": "^5"
+    "tsx": "^4.20.6",
+    "typescript": "^5",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^3.2.4"
   }
 }

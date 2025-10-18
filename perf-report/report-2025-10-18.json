@@ -1,0 +1,425 @@
+{
+  "timestamp": "2025-10-18T11:02:52.595Z",
+  "frontend": {
+    "timestamp": "2025-10-18T11:02:33.684Z",
+    "baseUrl": "http://localhost:3000",
+    "chromeFlags": "--headless --no-sandbox",
+    "pages": [
+      {
+        "name": "Home",
+        "description": "랜딩 페이지",
+        "path": "/",
+        "url": "http://localhost:3000/",
+        "metrics": {
+          "performance": 0.98,
+          "LCP": 2423.9325,
+          "FCP": 763.9324999999999,
+          "TTI": 2734.1139375000002,
+          "TBT": 33.5,
+          "CLS": 0
+        }
+      },
+      {
+        "name": "About",
+        "description": "서비스 소개 페이지",
+        "path": "/about",
+        "url": "http://localhost:3000/about",
+        "metrics": {
+          "performance": 0.98,
+          "LCP": 2382.0559999999996,
+          "FCP": 760.056,
+          "TTI": 2382.056,
+          "TBT": 27,
+          "CLS": 0
+        }
+      },
+      {
+        "name": "Privacy",
+        "description": "개인정보 처리방침",
+        "path": "/privacy",
+        "url": "http://localhost:3000/privacy",
+        "metrics": {
+          "performance": 0.98,
+          "LCP": 2359.116,
+          "FCP": 760.116,
+          "TTI": 2417.9660000000003,
+          "TBT": 3,
+          "CLS": 0
+        }
+      },
+      {
+        "name": "Login",
+        "description": "카카오 로그인 안내",
+        "path": "/login",
+        "url": "http://localhost:3000/login",
+        "metrics": {
+          "performance": 0.61,
+          "LCP": 9714.449,
+          "FCP": 5351.869000000001,
+          "TTI": 9831.436200000002,
+          "TBT": 38,
+          "CLS": 0
+        }
+      },
+      {
+        "name": "Admin",
+        "description": "관리자 대시보드 (권한 없을 경우 리다이렉트 확인)",
+        "path": "/admin",
+        "url": "http://localhost:3000/admin",
+        "metrics": {
+          "performance": 0.97,
+          "LCP": 2638.6463000000003,
+          "FCP": 920.6463000000001,
+          "TTI": 2889.931455,
+          "TBT": 9,
+          "CLS": 0
+        }
+      },
+      {
+        "name": "Vote Detail",
+        "description": "투표 상세 페이지",
+        "path": "/vote/12",
+        "url": "http://localhost:3000/vote/12",
+        "metrics": {
+          "performance": 0.96,
+          "LCP": 2789.391,
+          "FCP": 763.594,
+          "TTI": 2804.391,
+          "TBT": 3.5,
+          "CLS": 0
+        }
+      },
+      {
+        "name": "Result Detail",
+        "description": "투표 결과 분석 페이지",
+        "path": "/result/12",
+        "url": "http://localhost:3000/result/12",
+        "metrics": {
+          "performance": 0.84,
+          "LCP": 3388.532,
+          "FCP": 771.6880000000001,
+          "TTI": 3402.532,
+          "TBT": 57,
+          "CLS": 0.16858564851900357
+        }
+      }
+    ],
+    "overview": {
+      "measuredCount": 7,
+      "averagePerformance": 0.903,
+      "lowestPerformancePage": "Login",
+      "highestPerformancePage": "Home"
+    }
+  },
+  "api": {
+    "timestamp": "2025-10-18T11:02:37.692Z",
+    "baseUrl": "http://localhost:3000",
+    "iterations": 5,
+    "warmup": true,
+    "overall": {
+      "averageMs": 60.03,
+      "slowestEndpoint": "Hero Vote",
+      "fastestEndpoint": "Vote Feed"
+    },
+    "endpoints": [
+      {
+        "name": "Vote Feed",
+        "description": "투표 목록 및 집계 데이터를 반환",
+        "method": "GET",
+        "url": "http://localhost:3000/api/votes/feed",
+        "iterations": 5,
+        "warmup": true,
+        "metrics": [
+          {
+            "durationMs": 43.55,
+            "status": 200,
+            "cacheControl": null,
+            "contentLength": null,
+            "timestamp": "2025-10-18T11:02:34.266Z"
+          },
+          {
+            "durationMs": 39.78,
+            "status": 200,
+            "cacheControl": null,
+            "contentLength": null,
+            "timestamp": "2025-10-18T11:02:34.358Z"
+          },
+          {
+            "durationMs": 40.6,
+            "status": 200,
+            "cacheControl": null,
+            "contentLength": null,
+            "timestamp": "2025-10-18T11:02:34.450Z"
+          },
+          {
+            "durationMs": 70.13,
+            "status": 200,
+            "cacheControl": null,
+            "contentLength": null,
+            "timestamp": "2025-10-18T11:02:34.571Z"
+          },
+          {
+            "durationMs": 43.18,
+            "status": 200,
+            "cacheControl": null,
+            "contentLength": null,
+            "timestamp": "2025-10-18T11:02:34.666Z"
+          }
+        ],
+        "stats": {
+          "averageMs": 47.45,
+          "minMs": 39.78,
+          "maxMs": 70.13,
+          "firstMs": 43.55,
+          "secondMs": 39.78,
+          "lastMs": 43.18
+        },
+        "errors": [],
+        "cacheHeaders": {
+          "distinct": [
+            "<missing>"
+          ]
+        }
+      },
+      {
+        "name": "Hero Vote",
+        "description": "메인 히어로 섹션에 노출되는 투표",
+        "method": "GET",
+        "url": "http://localhost:3000/api/votes/hero",
+        "iterations": 5,
+        "warmup": true,
+        "metrics": [
+          {
+            "durationMs": 87.81,
+            "status": 200,
+            "cacheControl": null,
+            "contentLength": null,
+            "timestamp": "2025-10-18T11:02:34.998Z"
+          },
+          {
+            "durationMs": 91.85,
+            "status": 200,
+            "cacheControl": null,
+            "contentLength": null,
+            "timestamp": "2025-10-18T11:02:35.141Z"
+          },
+          {
+            "durationMs": 110.47,
+            "status": 200,
+            "cacheControl": null,
+            "contentLength": null,
+            "timestamp": "2025-10-18T11:02:35.302Z"
+          },
+          {
+            "durationMs": 111.61,
+            "status": 200,
+            "cacheControl": null,
+            "contentLength": null,
+            "timestamp": "2025-10-18T11:02:35.468Z"
+          },
+          {
+            "durationMs": 92.32,
+            "status": 200,
+            "cacheControl": null,
+            "contentLength": null,
+            "timestamp": "2025-10-18T11:02:35.612Z"
+          }
+        ],
+        "stats": {
+          "averageMs": 98.81,
+          "minMs": 87.81,
+          "maxMs": 111.61,
+          "firstMs": 87.81,
+          "secondMs": 91.85,
+          "lastMs": 92.32
+        },
+        "errors": [],
+        "cacheHeaders": {
+          "distinct": [
+            "<missing>"
+          ]
+        }
+      },
+      {
+        "name": "Vote Details",
+        "description": "특정 투표 상세 및 참여 상태",
+        "method": "GET",
+        "url": "http://localhost:3000/api/votes/12",
+        "iterations": 5,
+        "warmup": true,
+        "metrics": [
+          {
+            "durationMs": 39.85,
+            "status": 200,
+            "cacheControl": null,
+            "contentLength": null,
+            "timestamp": "2025-10-18T11:02:35.873Z"
+          },
+          {
+            "durationMs": 38.54,
+            "status": 200,
+            "cacheControl": null,
+            "contentLength": null,
+            "timestamp": "2025-10-18T11:02:35.963Z"
+          },
+          {
+            "durationMs": 102.67,
+            "status": 200,
+            "cacheControl": null,
+            "contentLength": null,
+            "timestamp": "2025-10-18T11:02:36.118Z"
+          },
+          {
+            "durationMs": 41.58,
+            "status": 200,
+            "cacheControl": null,
+            "contentLength": null,
+            "timestamp": "2025-10-18T11:02:36.209Z"
+          },
+          {
+            "durationMs": 53.56,
+            "status": 200,
+            "cacheControl": null,
+            "contentLength": null,
+            "timestamp": "2025-10-18T11:02:36.314Z"
+          }
+        ],
+        "stats": {
+          "averageMs": 55.24,
+          "minMs": 38.54,
+          "maxMs": 102.67,
+          "firstMs": 39.85,
+          "secondMs": 38.54,
+          "lastMs": 53.56
+        },
+        "errors": [],
+        "cacheHeaders": {
+          "distinct": [
+            "<missing>"
+          ]
+        }
+      },
+      {
+        "name": "Vote Statistics",
+        "description": "투표 통계 집계 결과",
+        "method": "GET",
+        "url": "http://localhost:3000/api/votes/12/statistics",
+        "iterations": 5,
+        "warmup": true,
+        "metrics": [
+          {
+            "durationMs": 44.97,
+            "status": 200,
+            "cacheControl": null,
+            "contentLength": null,
+            "timestamp": "2025-10-18T11:02:36.588Z"
+          },
+          {
+            "durationMs": 46.63,
+            "status": 200,
+            "cacheControl": null,
+            "contentLength": null,
+            "timestamp": "2025-10-18T11:02:36.686Z"
+          },
+          {
+            "durationMs": 39.05,
+            "status": 200,
+            "cacheControl": null,
+            "contentLength": null,
+            "timestamp": "2025-10-18T11:02:36.777Z"
+          },
+          {
+            "durationMs": 49.7,
+            "status": 200,
+            "cacheControl": null,
+            "contentLength": null,
+            "timestamp": "2025-10-18T11:02:36.878Z"
+          },
+          {
+            "durationMs": 61.28,
+            "status": 200,
+            "cacheControl": null,
+            "contentLength": null,
+            "timestamp": "2025-10-18T11:02:36.990Z"
+          }
+        ],
+        "stats": {
+          "averageMs": 48.33,
+          "minMs": 39.05,
+          "maxMs": 61.28,
+          "firstMs": 44.97,
+          "secondMs": 46.63,
+          "lastMs": 61.28
+        },
+        "errors": [],
+        "cacheHeaders": {
+          "distinct": [
+            "<missing>"
+          ]
+        }
+      },
+      {
+        "name": "Vote Comments",
+        "description": "투표 댓글 목록 및 트리",
+        "method": "GET",
+        "url": "http://localhost:3000/api/votes/12/comments",
+        "iterations": 5,
+        "warmup": true,
+        "metrics": [
+          {
+            "durationMs": 46.25,
+            "status": 200,
+            "cacheControl": null,
+            "contentLength": null,
+            "timestamp": "2025-10-18T11:02:37.227Z"
+          },
+          {
+            "durationMs": 60.41,
+            "status": 200,
+            "cacheControl": null,
+            "contentLength": null,
+            "timestamp": "2025-10-18T11:02:37.339Z"
+          },
+          {
+            "durationMs": 53.54,
+            "status": 200,
+            "cacheControl": null,
+            "contentLength": null,
+            "timestamp": "2025-10-18T11:02:37.444Z"
+          },
+          {
+            "durationMs": 48.3,
+            "status": 200,
+            "cacheControl": null,
+            "contentLength": null,
+            "timestamp": "2025-10-18T11:02:37.546Z"
+          },
+          {
+            "durationMs": 43.08,
+            "status": 200,
+            "cacheControl": null,
+            "contentLength": null,
+            "timestamp": "2025-10-18T11:02:37.641Z"
+          }
+        ],
+        "stats": {
+          "averageMs": 50.32,
+          "minMs": 43.08,
+          "maxMs": 60.41,
+          "firstMs": 46.25,
+          "secondMs": 60.41,
+          "lastMs": 43.08
+        },
+        "errors": [],
+        "cacheHeaders": {
+          "distinct": [
+            "<missing>"
+          ]
+        }
+      }
+    ]
+  },
+  "bundle": {
+    "mainBundle": "check .next/analyze/client.html for breakdown"
+  }
+}

@@ -1,0 +1,111 @@
+{
+  "timestamp": "2025-10-18T11:02:33.684Z",
+  "baseUrl": "http://localhost:3000",
+  "chromeFlags": "--headless --no-sandbox",
+  "pages": [
+    {
+      "name": "Home",
+      "description": "랜딩 페이지",
+      "path": "/",
+      "url": "http://localhost:3000/",
+      "metrics": {
+        "performance": 0.98,
+        "LCP": 2423.9325,
+        "FCP": 763.9324999999999,
+        "TTI": 2734.1139375000002,
+        "TBT": 33.5,
+        "CLS": 0
+      }
+    },
+    {
+      "name": "About",
+      "description": "서비스 소개 페이지",
+      "path": "/about",
+      "url": "http://localhost:3000/about",
+      "metrics": {
+        "performance": 0.98,
+        "LCP": 2382.0559999999996,
+        "FCP": 760.056,
+        "TTI": 2382.056,
+        "TBT": 27,
+        "CLS": 0
+      }
+    },
+    {
+      "name": "Privacy",
+      "description": "개인정보 처리방침",
+      "path": "/privacy",
+      "url": "http://localhost:3000/privacy",
+      "metrics": {
+        "performance": 0.98,
+        "LCP": 2359.116,
+        "FCP": 760.116,
+        "TTI": 2417.9660000000003,
+        "TBT": 3,
+        "CLS": 0
+      }
+    },
+    {
+      "name": "Login",
+      "description": "카카오 로그인 안내",
+      "path": "/login",
+      "url": "http://localhost:3000/login",
+      "metrics": {
+        "performance": 0.61,
+        "LCP": 9714.449,
+        "FCP": 5351.869000000001,
+        "TTI": 9831.436200000002,
+        "TBT": 38,
+        "CLS": 0
+      }
+    },
+    {
+      "name": "Admin",
+      "description": "관리자 대시보드 (권한 없을 경우 리다이렉트 확인)",
+      "path": "/admin",
+      "url": "http://localhost:3000/admin",
+      "metrics": {
+        "performance": 0.97,
+        "LCP": 2638.6463000000003,
+        "FCP": 920.6463000000001,
+        "TTI": 2889.931455,
+        "TBT": 9,
+        "CLS": 0
+      }
+    },
+    {
+      "name": "Vote Detail",
+      "description": "투표 상세 페이지",
+      "path": "/vote/12",
+      "url": "http://localhost:3000/vote/12",
+      "metrics": {
+        "performance": 0.96,
+        "LCP": 2789.391,
+        "FCP": 763.594,
+        "TTI": 2804.391,
+        "TBT": 3.5,
+        "CLS": 0
+      }
+    },
+    {
+      "name": "Result Detail",
+      "description": "투표 결과 분석 페이지",
+      "path": "/result/12",
+      "url": "http://localhost:3000/result/12",
+      "metrics": {
+        "performance": 0.84,
+        "LCP": 3388.532,
+        "FCP": 771.6880000000001,
+        "TTI": 3402.532,
+        "TBT": 57,
+        "CLS": 0.16858564851900357
+      }
+    }
+  ],
+  "overview": {
+    "measuredCount": 7,
+    "averagePerformance": 0.903,
+    "lowestPerformancePage": "Login",
+    "highestPerformancePage": "Home"
+  }
+}
