@@ -38,8 +38,8 @@ export default function OverallStackedBarChart({
               </div>
               <div className=" caption-text text-muted-foreground w-12">
                 {candidateA.count > candidateB.count
-                  ? `+${candidateA.percent - candidateB.percent}`
-                  : `-${candidateB.percent - candidateA.percent}`}
+                  ? `+${(candidateA.percent - candidateB.percent).toFixed(1)}`
+                  : `-${(candidateB.percent - candidateA.percent).toFixed(1)}`}
                 %
               </div>
             </div>

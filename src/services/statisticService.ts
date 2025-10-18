@@ -134,7 +134,7 @@ export async function getVoteStatistics(voteId: number) {
           totalCount: total,
           totalPercent:
             totalCount > 0
-              ? parseFloat(((total / totalCount) * 100).toFixed(1))
+              ? Number(((total / totalCount) * 100).toFixed(1))
               : 0,
           results: options.map((opt) => {
             const count = groupBallots.filter(
@@ -161,7 +161,7 @@ export async function getVoteStatistics(voteId: number) {
         .filter(Boolean) as string[]
     ),
   ];
-  dates.sort();
+  dates.sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
   dates.forEach((date) => {
     const dateBallots = ballots.filter(
       (b) =>

@@ -6,12 +6,8 @@ import { Loader2 } from "lucide-react";
 
 export default function LoginPage() {
   useEffect(() => {
-    const confirmed = window.confirm(
-      "로그인이 필요한 서비스입니다. 로그인 페이지로 이동하시겠습니까?"
-    );
-    if (confirmed) {
-      handleLoginRedirect();
-    }
+    window.alert("로그인이 필요한 서비스입니다. 로그인 페이지로 이동합니다.");
+    handleLoginRedirect();
   }, []);
 
   return (
