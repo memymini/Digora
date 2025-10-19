@@ -67,20 +67,20 @@ export const VoteCard = ({ data }: { data: VoteFeed }) => {
       {/* Action Button */}
       {isEnded ? (
         <Button
+          size="sm"
           onClick={(e) => {
             e.stopPropagation();
             router.push(`/result/${data.voteId}`);
           }}
-          className="w-full label-text"
           variant="secondary"
         >
           투표 결과보기
         </Button>
       ) : (
         <Button
+          size="sm"
           onClick={() => router.push(`/vote/${data.voteId}`)}
           className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors label-text"
-          variant="vote"
         >
           투표 참여하기
         </Button>

@@ -198,7 +198,7 @@ export const Header = () => {
                   </div>
                   <Button
                     variant="outline"
-                    size="default"
+                    size="sm"
                     className="w-full"
                     onClick={handleLogout}
                   >

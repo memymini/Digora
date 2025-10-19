@@ -4,36 +4,29 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/utils/cn";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
         default: "bg-primary text-primary-foreground hover:bg-primary/90",
         destructive:
           "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+        ghost: "",
         outline:
           "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
-        secondary:
-          "bg-primary/20 text-primary hover:bg-primary/30 card-shadow hover:card-shadow-hover",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4",
-        // Digora specific variants
-        vote: "bg-primary text-primary-foreground hover:bg-primary/90 card-shadow hover:card-shadow-hover",
-        "vote-blue": "bg-vote-blue text-white hover:bg-vote-blue/90",
-        "vote-red": "bg-vote-red text-white hover:bg-vote-red/90",
+        secondary: "bg-primary/20 text-primary hover:bg-primary/30",
         kakao:
           "bg-[#FEE500] text-[#000000] hover:bg-[#FEE500]/90 font-kakao rounded-sm",
       },
       size: {
-        default: "h-10 px-4 py-2",
-        sm: "h-9 rounded-md px-3",
-        lg: "h-16 rounded-md px-16 label-text-1",
+        sm: "h-10 rounded-sm px-5 label-text",
+        lg: "h-12 rounded-md px-16 label-text w-full",
         icon: "h-10 w-10",
       },
     },
     defaultVariants: {
       variant: "default",
-      size: "default",
+      size: "sm",
     },
   }
 );

@@ -138,7 +138,7 @@ export default function AboutPage() {
             데이터에 기반한 건강한 공론장을 만들어, 우리 사회가 더 나은 직접
             민주주의의 가능성을 실험하는 첫 번째 무대가 되고자 합니다.
           </p>
-          <Button variant="vote" size="lg" asChild>
+          <Button size="lg" asChild>
             <Link href="/#vote">실시간 투표 보러가기</Link>
           </Button>
         </section>

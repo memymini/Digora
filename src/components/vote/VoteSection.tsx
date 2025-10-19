@@ -39,7 +39,7 @@ export default function VoteSection({ data }: { data: VoteDetails }) {
       />
 
       {/* Candidates Section */}
-      <div className="mb-8">
+      <div>
         <div className="flex flex-row items-center justify-center gap-2 sm:gap-4 mb-8 relative">
           <CandidateProfile
             candidate={data.options[0]}
@@ -80,8 +80,7 @@ export default function VoteSection({ data }: { data: VoteDetails }) {
             <Button
               onClick={handleVote}
               disabled={!selectedCandidate || isPending}
-              className="w-full h-12 label-text mb-2"
-              variant="vote"
+              size="lg"
             >
               {isPending
                 ? "투표하는 중..."
@@ -98,8 +97,8 @@ export default function VoteSection({ data }: { data: VoteDetails }) {
           <Button
             onClick={() => router.push(`/result/${data.voteId}`)}
             disabled={isPending}
-            className="w-full h-12 label-text mb-2 font-bold"
             variant="secondary"
+            size="lg"
           >
             투표 결과 확인하기
           </Button>
