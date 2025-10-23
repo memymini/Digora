@@ -17,6 +17,11 @@ const buttonVariants = cva(
         secondary: "bg-primary/20 text-primary hover:bg-primary/30",
         kakao:
           "bg-[#FEE500] text-[#000000] hover:bg-[#FEE500]/90 font-kakao rounded-sm",
+        link: "text-primary underline-offset-4",
+        // Digora specific variants
+        vote: "bg-primary text-primary-foreground hover:bg-primary/90 card-shadow hover:card-shadow-hover",
+        "vote-blue": "bg-vote-blue text-white hover:bg-vote-blue/90",
+        "vote-red": "bg-vote-red text-white hover:bg-vote-red/90",
       },
       size: {
         sm: "h-10 rounded-sm px-5 label-text",
