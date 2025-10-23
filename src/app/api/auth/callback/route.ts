@@ -32,6 +32,36 @@ export async function GET(request: NextRequest) {
     if (sessionData.user) {
       const user = sessionData.user;
 
+      // Get current session to extract provider_token (Kakao access token)
+      const { data: currentSessionData, error: sessionError } =
+        await supabase.auth.getSession();
+      if (sessionError) {
+        console.error("Error getting current session:", sessionError);
+      }
+
+      let kakaoGender = user.user_metadata.gender || "unknown";
+      let kakaoAgeRange = user.user_metadata.age_range;
+      let kakaoBirthYear = user.user_metadata.birth_year || "unknown";
+
+      const accessToken = currentSessionData?.session?.provider_token;
+      if (accessToken) {
+        try {
+          const kakaoRes = await fetch("https://kapi.kakao.com/v2/user/me", {
+            headers: { Authorization: `Bearer ${accessToken}` },
+          });
+          const kakaoUser = await kakaoRes.json();
+
+          if (kakaoUser.kakao_account) {
+            kakaoGender = kakaoUser.kakao_account.gender || kakaoGender;
+            kakaoAgeRange = kakaoUser.kakao_account.age_range || kakaoAgeRange;
+            kakaoBirthYear =
+              kakaoUser.kakao_account.birthyear || kakaoBirthYear;
+          }
+        } catch (fetchError) {
+          console.error("Error fetching Kakao user data:", fetchError);
+        }
+      }
+
       const { data: profile } = await supabase
         .from("profiles")
         .select("id")
@@ -39,6 +69,7 @@ export async function GET(request: NextRequest) {
         .single();
 
       if (!profile) {
+        console.log(user);
         const { error: createProfileError } = await supabase
           .from("profiles")
           .insert({
@@ -47,8 +78,9 @@ export async function GET(request: NextRequest) {
             kakao_user_id: user.user_metadata.provider_id,
             display_name: user.user_metadata.full_name,
             role: "user", // Default role for new users
-            gender: user.user_metadata.gender || "unknown",
-            age_group: mapKakaoAgeRange(user.user_metadata.age_range),
+            gender: kakaoGender || "unknown",
+            age_group: mapKakaoAgeRange(kakaoAgeRange),
+            birth_year: kakaoBirthYear || "unknown",
           });
 
         if (createProfileError) {

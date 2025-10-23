@@ -7,6 +7,7 @@ export const handleLoginRedirect = async () => {
   await supabase.auth.signInWithOAuth({
     provider: "kakao",
     options: {
+      scopes: "gender, age_range, birthyear",
       redirectTo: `${window.location.origin}/api/auth/callback`,
     },
   });
