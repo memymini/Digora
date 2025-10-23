@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import type { User } from "@supabase/supabase-js";
+import type { AuthChangeEvent, User } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
 import { Profile } from "@/types";
 
@@ -29,18 +29,44 @@ export const SessionProvider = ({
     const supabase = createClient();
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      if (session) {
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("id", session.user.id)
-          .single();
-        setSession({ user: session.user, profile });
-      } else {
-        setSession(null);
+    } = supabase.auth.onAuthStateChange(
+      async (event: AuthChangeEvent, session) => {
+        switch (event) {
+          case "INITIAL_SESSION": {
+            // 서버에서 전달된 초기 세션을 그대로 사용한다.
+            return;
+          }
+          case "SIGNED_OUT": {
+            setSession(null);
+            return;
+          }
+          case "SIGNED_IN":
+          case "TOKEN_REFRESHED":
+          case "USER_UPDATED": {
+            if (!session) {
+              setSession(null);
+              return;
+            }
+
+            const { data: profile, error } = await supabase
+              .from("profiles")
+              .select("*")
+              .eq("id", session.user.id)
+              .single();
+
+            if (error || !profile) {
+              setSession(null);
+              return;
+            }
+
+            setSession({ user: session.user, profile });
+            return;
+          }
+          default:
+            return;
+        }
       }
-    });
+    );
 
     return () => subscription.unsubscribe();
   }, []);

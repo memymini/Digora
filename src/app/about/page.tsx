@@ -127,7 +127,7 @@ export default function AboutPage() {
           </Card>
         </section>
 
-        <section className="flex flex-col items-center gap-8 rounded-3xl border border-muted bg-card px-8 py-16 text-center card-shadow">
+        <section className="flex flex-col items-center gap-8 rounded-3xl border border-muted bg-card px-8 py-16 text-center card-shadow ">
           <h2 className="heading-2 sm:heading-1 text-foreground">
             데이터로 증명하는 직접 민주주의의 가능성
           </h2>
@@ -138,7 +138,8 @@ export default function AboutPage() {
             데이터에 기반한 건강한 공론장을 만들어, 우리 사회가 더 나은 직접
             민주주의의 가능성을 실험하는 첫 번째 무대가 되고자 합니다.
           </p>
-          <Button size="lg" asChild>
+
+          <Button size="lg" asChild className="w-fit">
             <Link href="/#vote">실시간 투표 보러가기</Link>
           </Button>
         </section>
