@@ -26,7 +26,10 @@ export default function VoteSection({ data }: { data: VoteDetails }) {
       setSelectedCandidate(optionId);
     }
   };
-  console.log(data.userVotedOptionId);
+
+  const now = new Date();
+  const endsAt = new Date(data.endsAt);
+  const isVotingActive = now < endsAt;
 
   return (
     <Card className="p-8 md:p-12 card-shadow mb-8">
@@ -75,23 +78,33 @@ export default function VoteSection({ data }: { data: VoteDetails }) {
         </div>
 
         {/* Vote Button */}
-        {!data.isUserVoted ? (
+        {isVotingActive ? (
           <div className="flex flex-col items-center font-bold">
-            <Button
-              onClick={handleVote}
-              disabled={!selectedCandidate || isPending}
-              size="lg"
-            >
-              {isPending
-                ? "투표하는 중..."
-                : selectedCandidate
-                ? `${
-                    selectedCandidate === data.options[0].id
-                      ? data.options[0].name
-                      : data.options[1].name
-                  }에게 투표하기`
-                : "후보를 선택해주세요"}
-            </Button>
+            {data.userVotedOptionId ? (
+              <Button disabled={true} size="lg">
+                {`${
+                  data.userVotedOptionId === data.options[0].id
+                    ? data.options[0].name
+                    : data.options[1].name
+                }에게 투표하셨습니다.`}
+              </Button>
+            ) : (
+              <Button
+                onClick={handleVote}
+                disabled={!selectedCandidate || isPending}
+                size="lg"
+              >
+                {isPending
+                  ? "투표하는 중..."
+                  : selectedCandidate
+                  ? `${
+                      selectedCandidate === data.options[0].id
+                        ? data.options[0].name
+                        : data.options[1].name
+                    }에게 투표하기`
+                  : "후보를 선택해주세요"}
+              </Button>
+            )}
           </div>
         ) : (
           <Button
