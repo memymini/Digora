@@ -78,17 +78,9 @@ export default function VoteSection({ data }: { data: VoteDetails }) {
         </div>
 
         {/* Vote Button */}
-        {isVotingActive ? (
+        {isVotingActive && !data.isUserVoted ? (
           <div className="flex flex-col items-center font-bold">
-            {data.userVotedOptionId ? (
-              <Button disabled={true} size="lg">
-                {`${
-                  data.userVotedOptionId === data.options[0].id
-                    ? data.options[0].name
-                    : data.options[1].name
-                }에게 투표하셨습니다.`}
-              </Button>
-            ) : (
+            {
               <Button
                 onClick={handleVote}
                 disabled={!selectedCandidate || isPending}
@@ -104,7 +96,7 @@ export default function VoteSection({ data }: { data: VoteDetails }) {
                     }에게 투표하기`
                   : "후보를 선택해주세요"}
               </Button>
-            )}
+            }
           </div>
         ) : (
           <Button
