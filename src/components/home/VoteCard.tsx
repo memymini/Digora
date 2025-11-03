@@ -3,10 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { TrendingUp } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { CandidateProfile } from "../common/CandidateProfile";
 import { VoteFeed } from "@/types";
 import { VoteCountdown } from "../common/VoteCountdown";
 import { useEffect, useState } from "react";
+import { Profile } from "./Profile";
 
 export const VoteCard = ({ data }: { data: VoteFeed }) => {
   const router = useRouter();
@@ -18,6 +18,7 @@ export const VoteCard = ({ data }: { data: VoteFeed }) => {
     const ended = new Date(data.endsAt) < new Date();
     setIsEnded(ended);
   }, [data.endsAt]);
+
   return (
     <Card
       onClick={() => router.push(`/vote/${data.voteId}`)}
@@ -38,17 +39,9 @@ export const VoteCard = ({ data }: { data: VoteFeed }) => {
       {/* Candidates */}
       <div className="w-full">
         <div className="flex items-center justify-center mb-6 w-full gap-2 sm:gap-4">
-          <CandidateProfile
-            candidate={candidateA}
-            isWinner={candidateA.percent > candidateB.percent}
-            color="blue"
-          />
+          <Profile candidate={candidateA} color="blue" />
           <span className="mb-20 text-2xl font-black">VS</span>
-          <CandidateProfile
-            candidate={candidateB}
-            isWinner={candidateB.percent > candidateA.percent}
-            color="red"
-          />
+          <Profile candidate={candidateB} color="red" />
         </div>
       </div>
 
