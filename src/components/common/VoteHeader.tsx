@@ -19,7 +19,9 @@ export const VoteHeader = ({
   return (
     <div className="mb-8">
       <h1 className="heading-2 sm:heading-1 mb-4">{title}</h1>
-      <p className="body-text text-muted-foreground mb-6">{description}</p>
+      <p className="body-text text-muted-foreground mb-6 whitespace-pre-line text-justify">
+        {description}
+      </p>
       <div className="flex items-center gap-6 caption-text justify-between text-muted-foreground">
         <div className="flex items-center gap-2">
           <TrendingUp className="w-4 h-4" />

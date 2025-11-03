@@ -39,10 +39,10 @@ export const CreateVoteForm = () => {
             >
               소제목
             </label>
-            <input
-              type="text"
+            <textarea
               name="subtitle"
               id="subtitle"
+              rows={3}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               placeholder="투표 소제목을 입력하세요"
             />

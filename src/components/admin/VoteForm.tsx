@@ -66,10 +66,10 @@ export const VoteForm = ({
         >
           소제목
         </label>
-        <input
-          type="text"
+        <textarea
           name="subtitle"
           id="subtitle"
+          rows={3}
           defaultValue={selectedVote?.details}
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
         />
