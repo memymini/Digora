@@ -35,10 +35,6 @@ export const Profile = ({ candidate, color }: ProfileProps) => {
         >
           {candidate.percent || 0}%
         </p>
-
-        <p className="caption-text text-muted-foreground mt-1">
-          {candidate.count}표
-        </p>
       </div>
     </div>
   );
