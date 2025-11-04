@@ -37,7 +37,7 @@ export type PieChartData = Option & {
 };
 
 export function mapPieChartData(candidates: Option[]): PieChartData[] {
-  return candidates.map((candidate) => ({
+  return candidates.map(({ descriptions, ...candidate }) => ({
     ...candidate,
   }));
 }
@@ -267,6 +267,7 @@ export function adminVoteOptionMapper(
     name: option.candidate_name,
     party: option.party,
     imageUrl: option.image_path,
+    descriptions: option.descriptions,
   };
 }
 
