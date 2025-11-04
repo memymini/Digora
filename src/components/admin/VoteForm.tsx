@@ -1,45 +1,53 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { AdminVotes } from "@/types";
+import { UseFormReturn, SubmitHandler, useFieldArray } from "react-hook-form";
+
+// Define the schema for your form data
+export interface VoteFormSchema {
+  title: string;
+  details: string;
+  ends_at: string;
+  options: {
+    id?: number;
+    name: string;
+    descriptions: string;
+    file?: FileList;
+    imageUrl?: string;
+  }[];
+}
+
+interface VoteFormProps {
+  form: UseFormReturn<VoteFormSchema>;
+  onSubmit: SubmitHandler<VoteFormSchema>;
+  onCancel: () => void;
+  selectedVote: AdminVotes | null;
+}
 
 export const VoteForm = ({
-  selectedVote,
+  form,
   onSubmit,
   onCancel,
-}: {
-  selectedVote: AdminVotes | null;
-  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-  onCancel: () => void;
-}) => {
-  const [candidateA_preview, setCandidateAPreview] = useState<string | null>(
-    null
-  );
-  const [candidateB_preview, setCandidateBPreview] = useState<string | null>(
-    null
-  );
+  selectedVote,
+}: VoteFormProps) => {
+  const {
+    register,
+    control,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = form;
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "options",
+  });
 
-  useEffect(() => {
-    setCandidateAPreview(selectedVote?.voteOptions[0].imageUrl || null);
-    setCandidateBPreview(selectedVote?.voteOptions[1].imageUrl || null);
-  }, [selectedVote]);
-
-  const handleFileChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    setPreview: (url: string | null) => void
-  ) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setPreview(URL.createObjectURL(file));
-    } else {
-      setPreview(null);
-    }
-  };
+  const watchedOptions = watch("options");
 
   return (
-    <form onSubmit={onSubmit} className="space-y-4 mb-8">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mb-8">
       <h3 className="text-lg font-semibold">
         {selectedVote ? "투표 수정" : "새 투표 생성"}
       </h3>
@@ -52,12 +60,13 @@ export const VoteForm = ({
         </label>
         <input
           type="text"
-          name="title"
           id="title"
-          defaultValue={selectedVote?.title}
+          {...register("title", { required: "제목을 입력해주세요." })}
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-          required
         />
+        {errors.title && (
+          <p className="text-red-500 text-sm mt-1">{errors.title.message}</p>
+        )}
       </div>
       <div>
         <label
@@ -67,93 +76,99 @@ export const VoteForm = ({
           소제목
         </label>
         <textarea
-          name="subtitle"
           id="subtitle"
           rows={3}
-          defaultValue={selectedVote?.details}
+          {...register("details")}
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
         />
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <label
-            htmlFor="candidateAName"
-            className="block text-sm font-medium text-gray-700"
-          >
-            후보 1 이름
-          </label>
-          <input
-            type="text"
-            name="candidateAName"
-            id="candidateAName"
-            defaultValue={selectedVote?.voteOptions?.[0]?.name}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-            required
-          />
-          <label
-            htmlFor="candidateA"
-            className="block text-sm font-medium text-gray-700"
-          >
-            후보 1 이미지
-          </label>
-          <input
-            type="file"
-            name="candidateA"
-            id="candidateA"
-            accept="image/*"
-            onChange={(e) => handleFileChange(e, setCandidateAPreview)}
-            className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100"
-          />
-          {candidateA_preview && (
-            <Image
-              src={candidateA_preview}
-              alt="Candidate A Preview"
-              width={100}
-              height={100}
-              className="mt-2 rounded-md object-cover"
-            />
-          )}
-        </div>
-        <div className="space-y-2">
-          <label
-            htmlFor="candidateBName"
-            className="block text-sm font-medium text-gray-700"
-          >
-            후보 2 이름
-          </label>
-          <input
-            type="text"
-            name="candidateBName"
-            id="candidateBName"
-            defaultValue={selectedVote?.voteOptions?.[1]?.name}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-            required
-          />
-          <label
-            htmlFor="candidateB"
-            className="block text-sm font-medium text-gray-700"
-          >
-            후보 2 이미지
-          </label>
-          <input
-            type="file"
-            name="candidateB"
-            id="candidateB"
-            accept="image/*"
-            onChange={(e) => handleFileChange(e, setCandidateBPreview)}
-            className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100"
-          />
-          {candidateB_preview && (
-            <Image
-              src={candidateB_preview}
-              alt="Candidate B Preview"
-              width={100}
-              height={100}
-              className="mt-2 rounded-md object-cover"
-            />
-          )}
-        </div>
+
+      <div className="space-y-6">
+        {fields.map((field, index) => {
+          const watchedFile = watchedOptions?.[index]?.file;
+          const previewUrl = watchedFile?.[0]
+            ? URL.createObjectURL(watchedFile[0])
+            : field.imageUrl;
+
+          return (
+            <div
+              key={field.id}
+              className="p-4 border rounded-md space-y-2 relative"
+            >
+              <h4 className="font-medium">후보 {index + 1}</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label
+                    htmlFor={`options.${index}.name`}
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    이름
+                  </label>
+                  <input
+                    {...register(`options.${index}.name`, {
+                      required: "후보 이름을 입력해주세요.",
+                    })}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                  />
+                  {errors.options?.[index]?.name && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.options?.[index]?.name?.message}
+                    </p>
+                  )}
+
+                  <label
+                    htmlFor={`options.${index}.description`}
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    설명
+                  </label>
+                  <textarea
+                    {...register(`options.${index}.descriptions`)}
+                    rows={2}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                    placeholder={`후보 ${index + 1}에 대한 설명을 입력하세요`}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label
+                    htmlFor={`options.${index}.file`}
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    이미지
+                  </label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    {...register(`options.${index}.file`)}
+                    className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100"
+                  />
+                  {previewUrl && (
+                    <Image
+                      src={previewUrl}
+                      alt={`Candidate ${index + 1} Preview`}
+                      width={100}
+                      height={100}
+                      className="mt-2 rounded-md object-cover"
+                    />
+                  )}
+                </div>
+              </div>
+              {fields.length > 2 && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => remove(index)}
+                  className="absolute top-2 right-2"
+                >
+                  삭제
+                </Button>
+              )}
+            </div>
+          );
+        })}
       </div>
+
       <div>
         <label
           htmlFor="duration"
@@ -163,12 +178,13 @@ export const VoteForm = ({
         </label>
         <input
           type="date"
-          name="duration"
           id="duration"
-          defaultValue={selectedVote?.endsAt}
+          {...register("ends_at", { required: "투표 종료일을 선택해주세요." })}
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-          required
         />
+        {errors.ends_at && (
+          <p className="text-red-500 text-sm mt-1">{errors.ends_at.message}</p>
+        )}
       </div>
       <div className="text-right space-x-2">
         {selectedVote && (

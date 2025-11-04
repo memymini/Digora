@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { VoteForm } from "./VoteForm";
+import { VoteForm, VoteFormSchema } from "./VoteForm";
 import { AdminVotes } from "@/types";
 import { useAdminVotesQuery } from "@/hooks/queries/useAdminVotesQuery";
 import { useDeleteVoteMutation } from "@/hooks/mutations/useDeleteVoteMutation";
@@ -23,6 +24,45 @@ export const VoteManagement = () => {
   const createVoteMutation = useCreateVoteMutation();
   const updateVoteMutation = useUpdateVoteMutation();
 
+  const form = useForm<VoteFormSchema>({
+    defaultValues: {
+      title: "",
+      details: "",
+      ends_at: "",
+      options: [
+        { name: "", descriptions: "", file: undefined },
+        { name: "", descriptions: "", file: undefined },
+      ],
+    },
+  });
+
+  useEffect(() => {
+    if (selectedVote) {
+      form.reset({
+        title: selectedVote.title,
+        details: selectedVote.details,
+        ends_at: selectedVote.endsAt.split("T")[0], // Format for date input
+        options: selectedVote.voteOptions.map((opt) => ({
+          id: opt.id,
+          name: opt.name,
+          descriptions: (opt.descriptions || []).join('\n'),
+          imageUrl: opt.imageUrl,
+          file: undefined,
+        })),
+      });
+    } else {
+      form.reset({
+        title: "",
+        details: "",
+        ends_at: "",
+        options: [
+          { name: "", descriptions: "", file: undefined },
+          { name: "", descriptions: "", file: undefined },
+        ],
+      });
+    }
+  }, [selectedVote, form]);
+
   const handleEdit = (vote: AdminVotes) => {
     setSelectedVote(vote);
   };
@@ -30,91 +70,56 @@ export const VoteManagement = () => {
   const handleDelete = (voteId: number) => {
     if (window.confirm("정말로 이 투표를 삭제하시겠습니까?")) {
       deleteVoteMutation.mutate(voteId, {
-        onSuccess: () => {
-          alert("투표가 삭제되었습니다.");
-        },
-        onError: (err) => {
-          alert(`삭제 중 오류가 발생했습니다: ${err.message}`);
-        },
+        onSuccess: () => alert("투표가 삭제되었습니다."),
+        onError: (err) => alert(`삭제 중 오류: ${err.message}`),
       });
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const form = e.currentTarget;
-    const formData = new FormData(e.currentTarget);
-    const title = formData.get("title") as string;
-    const details = formData.get("subtitle") as string;
-    const ends_at = formData.get("duration") as string;
-    const candidateAName = formData.get("candidateAName") as string;
-    const candidateBName = formData.get("candidateBName") as string;
-
+  const onSubmit: SubmitHandler<VoteFormSchema> = async (data) => {
     const commonMutationOptions = {
       onSuccess: () => {
         alert(
-          selectedVote
-            ? "투표가 수정되었습니다."
-            : "새로운 투표가 생성되었습니다."
+          selectedVote ? "투표가 수정되었습니다." : "새 투표가 생성되었습니다."
         );
         setSelectedVote(null);
-        form.reset();
       },
-      onError: (err: Error) => {
-        alert(`작업 중 오류가 발생했습니다: ${err.message}`);
-      },
+      onError: (err: Error) => alert(`작업 중 오류: ${err.message}`),
     };
 
     if (selectedVote) {
       // Update
-      const candidateAFile = formData.get("candidateA") as File | null;
-      const candidateBFile = formData.get("candidateB") as File | null;
-
       updateVoteMutation.mutate(
         {
           voteId: selectedVote.id,
-          title,
-          details,
-          ends_at,
-          options: [
-            {
-              id: selectedVote.voteOptions[0].id,
-              candidate_name: candidateAName,
-              file: candidateAFile,
-            },
-            {
-              id: selectedVote.voteOptions[1].id,
-              candidate_name: candidateBName,
-              file: candidateBFile,
-            },
-          ],
+          title: data.title,
+          details: data.details,
+          ends_at: data.ends_at,
+          options: data.options.map((opt, index) => ({
+            id: selectedVote.voteOptions[index].id,
+            candidate_name: opt.name,
+            descriptions: opt.descriptions || "",
+            file: opt.file?.[0],
+          })),
         },
         commonMutationOptions
       );
     } else {
       // Create
-      const candidateAFile = formData.get("candidateA") as File;
-      const candidateBFile = formData.get("candidateB") as File;
-
-      if (
-        !candidateAFile ||
-        candidateAFile.size === 0 ||
-        !candidateBFile ||
-        candidateBFile.size === 0
-      ) {
-        alert("두 후보의 이미지를 모두 업로드해야 합니다.");
+      if (data.options.some((opt) => !opt.file || opt.file.length === 0)) {
+        alert("모든 후보의 이미지를 업로드해야 합니다.");
         return;
       }
-
       createVoteMutation.mutate(
         {
-          title,
-          details,
-          ends_at,
-          candidateAFile,
-          candidateBFile,
-          candidateAName,
-          candidateBName,
+          title: data.title,
+          details: data.details,
+          ends_at: data.ends_at,
+          options: data.options.map(opt => ({
+            name: opt.name,
+            descriptions: opt.descriptions || "",
+            file: opt.file![0],
+          }))
         },
         commonMutationOptions
       );
@@ -132,12 +137,13 @@ export const VoteManagement = () => {
       </CardHeader>
       <CardContent>
         <VoteForm
-          selectedVote={selectedVote}
-          onSubmit={handleSubmit}
+          form={form}
+          onSubmit={onSubmit}
           onCancel={handleCancel}
+          selectedVote={selectedVote}
         />
 
-        <div className="border-t pt-8">
+        <div className="border-t pt-8 mt-8">
           <h3 className="text-lg font-semibold mb-4">생성된 투표 목록</h3>
           {isLoading && <p>투표 목록을 불러오는 중...</p>}
           {isError && (
