@@ -12,10 +12,11 @@ export interface CreateVoteRequest {
   title: string;
   details: string;
   ends_at: string;
-  candidateAFile: File;
-  candidateBFile: File;
-  candidateAName: string;
-  candidateBName: string;
+  options: {
+    name: string;
+    descriptions?: string;
+    file: File;
+  }[];
 }
 
 export interface UpdateVoteRequest {
@@ -26,6 +27,7 @@ export interface UpdateVoteRequest {
   options: {
     id: number;
     candidate_name: string;
+    descriptions?: string;
     file?: File | null;
   }[];
 }

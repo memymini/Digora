@@ -11,18 +11,14 @@ export const updateVote = async (payload: UpdateVoteRequest): Promise<null> => {
   formData.append("details", details);
   formData.append("ends_at", ends_at);
 
-  const [candidateA, candidateB] = options;
-  formData.append("candidateAId", candidateA.id.toString());
-  formData.append("candidateAName", candidateA.candidate_name);
-  if (candidateA.file) {
-    formData.append("candidateAFile", candidateA.file);
-  }
-
-  formData.append("candidateBId", candidateB.id.toString());
-  formData.append("candidateBName", candidateB.candidate_name);
-  if (candidateB.file) {
-    formData.append("candidateBFile", candidateB.file);
-  }
+  options.forEach((option, index) => {
+    formData.append(`options[${index}][id]`, option.id.toString());
+    formData.append(`options[${index}][name]`, option.candidate_name);
+    formData.append(`options[${index}][descriptions]`, option.descriptions || '');
+    if (option.file) {
+      formData.append(`options[${index}][file]`, option.file);
+    }
+  });
 
   return http.post<null>(`/api/admin/votes/${voteId}`, formData);
 };

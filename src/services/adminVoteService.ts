@@ -19,7 +19,8 @@ export const adminVoteService = {
           id,
           candidate_name,
           party,
-          image_path
+          image_path,
+          descriptions
         )
       `
       )
@@ -50,64 +51,112 @@ export const adminVoteService = {
     userId: string,
     formData: FormData
   ) {
-    // 관리자 권한 확인
-    const { data: profile, error: profileError } = await supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", userId)
-      .single();
+    console.log("[createVote] Start");
+    try {
+      // 관리자 권한 확인
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", userId)
+        .single();
 
-    if (profileError || !profile) throw new Error("Profile not found.");
-    if (profile.role !== "admin") throw new Error("User is not admin.");
+      if (profileError || !profile) throw new Error("Profile not found.");
+      if (profile.role !== "admin") throw new Error("User is not admin.");
 
-    // 폼 데이터 파싱
-    const title = formData.get("title") as string;
-    const details = formData.get("details") as string;
-    const ends_at = formData.get("ends_at") as string;
-    const candidateAFile = formData.get("candidateAFile") as File;
-    const candidateBFile = formData.get("candidateBFile") as File;
-    const candidateAName = formData.get("candidateAName") as string;
-    const candidateBName = formData.get("candidateBName") as string;
+      // 폼 데이터 파싱
+      const title = formData.get("title") as string;
+      const details = formData.get("details") as string;
+      const ends_at = formData.get("ends_at") as string;
 
-    const [candidateAUrl, candidateBUrl] = await Promise.all([
-      this.uploadImage(supabase, candidateAFile),
-      this.uploadImage(supabase, candidateBFile),
-    ]);
-
-    // 투표 생성
-    const { data: voteData, error: voteError } = await supabase
-      .from("votes")
-      .insert({
+      const options: { name: string; descriptions: string; file: File }[] = [];
+      for (const [key, value] of formData.entries()) {
+        const match = key.match(
+          /^options\[(\d+)\]\[(name|descriptions|file)\]$/
+        );
+        if (match) {
+          const index = parseInt(match[1], 10);
+          const field = match[2];
+          if (!options[index]) {
+            options[index] = { name: "", descriptions: "", file: null! };
+          }
+          if (field === "file") {
+            options[index][field] = value as File;
+          } else {
+            options[index][field] = value as string;
+          }
+        }
+      }
+      console.log("[createVote] Parsed form data:", {
         title,
         details,
-        starts_at: new Date().toISOString(),
         ends_at,
-        status: "ongoing",
-      })
-      .select()
-      .single();
+        options,
+      });
 
-    if (voteError || !voteData) throw new Error("Failed to create vote.");
+      // 투표 생성
+      console.log("[createVote] Inserting into 'votes' table...");
+      const { data: voteData, error: voteError } = await supabase
+        .from("votes")
+        .insert({
+          title,
+          details,
+          starts_at: new Date().toISOString(),
+          ends_at,
+          status: "ongoing",
+        })
+        .select()
+        .single();
 
-    const optionsToInsert = [
-      {
-        vote_id: voteData.id,
-        candidate_name: candidateAName || "후보 1",
-        image_path: candidateAUrl,
-      },
-      {
-        vote_id: voteData.id,
-        candidate_name: candidateBName || "후보 2",
-        image_path: candidateBUrl,
-      },
-    ];
+      if (voteError || !voteData) {
+        console.error("[createVote] Error inserting vote:", voteError);
+        throw new Error("Failed to create vote.");
+      }
+      console.log("[createVote] Vote created with ID:", voteData.id);
 
-    const { error: optionsError } = await supabase
-      .from("vote_options")
-      .insert(optionsToInsert);
-    if (optionsError) throw new Error(optionsError.message);
+      // Upload images and prepare options for insertion
+      const optionsToInsert = await Promise.all(
+        options.map(async (option) => {
+          console.log(
+            `[createVote] Uploading image for option: ${option.name}`
+          );
+          const imageUrl = await this.uploadImage(supabase, option.file);
+          console.log(
+            `[createVote] Image uploaded for ${option.name}: ${imageUrl}`
+          );
+          return {
+            vote_id: voteData.id,
+            candidate_name: option.name,
+            descriptions: option.descriptions
+              .split(/\r?\n/)
+              .filter((line) => line.trim() !== ""),
+            image_path: imageUrl,
+            party: null,
+          };
+        })
+      );
+      console.log(
+        "[createVote] Inserting into 'vote_options' table:",
+        optionsToInsert
+      );
 
-    return voteData;
+      const { error: optionsError } = await supabase
+        .from("vote_options")
+        .insert(optionsToInsert);
+
+      if (optionsError) {
+        console.error(
+          "[createVote] Error inserting vote options:",
+          optionsError
+        );
+        throw new Error(optionsError.message);
+      }
+
+      console.log("[createVote] Successfully created vote and options.");
+      return voteData;
+    } catch (error) {
+      console.error("[createVote] An unexpected error occurred:", error);
+      throw error; // Re-throw the error to be handled by the calling route
+    }
   },
   async deleteVote(supabase: SupabaseClient, id: string) {
     const voteId = parseInt(id, 10);
@@ -118,8 +167,11 @@ export const adminVoteService = {
     if (error) throw new Error(error.message);
     return { message: "Vote deleted successfully." };
   },
-  async updateVote(supabase: SupabaseClient, id: string, formData: FormData) {
-    const voteId = parseInt(id, 10);
+  async updateVote(
+    supabase: SupabaseClient,
+    voteId: number,
+    formData: FormData
+  ) {
     const title = formData.get("title") as string;
     const details = formData.get("details") as string;
     const ends_at = formData.get("ends_at") as string;
@@ -130,57 +182,63 @@ export const adminVoteService = {
       .eq("id", voteId);
     if (voteUpdateError) throw new Error(voteUpdateError.message);
 
-    // Candidate A update
-    const candidateAId = formData.get("candidateAId") as string;
-    const candidateAName = formData.get("candidateAName") as string;
-    const candidateAFile = formData.get("candidateAFile") as File | null;
-    const candidateAUpdateData: {
-      candidate_name: string;
-      image_path?: string;
-    } = {
-      candidate_name: candidateAName,
-    };
-    if (candidateAFile && candidateAFile.size > 0) {
-      const candidateAImageUrl = await this.uploadImage(
-        supabase,
-        candidateAFile
+    // Parse dynamic options from FormData
+    const options: {
+      id: string;
+      name: string;
+      descriptions: string;
+      file?: File;
+    }[] = [];
+    for (const [key, value] of formData.entries()) {
+      const match = key.match(
+        /^options\[(\d+)\]\[(id|name|descriptions|file)\]$/
       );
-      if (candidateAImageUrl) {
-        candidateAUpdateData.image_path = candidateAImageUrl;
+      if (match) {
+        const index = parseInt(match[1], 10);
+        const field = match[2];
+        if (!options[index]) {
+          options[index] = { id: "", name: "", descriptions: "" };
+        }
+        if (field === "file" && (value as File).size > 0) {
+          options[index][field] = value as File;
+        } else if (field !== "file") {
+          options[index][field as "id" | "name" | "descriptions"] =
+            value as string;
+        }
       }
     }
 
-    const { error: candidateAError } = await supabase
-      .from("vote_options")
-      .update(candidateAUpdateData)
-      .eq("id", candidateAId);
-    if (candidateAError) throw new Error(candidateAError.message);
+    // Update options
+    const updatePromises = options.map(async (option) => {
+      const optionId = parseInt(option.id, 10);
+      const updateData: {
+        candidate_name: string;
+        descriptions: string[];
+        image_path?: string;
+      } = {
+        candidate_name: option.name,
+        descriptions: option.descriptions
+          .split(/\r?\n/)
+          .filter((line) => line.trim() !== ""),
+      };
 
-    // Candidate B update
-    const candidateBId = formData.get("candidateBId") as string;
-    const candidateBName = formData.get("candidateBName") as string;
-    const candidateBFile = formData.get("candidateBFile") as File | null;
-    const candidateBUpdateData: {
-      candidate_name: string;
-      image_path?: string;
-    } = {
-      candidate_name: candidateBName,
-    };
-    if (candidateBFile && candidateBFile.size > 0) {
-      const candidateBImageUrl = await this.uploadImage(
-        supabase,
-        candidateBFile
-      );
-      if (candidateBImageUrl) {
-        candidateBUpdateData.image_path = candidateBImageUrl;
+      if (option.file) {
+        const imageUrl = await this.uploadImage(supabase, option.file);
+        updateData.image_path = imageUrl;
       }
-    }
 
-    const { error: candidateBError } = await supabase
-      .from("vote_options")
-      .update(candidateBUpdateData)
-      .eq("id", candidateBId);
-    if (candidateBError) throw new Error(candidateBError.message);
+      const { error } = await supabase
+        .from("vote_options")
+        .update(updateData)
+        .eq("id", optionId);
+
+      if (error)
+        throw new Error(
+          `Failed to update option ${optionId}: ${error.message}`
+        );
+    });
+
+    await Promise.all(updatePromises);
 
     return { message: "Vote updated successfully." };
   },

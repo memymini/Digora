@@ -61,6 +61,7 @@ export interface AdminOptionResponse {
   candidate_name: string;
   party: string | null;
   image_path: string | null;
+  descriptions: string[];
 }
 export interface AdminVotesResponse {
   id: number;

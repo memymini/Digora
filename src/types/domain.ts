@@ -25,6 +25,7 @@ export interface Option {
   imageUrl: string | null;
   count: number;
   percent: number;
+  descriptions?: string[];
 }
 
 // 랜딩 페이지 - 메인 투표 타입
@@ -158,6 +159,7 @@ export interface AdminVoteOption {
   name: string;
   party: string | null;
   imageUrl: string | null;
+  descriptions: string[];
 }
 
 export interface AdminVotes {
