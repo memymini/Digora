@@ -1,7 +1,6 @@
 import { Option } from "@/types";
 import Image from "next/image";
 import { cn } from "@/utils/cn";
-import { useState } from "react";
 
 interface CandidateProfileProps {
   candidate: Option;

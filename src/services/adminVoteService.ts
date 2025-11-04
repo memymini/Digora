@@ -51,7 +51,6 @@ export const adminVoteService = {
     userId: string,
     formData: FormData
   ) {
-    console.log("[createVote] Start");
     try {
       // 관리자 권한 확인
       const { data: profile, error: profileError } = await supabase
@@ -86,15 +85,8 @@ export const adminVoteService = {
           }
         }
       }
-      console.log("[createVote] Parsed form data:", {
-        title,
-        details,
-        ends_at,
-        options,
-      });
 
       // 투표 생성
-      console.log("[createVote] Inserting into 'votes' table...");
       const { data: voteData, error: voteError } = await supabase
         .from("votes")
         .insert({
@@ -111,18 +103,11 @@ export const adminVoteService = {
         console.error("[createVote] Error inserting vote:", voteError);
         throw new Error("Failed to create vote.");
       }
-      console.log("[createVote] Vote created with ID:", voteData.id);
 
       // Upload images and prepare options for insertion
       const optionsToInsert = await Promise.all(
         options.map(async (option) => {
-          console.log(
-            `[createVote] Uploading image for option: ${option.name}`
-          );
           const imageUrl = await this.uploadImage(supabase, option.file);
-          console.log(
-            `[createVote] Image uploaded for ${option.name}: ${imageUrl}`
-          );
           return {
             vote_id: voteData.id,
             candidate_name: option.name,
@@ -133,10 +118,6 @@ export const adminVoteService = {
             party: null,
           };
         })
-      );
-      console.log(
-        "[createVote] Inserting into 'vote_options' table:",
-        optionsToInsert
       );
 
       const { error: optionsError } = await supabase
@@ -150,11 +131,8 @@ export const adminVoteService = {
         );
         throw new Error(optionsError.message);
       }
-
-      console.log("[createVote] Successfully created vote and options.");
       return voteData;
     } catch (error) {
-      console.error("[createVote] An unexpected error occurred:", error);
       throw error; // Re-throw the error to be handled by the calling route
     }
   },
@@ -169,7 +147,7 @@ export const adminVoteService = {
   },
   async updateVote(
     supabase: SupabaseClient,
-    voteId: number,
+    voteId: string,
     formData: FormData
   ) {
     const title = formData.get("title") as string;

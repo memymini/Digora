@@ -39,7 +39,7 @@ export const VoteForm = ({
     watch,
     formState: { errors },
   } = form;
-  const { fields, append, remove } = useFieldArray({
+  const { fields, remove } = useFieldArray({
     control,
     name: "options",
   });
