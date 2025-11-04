@@ -10,10 +10,15 @@ import { useRouter } from "next/navigation";
 
 export default function VoteSection({ data }: { data: VoteDetails }) {
   const [selectedCandidate, setSelectedCandidate] = useState<number | null>();
+  const [flippedCardId, setFlippedCardId] = useState<number | null>(null);
   const router = useRouter();
   const { mutate, isPending } = useVoteMutation({
     voteId: data.voteId,
   });
+
+  const handleFlip = (optionId: number) => {
+    setFlippedCardId((prev) => (prev === optionId ? null : optionId));
+  };
 
   const handleVote = () => {
     if (selectedCandidate && !data.isUserVoted) {
@@ -51,8 +56,11 @@ export default function VoteSection({ data }: { data: VoteDetails }) {
             optionId={data.userVotedOptionId}
             onSelect={() => handleSelectCandidate(data.options[0].id)}
             color="blue"
+            variant="vote"
+            isFlipped={flippedCardId === data.options[0].id}
+            onFlip={() => handleFlip(data.options[0].id)}
           />
-          <span className="mb-20 text-3xl sm:text-4xl md:text-5xl font-black ">
+          <span className="mb-20 text-2xl sm:text-4xl md:text-5xl font-black ">
             VS
           </span>
           <CandidateProfile
@@ -62,6 +70,9 @@ export default function VoteSection({ data }: { data: VoteDetails }) {
             optionId={data.userVotedOptionId}
             onSelect={() => handleSelectCandidate(data.options[1].id)}
             color="red"
+            variant="vote"
+            isFlipped={flippedCardId === data.options[1].id}
+            onFlip={() => handleFlip(data.options[1].id)}
           />
         </div>
 

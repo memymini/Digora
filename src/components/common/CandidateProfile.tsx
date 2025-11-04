@@ -1,6 +1,7 @@
 import { Option } from "@/types";
 import Image from "next/image";
 import { cn } from "@/utils/cn";
+import { useState } from "react";
 
 interface CandidateProfileProps {
   candidate: Option;
@@ -10,7 +11,9 @@ interface CandidateProfileProps {
   onSelect?: () => void;
   color: "blue" | "red";
   isWinner?: boolean;
-  variant?: "hero" | null;
+  variant?: "hero" | "vote" | null;
+  isFlipped?: boolean;
+  onFlip?: () => void;
 }
 
 export const CandidateProfile = ({
@@ -20,7 +23,10 @@ export const CandidateProfile = ({
   optionId,
   onSelect,
   color,
+  isWinner = false,
   variant,
+  isFlipped,
+  onFlip,
 }: CandidateProfileProps) => {
   const colorClasses = {
     blue: {
@@ -34,49 +40,77 @@ export const CandidateProfile = ({
       shadow: "shadow-glow-red",
     },
   };
+
   const ringClass =
     (isVoted && optionId === candidate.id) ||
-    (onSelect && !isVoted && isSelected)
+    (onSelect && !isVoted && isSelected) ||
+    isWinner
       ? colorClasses[color].ring
       : variant === "hero"
       ? colorClasses[color].shadow
       : "ring-transparent";
-
   return (
     <div
       className={cn(
         "flex flex-col items-center w-full",
         onSelect && !isVoted ? "cursor-pointer" : "cursor-default"
       )}
-      onClick={onSelect}
+      onClick={() => {
+        if (variant === "vote" && onFlip) onFlip();
+        if (onSelect) onSelect();
+      }}
     >
       <div
         className={cn(
-          "relative w-[100%] transition-transform duration-300",
+          "relative w-full [perspective:1000px] transition-transform duration-500",
           variant === "hero" && "animate-competitive-pulse hover:scale-105",
           variant === "hero" && colorClasses[color].shadow
         )}
       >
+        {/* 카드 컨테이너 */}
         <div
           className={cn(
-            `relative aspect-[3/4] overflow-hidden mb-4 md:mb-8 transition-all rounded-lg duration-300 ${ringClass}`
+            "w-full relative aspect-[3/4] transition-transform duration-700 [transform-style:preserve-3d]",
+            isFlipped && "[transform:rotateY(180deg)]"
           )}
         >
-          <Image
-            src={candidate.imageUrl!}
-            alt={candidate.name}
-            fill
-            className="object-cover"
-          />
-
+          {/* 앞면 */}
           <div
-            className={`absolute inset-0 flex items-center ${
-              color === "blue" ? "bg-vote-blue/10" : "bg-vote-red/10"
-            }`}
-          />
+            className={cn(
+              "absolute inset-0 rounded-lg overflow-hidden backface-hidden w-full",
+              ringClass
+            )}
+          >
+            <Image
+              src={candidate.imageUrl!}
+              alt={candidate.name}
+              fill
+              className="object-cover"
+            />
+            <div
+              className={`absolute inset-0 ${
+                color === "blue" ? "bg-vote-blue/10" : "bg-vote-red/10"
+              }`}
+            />
+          </div>
+
+          {/* 뒷면 */}
+          <ul
+            className={cn(
+              "absolute inset-0 rounded-lg [transform:rotateY(180deg)] backface-hidden bg-black/70 backdrop-blur-md flex justify-center text-white p-2 sm:p-4 flex-col list-disc list-outside pl-4 sm:pl-8 text-justify",
+              ringClass
+            )}
+          >
+            {candidate.descriptions?.map((d, idx) => (
+              <li key={idx} className="text-xs sm:text-lg font-semibold ">
+                {d}
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
-      <div className="text-center">
+
+      <div className="text-center mt-4">
         <p className={`text-lg font-bold sm:heading-2 mb-1 sm:mb-2`}>
           {candidate.name}
         </p>
