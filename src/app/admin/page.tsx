@@ -1,5 +1,6 @@
 import { VoteManagement } from "@/components/admin/VoteManagement";
 import { ReportedComments } from "@/components/admin/ReportedComments";
+import { DailyReport } from "@/components/admin/DailyReport";
 
 export default function AdminPage() {
   return (
@@ -14,6 +15,7 @@ export default function AdminPage() {
           <div className="space-y-8">
             <VoteManagement />
             <ReportedComments />
+            <DailyReport />
           </div>
         </div>
       </main>
