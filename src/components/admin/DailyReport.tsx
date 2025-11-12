@@ -21,7 +21,7 @@ export const DailyReport = () => {
   if (!data) {
     return <p className="text-center text-gray-500">데이터가 없습니다.</p>;
   }
-  console.log(data);
+
   return (
     <Card>
       <CardHeader>
