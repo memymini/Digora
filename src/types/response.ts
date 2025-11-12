@@ -87,3 +87,11 @@ export interface ReportedCommentResponse {
     display_name: string | null;
   };
 }
+
+export interface DailyReportResponse {
+  date: string;
+  daily_visitors: number;
+  total_users: number;
+  daily_votes: number;
+  daily_comments: number;
+}
