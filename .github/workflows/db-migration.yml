@@ -27,9 +27,8 @@ jobs:
         id: db_push
         run: |
           # Git에 커밋된 마이그레이션 파일들을 Production DB에 적용
-          # --linked: link된 프로젝트의 마이그레이션 기록을 사용 (Test/Dev)
           # --db-url: 마이그레이션을 적용할 원격 Production DB 지정
-          supabase db push --linked --db-url $PROD_DB_URL
+          supabase db push --db-url $PROD_DB_URL
         env:
           # GitHub Secrets에 저장된 Production DB URL 사용
           PROD_DB_URL: ${{ secrets.PROD_DB_URL }}
