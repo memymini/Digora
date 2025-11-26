@@ -1,0 +1,44 @@
+name: Supabase Production DB Migration
+
+on:
+  push:
+    branches:
+      - main # main 브랜치에 코드가 푸시될 때 워크플로우 실행
+
+jobs:
+  migrate_db:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: ⬇️ Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 🛠️ Set up Supabase CLI
+        # Supabase CLI를 설치하고 PATH에 추가
+        uses: supabase/setup-cli@v1
+
+      - name: 🔗 Link Project (Optional, for context)
+        # Production 프로젝트 참조 ID를 사용하여 CLI 컨텍스트 설정
+        run: supabase link --project-ref ${{ secrets.PROD_PROJECT_REF }}
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+      - name: 🚀 Apply Migrations to Production DB
+        id: db_push
+        run: |
+          # Git에 커밋된 마이그레이션 파일들을 Production DB에 적용
+          # --linked: link된 프로젝트의 마이그레이션 기록을 사용 (Test/Dev)
+          # --remote-db-url: 마이그레이션을 적용할 원격 Production DB 지정
+          supabase db push --linked --remote-db-url $PROD_DB_URL
+        env:
+          # GitHub Secrets에 저장된 Production DB URL 사용
+          PROD_DB_URL: ${{ secrets.PROD_DB_URL }}
+          # CLI 인증을 위한 Supabase Access Token (필요 시)
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+      - name: ✅ Check Migration Status
+        if: always()
+        run: |
+          # 마이그레이션 적용 후 상태를 확인하여 성공 여부 로그
+          # 실패 시 오류 로그 확인
+          echo "Migration process finished. Check logs for success/failure."
