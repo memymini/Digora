@@ -1,159 +1,58 @@
 "use client";
 
-import { VoteCard } from "./VoteCard";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useRef, useState, useEffect, useCallback } from "react";
 import { useVoteFeedQuery } from "@/hooks/queries/useVoteFeedQuery";
-import { cn } from "@/utils/cn";
+import { VoteFeedItem } from "./VoteFeedItem";
+
+export const VoteFeed = () => {
+  const { data, isLoading } = useVoteFeedQuery();
+
+  if (isLoading) return <VoteFeedSkeleton />;
+
+  return (
+    <div className="lg:col-span-2 space-y-6">
+      <div className="flex items-center gap-2 mb-4">
+        <h2 className="text-xl font-bold text-slate-800">
+          🔥 실시간 관심 집중
+        </h2>
+        <span className="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded font-bold animate-pulse">
+          LIVE
+        </span>
+      </div>
+
+      <div className="flex flex-col gap-4">
+        {data?.map((vote) => (
+          <VoteFeedItem key={vote.voteId} vote={vote} />
+        ))}
+      </div>
+    </div>
+  );
+};
 
 const VoteFeedSkeleton = () => (
-  <div className="flex items-center gap-6 overflow-x-hidden w-full sm:px-6">
+  <div className="lg:col-span-2 space-y-6">
+    <div className="flex items-center gap-2 mb-4">
+      <Skeleton className="h-8 w-40" />
+      <Skeleton className="h-5 w-12" />
+    </div>
+
     {[...Array(3)].map((_, i) => (
       <div
         key={i}
-        className="flex-shrink-0 w-full sm:w-[calc(50%-1.5rem)] lg:w-[calc(33.333%-1.5rem)]"
+        className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 flex gap-4 battle-card cursor-pointer relative overflow-hidden"
       >
-        <Skeleton className="h-[400px] w-full rounded-xl" />
+        <div className="absolute top-0 left-0 w-1 h-full bg-slate-200"></div>
+        <div className="w-20 h-20 md:w-24 md:h-24 flex-none rounded-xl overflow-hidden relative">
+          <Skeleton className="w-full h-full" />
+        </div>
+        <div className="flex-1 flex flex-col justify-center gap-2">
+          <div className="space-y-1">
+            <Skeleton className="h-6 w-3/4" />
+            <Skeleton className="h-4 w-1/2" />
+          </div>
+          <Skeleton className="h-2 w-full rounded-full" />
+        </div>
       </div>
     ))}
   </div>
 );
-
-export const VoteFeed = () => {
-  const { data, isLoading, error } = useVoteFeedQuery();
-
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [isOverflowing, setIsOverflowing] = useState(false);
-
-  const handleScroll = useCallback(() => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
-
-    const children = Array.from(container.children) as HTMLElement[];
-    let closestIndex = 0;
-    let smallestDistance = Infinity;
-
-    children.forEach((child, index) => {
-      const childRect = child.getBoundingClientRect();
-      const containerRect = container.getBoundingClientRect();
-      const distance = Math.abs(
-        childRect.left +
-          childRect.width / 2 -
-          (containerRect.left + containerRect.width / 2)
-      );
-
-      if (distance < smallestDistance) {
-        smallestDistance = distance;
-        closestIndex = index;
-      }
-    });
-
-    setActiveIndex(closestIndex);
-  }, []);
-
-  useEffect(() => {
-    const container = scrollContainerRef.current;
-    if (isLoading || !container || !data) return;
-
-    const checkOverflow = () => {
-      if (container) {
-        setIsOverflowing(container.scrollWidth > container.clientWidth);
-      }
-    };
-
-    let scrollTimeout: NodeJS.Timeout;
-    const debouncedScrollHandler = () => {
-      clearTimeout(scrollTimeout);
-      scrollTimeout = setTimeout(handleScroll, 100);
-    };
-
-    checkOverflow();
-    handleScroll();
-
-    container.addEventListener("scroll", debouncedScrollHandler);
-    window.addEventListener("resize", checkOverflow);
-
-    const observer = new MutationObserver(() => {
-      checkOverflow();
-      handleScroll();
-    });
-    observer.observe(container, {
-      childList: true,
-      subtree: true,
-      characterData: true,
-    });
-
-    return () => {
-      container.removeEventListener("scroll", debouncedScrollHandler);
-      window.removeEventListener("resize", checkOverflow);
-      observer.disconnect();
-      clearTimeout(scrollTimeout);
-    };
-  }, [handleScroll, isLoading, data]);
-
-  const scrollToCard = (index: number) => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
-    const children = container.children;
-    if (children[index]) {
-      children[index].scrollIntoView({
-        behavior: "smooth",
-        block: "nearest",
-        inline: "center",
-      });
-    }
-  };
-
-  if (isLoading) {
-    return <VoteFeedSkeleton />;
-  }
-
-  if (error) {
-    return (
-      <div className="text-center text-red-500 py-10">
-        <p>데이터를 불러오는 중 오류가 발생했습니다.</p>
-        <p className="text-sm text-muted-foreground">{error.message}</p>
-      </div>
-    );
-  }
-
-  if (!data || data.length === 0) {
-    return (
-      <div className="text-center text-muted-foreground py-10">
-        진행중인 투표가 없습니다.
-      </div>
-    );
-  }
-
-  return (
-    <div className="relative w-full">
-      <div
-        ref={scrollContainerRef}
-        className={cn(
-          "flex items-center gap-6 overflow-x-scroll hide-scrollbar scroll-snap-x-mandatory w-full py-6 sm:p-6"
-        )}
-      >
-        {data.map((vote) => (
-          <VoteCard key={vote.voteId} data={vote} />
-        ))}
-      </div>
-
-      {/* Dots Indicator */}
-      {isOverflowing && data.length > 1 && (
-        <div className="flex sm:hidden absolute bottom-0 left-1/2 -translate-x-1/2 items-center justify-center gap-2">
-          {data.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => scrollToCard(i)}
-              className={`h-2 w-2 rounded-full transition-all duration-300 ${
-                activeIndex === i ? "w-4 bg-primary" : "bg-muted"
-              }`}
-              aria-label={`Go to vote ${i + 1}`}
-            />
-          ))}
-        </div>
-      )}
-    </div>
-  );
-};
