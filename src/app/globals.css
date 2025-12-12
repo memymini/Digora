@@ -275,6 +275,37 @@
   animation: competitive-pulse 3s infinite ease-in-out;
 }
 
+@keyframes pulse-strong {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+@utility animate-pulse-strong {
+  animation: pulse-strong 1.5s infinite ease-in-out;
+}
+
+@keyframes float-up-fade {
+  0% {
+    transform: translateY(0) scale(0.5);
+    opacity: 0;
+  }
+  20% {
+    transform: translateY(-20px) scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-50px) scale(1);
+    opacity: 0;
+  }
+}
+@utility animate-float-up {
+  animation: float-up-fade 0.8s ease-out forwards;
+}
+
 /* Hero Vote Animations & Styles */
 @keyframes bounce-subtle {
   0%,
@@ -308,4 +339,46 @@
     black 90%,
     transparent
   );
+}
+
+.text-brand-main {
+  color: #5b76f6;
+}
+.bg-brand-main {
+  background-color: #5b76f6;
+}
+.text-brand-sub {
+  color: #f43f5e;
+}
+.bg-brand-sub {
+  background-color: #f43f5e;
+}
+
+/* 실시간 느낌의 깜빡임 */
+.live-indicator {
+  width: 8px;
+  height: 8px;
+  background-color: #ef4444;
+  border-radius: 50%;
+  animation: blink 1.5s infinite;
+}
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* 카드 호버 이펙트 */
+.battle-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+}
+.battle-card {
+  transition: all 0.2s ease-out;
 }
