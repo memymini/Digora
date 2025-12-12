@@ -9,28 +9,51 @@ export const commentService = {
   async getComments(voteId: number) {
     const supabase = await createClient();
 
-    const { data: commentsData, error } = await supabase
-      .from("comments")
-      .select(
-        `
-      id, 
-      body, 
-      created_at, 
-      parent_id, 
-      likes_count,
-      user_id,
-      badge_label,
-      profiles ( role )
-    `
-      )
-      .eq("vote_id", voteId)
-      .eq("visibility", "active")
-      .order("created_at", { ascending: true });
+    // 1. Get User Session (for isUserVoted check)
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    const userId = session?.user?.id;
 
-    if (error) throw error;
+    // 2. Parallel Fetch: Comments and User Vote Status
+    const [commentsRes, userVoteRes] = await Promise.all([
+      supabase
+        .from("comments")
+        .select(
+          `
+        id, 
+        body, 
+        created_at, 
+        parent_id, 
+        likes_count,
+        user_id,
+        badge_label,
+        profiles ( role )
+      `
+        )
+        .eq("vote_id", voteId)
+        .eq("visibility", "active")
+        .order("created_at", { ascending: true }),
+      userId
+        ? supabase
+            .from("ballots")
+            .select("id")
+            .eq("vote_id", voteId)
+            .eq("user_id", userId)
+            .maybeSingle()
+        : Promise.resolve({ data: null, error: null }),
+    ]);
+
+    if (commentsRes.error) throw commentsRes.error;
+    const isUserVoted = !!userVoteRes.data;
 
     // 🧩 mapper를 통해 익명화 및 트리 구조 변환
-    return commentsMapper(commentsData);
+    const mappedComments = commentsMapper(commentsRes.data);
+
+    return {
+      ...mappedComments,
+      isUserVoted,
+    };
   },
 
   async createComment(voteId: number, content: string, parentId?: number) {

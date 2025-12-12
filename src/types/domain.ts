@@ -66,6 +66,7 @@ export interface Comment {
 export interface Comments {
   comments: Comment[];
   totalCount: number;
+  isUserVoted: boolean;
 }
 
 export interface SingleComment {
