@@ -6,36 +6,14 @@ import {
   Option,
   Summary,
 } from "@/types";
+import { SupabaseClient } from "@supabase/supabase-js";
+import { statisticRepository } from "@/repositories/statisticRepository";
 
-import { createClient } from "@/lib/supabase/server";
-
-export async function getVoteStatistics(voteId: number) {
-  const supabase = await createClient();
-  const ballotsQuery = supabase
-    .from("ballots")
-    .select(
-      `
-        created_at,
-        option_id,
-        profiles ( age_group, gender )
-      `
-    )
-    .eq("vote_id", voteId);
-
-  const optionsQuery = supabase
-    .from("vote_options")
-    .select("id, candidate_name")
-    .eq("vote_id", voteId);
-
-  const commentsQuery = supabase
-    .from("comments")
-    .select("id", { count: "exact" })
-    .eq("vote_id", voteId);
-
+export async function getVoteStatistics(client: SupabaseClient, voteId: number) {
   const [ballotsRes, optionsRes, commentsRes] = await Promise.all([
-    ballotsQuery,
-    optionsQuery,
-    commentsQuery,
+    statisticRepository.getBallots(client, voteId),
+    statisticRepository.getOptions(client, voteId),
+    statisticRepository.getCommentCount(client, voteId),
   ]);
 
   if (ballotsRes.error) throw ballotsRes.error;

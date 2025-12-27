@@ -1,28 +1,21 @@
-import { createClient } from "@/lib/supabase/server";
-export const voteService = {
-  async getHeroVote() {
-    const supabase = await createClient();
+import { SupabaseClient } from "@supabase/supabase-js";
+import { voteRepository } from "@/repositories/voteRepository";
 
-    const { data: vote, error: voteError } = await supabase
-      .from("votes")
-      .select("id, title, details,status, ends_at")
-      .eq("status", "ongoing")
-      .order("starts_at", { ascending: false })
-      .limit(1)
-      .single();
+export const voteService = {
+  async getHeroVote(client: SupabaseClient) {
+    const { data: votes, error: voteError } =
+      await voteRepository.getOngoingVotes(client, 1);
 
     if (voteError) {
       if (voteError.code === "PGRST116") return null;
       throw new Error(`DB_ERROR: ${voteError.message}`);
     }
 
+    const vote = votes?.[0];
     if (!vote) return null;
-    const { data: rpcData, error: rpcError } = await supabase.rpc(
-      "get_vote_details",
-      {
-        p_vote_id: vote.id,
-      }
-    );
+
+    const { data: rpcData, error: rpcError } =
+      await voteRepository.getVoteDetailsRpc(client, vote.id);
 
     if (rpcError) throw new Error(`DB_ERROR: ${rpcError.message}`);
     return {
@@ -32,9 +25,8 @@ export const voteService = {
     };
   },
 
-  async getVoteFeed() {
-    const supabase = await createClient();
-    const { data, error } = await supabase.rpc("get_vote_feed");
+  async getVoteFeed(client: SupabaseClient) {
+    const { data, error } = await voteRepository.getVoteFeedRpc(client);
 
     if (error) {
       console.error("Supabase RPC error:", error);
@@ -43,23 +35,17 @@ export const voteService = {
 
     return data ?? [];
   },
-  async getVoteDetails(voteId: number, userId?: string) {
-    const supabase = await createClient();
 
+  async getVoteDetails(
+    client: SupabaseClient,
+    voteId: number,
+    userId?: string
+  ) {
     const [voteRes, rpcRes, userVoteRes] = await Promise.all([
-      supabase
-        .from("votes")
-        .select("id, title, status, ends_at, details")
-        .eq("id", voteId)
-        .single(),
-      supabase.rpc("get_vote_details", { p_vote_id: voteId }),
+      voteRepository.getVoteById(client, voteId),
+      voteRepository.getVoteDetailsRpc(client, voteId),
       userId
-        ? supabase
-            .from("ballots")
-            .select("option_id")
-            .eq("vote_id", voteId)
-            .eq("user_id", userId)
-            .maybeSingle()
+        ? voteRepository.getUserBallot(client, voteId, userId)
         : Promise.resolve({ data: null, error: null }),
     ]);
 
@@ -85,25 +71,27 @@ export const voteService = {
     };
   },
 
-  async handleVote(userId: string, voteId: number, optionId: number) {
-    const supabase = await createClient();
-
-    const { data: vote, error: voteError } = await supabase
-      .from("votes")
-      .select("status")
-      .eq("id", voteId)
-      .single();
+  async handleVote(
+    client: SupabaseClient,
+    userId: string,
+    voteId: number,
+    optionId: number
+  ) {
+    const { data: vote, error: voteError } = await voteRepository.getVoteById(
+      client,
+      voteId
+    );
 
     if (voteError) throw voteError;
     if (!vote) throw new Error("NOT_FOUND");
     if (vote.status !== "ongoing") throw new Error("VOTE_NOT_ONGOING");
 
-    const { error: ballotError } = await supabase.from("ballots").insert({
-      user_id: userId,
-      vote_id: voteId,
-      option_id: optionId,
-      created_at: new Date().toISOString(),
-    });
+    const { error: ballotError } = await voteRepository.castBallot(
+      client,
+      voteId,
+      userId,
+      optionId
+    );
 
     if (ballotError?.code === "23505") throw new Error("ALREADY_VOTED");
     if (ballotError) throw ballotError;

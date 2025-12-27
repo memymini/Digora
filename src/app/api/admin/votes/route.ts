@@ -7,7 +7,8 @@ import { AdminVotes } from "@/types";
 // GET handler
 export async function GET() {
   try {
-    const data = await adminVoteService.getAllVotes();
+    const supabase = await createClient();
+    const data = await adminVoteService.getAllVotes(supabase);
     return createSuccessResponse<AdminVotes[]>(data);
   } catch (e: unknown) {
     const error = e as Error;

@@ -29,8 +29,6 @@ export default function VoteSection({ voteId }: { voteId: number }) {
   };
 
   const totalVotes = data.totalCount;
-  const option1 = data.options[0];
-  const option2 = data.options[1];
 
   return (
     <section className="mb-12 w-full max-w-5xl mx-auto">
@@ -46,28 +44,35 @@ export default function VoteSection({ voteId }: { voteId: number }) {
       </div>
 
       {/* Option Cards */}
-      <div className="grid grid-cols-2 gap-3 md:gap-6 relative mb-8">
-        {/* VS Badge */}
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20">
-          <div className="bg-white rounded-full w-10 h-10 md:w-16 md:h-16 flex items-center justify-center font-black text-sm md:text-2xl shadow-xl border-2 md:border-4 border-slate-50 text-slate-800 italic">
-            VS
+      <div
+        className={`grid ${
+          data.options.length === 2
+            ? "grid-cols-2"
+            : "grid-cols-1 md:grid-cols-2"
+        } gap-3 md:gap-6 relative mb-8`}
+      >
+        {/* VS Badge - Only show for 2 options */}
+        {data.options.length === 2 && (
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20">
+            <div className="bg-white rounded-full w-10 h-10 md:w-16 md:h-16 flex items-center justify-center font-black text-sm md:text-2xl shadow-xl border-2 md:border-4 border-slate-50 text-slate-800 italic">
+              VS
+            </div>
           </div>
-        </div>
+        )}
 
-        <VoteOptionCard
-          option={option1}
-          themeColor="brand-main"
-          onVote={handleVote}
-        />
-
-        <VoteOptionCard
-          option={option2}
-          themeColor="brand-sub"
-          onVote={handleVote}
-        />
+        {data.options.map((option, index) => (
+          <VoteOptionCard
+            key={option.id}
+            option={option}
+            themeColor={index === 0 ? "brand-main" : "brand-sub"}
+            onVote={handleVote}
+          />
+        ))}
       </div>
 
-      <VoteProgressBar option1={option1} option2={option2} />
+      {data.options.length === 2 && (
+        <VoteProgressBar option1={data.options[0]} option2={data.options[1]} />
+      )}
     </section>
   );
 }

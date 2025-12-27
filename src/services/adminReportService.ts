@@ -1,31 +1,12 @@
-import { createClient } from "@/lib/supabase/server";
 import { SupabaseClient } from "@supabase/supabase-js";
+import { adminReportRepository } from "@/repositories/adminReportRepository";
 
 export const adminReportService = {
-  async getReports(status: string | null) {
-    const supabase = await createClient();
-
-    // TODO: Add admin role check once middleware is stable
-    let query = supabase.from("comment_reports").select(
-      `
-        id,
-        reason,
-        status,
-        created_at,
-        comment:comments!inner ( id, body, created_at ),
-        reporter:profiles!comment_reports_reporter_id_fkey ( id, display_name )
-      `
+  async getReports(client: SupabaseClient, status: string | null) {
+    const { data, error } = await adminReportRepository.getReports(
+      client,
+      status
     );
-
-    if (status === "completed") {
-      query = query.in("status", ["hidden", "rejected"]);
-    } else {
-      query = query.eq("status", "pending");
-    }
-
-    const { data, error } = await query.order("created_at", {
-      ascending: true,
-    });
 
     if (error) throw new Error(error.message);
 
@@ -39,17 +20,14 @@ export const adminReportService = {
     return normalizedData;
   },
   async updateReportStatus(
-    supabase: SupabaseClient,
+    client: SupabaseClient,
     adminId: string,
     reportId: number,
     status: string
   ) {
     // 관리자 권한 확인
-    const { data: profile, error: profileError } = await supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", adminId)
-      .single();
+    const { data: profile, error: profileError } =
+      await adminReportRepository.getProfile(client, adminId);
 
     if (profileError || !profile)
       throw new Error("프로필 정보를 불러올 수 없습니다.");
@@ -63,11 +41,12 @@ export const adminReportService = {
     }
 
     // 신고 처리 함수 호출
-    const { error } = await supabase.rpc("handle_report", {
-      p_report_id: reportId,
-      p_new_status: status,
-      p_admin_id: adminId,
-    });
+    const { error } = await adminReportRepository.handleReport(
+      client,
+      reportId,
+      adminId,
+      status
+    );
 
     if (error) throw new Error(error.message);
 

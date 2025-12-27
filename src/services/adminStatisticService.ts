@@ -1,13 +1,11 @@
-import { createClient } from "@/lib/supabase/server";
+import { SupabaseClient } from "@supabase/supabase-js";
+import { adminStatisticRepository } from "@/repositories/adminStatisticRepository";
 
 export const adminStatisticService = {
-  async getDailyStatistics() {
-    const supabase = await createClient();
-
-    const { data, error } = await supabase
-      .from("daily_statistics")
-      .select("*")
-      .order("date", { ascending: true });
+  async getDailyStatistics(client: SupabaseClient) {
+    const { data, error } = await adminStatisticRepository.getDailyStatistics(
+      client
+    );
 
     if (error) {
       console.error("Error fetching daily statistics:", error);

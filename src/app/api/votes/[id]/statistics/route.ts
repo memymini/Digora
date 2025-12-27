@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getVoteStatistics } from "@/services/statisticService";
 import { createErrorResponse, createSuccessResponse } from "@/utils/api";
+import { createClient } from "@/lib/supabase/server";
 
 export const revalidate = 0;
 
@@ -14,7 +15,8 @@ export async function GET(
     if (isNaN(voteId)) {
       return createErrorResponse("INVALID_INPUT", 400, "Invalid vote ID");
     }
-    const statistics = await getVoteStatistics(voteId);
+    const supabase = await createClient();
+    const statistics = await getVoteStatistics(supabase, voteId);
     return createSuccessResponse(statistics);
   } catch (e: unknown) {
     const error = e as Error;

@@ -1,63 +1,40 @@
 import { adminVotesMapper } from "@/utils/mappers";
-import { createClient } from "@/lib/supabase/server";
 import { SupabaseClient } from "@supabase/supabase-js";
+import { adminVoteRepository } from "@/repositories/adminVoteRepository";
 
 export const adminVoteService = {
-  async getAllVotes() {
-    const supabase = await createClient();
-
-    const { data, error } = await supabase
-      .from("votes")
-      .select(
-        `
-        id,
-        title,
-        details,
-        status,
-        ends_at,
-        vote_options (
-          id,
-          candidate_name,
-          party,
-          image_path,
-          descriptions
-        )
-      `
-      )
-      .order("id", { ascending: false });
+  async getAllVotes(client: SupabaseClient) {
+    const { data, error } = await adminVoteRepository.getAllVotes(client);
 
     if (error) throw new Error(error.message);
 
     // ✅ mapper 적용
-    return adminVotesMapper(data);
+    return adminVotesMapper(data || []);
   },
 
-  async uploadImage(supabase: SupabaseClient, file: File) {
+  async uploadImage(client: SupabaseClient, file: File) {
     if (!file || file.size === 0) throw new Error("Image file is required.");
     const fileName = `${Date.now()}_${file.name}`;
-    const { data, error } = await supabase.storage
-      .from("vote-images")
-      .upload(fileName, file);
-    if (error) throw new Error(error.message);
 
-    const { data: urlData } = supabase.storage
-      .from("vote-images")
-      .getPublicUrl(data.path);
-    return urlData.publicUrl;
+    const { data, error } = await adminVoteRepository.uploadImage(
+      client,
+      file,
+      fileName
+    );
+
+    if (error) throw new Error(error.message);
+    return data!.publicUrl;
   },
 
   async createVote(
-    supabase: SupabaseClient,
+    client: SupabaseClient,
     userId: string,
     formData: FormData
   ) {
     try {
       // 관리자 권한 확인
-      const { data: profile, error: profileError } = await supabase
-        .from("profiles")
-        .select("role")
-        .eq("id", userId)
-        .single();
+      const { data: profile, error: profileError } =
+        await adminVoteRepository.getProfile(client, userId);
 
       if (profileError || !profile) throw new Error("Profile not found.");
       if (profile.role !== "admin") throw new Error("User is not admin.");
@@ -87,17 +64,14 @@ export const adminVoteService = {
       }
 
       // 투표 생성
-      const { data: voteData, error: voteError } = await supabase
-        .from("votes")
-        .insert({
+      const { data: voteData, error: voteError } =
+        await adminVoteRepository.insertVote(client, {
           title,
           details,
           starts_at: new Date().toISOString(),
           ends_at,
           status: "ongoing",
-        })
-        .select()
-        .single();
+        });
 
       if (voteError || !voteData) {
         console.error("[createVote] Error inserting vote:", voteError);
@@ -107,7 +81,7 @@ export const adminVoteService = {
       // Upload images and prepare options for insertion
       const optionsToInsert = await Promise.all(
         options.map(async (option) => {
-          const imageUrl = await this.uploadImage(supabase, option.file);
+          const imageUrl = await this.uploadImage(client, option.file);
           return {
             vote_id: voteData.id,
             candidate_name: option.name,
@@ -120,9 +94,8 @@ export const adminVoteService = {
         })
       );
 
-      const { error: optionsError } = await supabase
-        .from("vote_options")
-        .insert(optionsToInsert);
+      const { error: optionsError } =
+        await adminVoteRepository.insertVoteOptions(client, optionsToInsert);
 
       if (optionsError) {
         console.error(
@@ -136,17 +109,15 @@ export const adminVoteService = {
       throw error; // Re-throw the error to be handled by the calling route
     }
   },
-  async deleteVote(supabase: SupabaseClient, id: string) {
+  async deleteVote(client: SupabaseClient, id: string) {
     const voteId = parseInt(id, 10);
-    const { error } = await supabase
-      .from("votes")
-      .delete()
-      .match({ id: voteId });
+    const { error } = await adminVoteRepository.deleteVote(client, voteId);
+
     if (error) throw new Error(error.message);
     return { message: "Vote deleted successfully." };
   },
   async updateVote(
-    supabase: SupabaseClient,
+    client: SupabaseClient,
     voteId: string,
     formData: FormData
   ) {
@@ -154,10 +125,11 @@ export const adminVoteService = {
     const details = formData.get("details") as string;
     const ends_at = formData.get("ends_at") as string;
 
-    const { error: voteUpdateError } = await supabase
-      .from("votes")
-      .update({ title, details, ends_at })
-      .eq("id", voteId);
+    const { error: voteUpdateError } = await adminVoteRepository.updateVote(
+      client,
+      voteId,
+      { title, details, ends_at }
+    );
     if (voteUpdateError) throw new Error(voteUpdateError.message);
 
     // Parse dynamic options from FormData
@@ -201,14 +173,15 @@ export const adminVoteService = {
       };
 
       if (option.file) {
-        const imageUrl = await this.uploadImage(supabase, option.file);
+        const imageUrl = await this.uploadImage(client, option.file);
         updateData.image_path = imageUrl;
       }
 
-      const { error } = await supabase
-        .from("vote_options")
-        .update(updateData)
-        .eq("id", optionId);
+      const { error } = await adminVoteRepository.updateVoteOption(
+        client,
+        optionId,
+        updateData
+      );
 
       if (error)
         throw new Error(
