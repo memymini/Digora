@@ -21,6 +21,9 @@ export function useApiError() {
         case 403:
           toast.error("접근 권한이 없습니다.");
           break;
+        case 429:
+          toast.error("투표는 하루에 100회만 가능합니다.");
+          break;
         case 500:
           toast.error("서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.");
           break;
