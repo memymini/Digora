@@ -341,19 +341,6 @@
   );
 }
 
-.text-brand-main {
-  color: #5b76f6;
-}
-.bg-brand-main {
-  background-color: #5b76f6;
-}
-.text-brand-sub {
-  color: #f43f5e;
-}
-.bg-brand-sub {
-  background-color: #f43f5e;
-}
-
 /* 실시간 느낌의 깜빡임 */
 .live-indicator {
   width: 8px;
@@ -362,6 +349,7 @@
   border-radius: 50%;
   animation: blink 1.5s infinite;
 }
+
 @keyframes blink {
   0% {
     opacity: 1;
