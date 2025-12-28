@@ -29,6 +29,7 @@ export default function VoteSection({ voteId }: { voteId: number }) {
   };
 
   const totalVotes = data.totalCount;
+  const isEnded = new Date(data.endsAt) < new Date();
 
   return (
     <section className="mb-12 w-full max-w-5xl mx-auto">
@@ -40,6 +41,7 @@ export default function VoteSection({ voteId }: { voteId: number }) {
         <p className="text-slate-500 text-sm md:text-base">{data.details}</p>
         <div className="mt-2 text-slate-400 text-xs font-medium">
           누적 {totalVotes.toLocaleString()}클릭
+          {isEnded && <span className="ml-2 text-red-500">종료된 투표</span>}
         </div>
       </div>
 
@@ -66,6 +68,7 @@ export default function VoteSection({ voteId }: { voteId: number }) {
             option={option}
             themeColor={index === 0 ? "vote-blue" : "vote-red"}
             onVote={handleVote}
+            disabled={isEnded}
           />
         ))}
       </div>

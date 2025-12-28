@@ -16,6 +16,7 @@ interface VoteOptionCardProps {
   option: Option;
   themeColor: "vote-blue" | "vote-red";
   onVote: (optionId: number) => void;
+  disabled?: boolean;
 }
 
 const THEME_STYLES = {
@@ -45,11 +46,13 @@ export const VoteOptionCard = ({
   option,
   themeColor,
   onVote,
+  disabled = false,
 }: VoteOptionCardProps) => {
   const [clickEffects, setClickEffects] = useState<ClickEffect[]>([]);
   const styles = THEME_STYLES[themeColor];
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (disabled) return;
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
@@ -73,7 +76,11 @@ export const VoteOptionCard = ({
 
   return (
     <div
-      className={`bg-white rounded-2xl md:rounded-[2rem] p-4 md:p-8 flex flex-col items-center text-center shadow-lg border border-slate-100 ${styles.border} transition-all cursor-pointer group relative overflow-hidden active:scale-95 duration-100`}
+      className={`bg-white rounded-2xl md:rounded-[2rem] p-4 md:p-8 flex flex-col items-center text-center shadow-lg border border-slate-100 ${
+        disabled
+          ? "opacity-70 cursor-default"
+          : `${styles.border} cursor-pointer hover:shadow-xl active:scale-95`
+      } transition-all group relative overflow-hidden duration-100`}
       onClick={handleClick}
     >
       {option.imageUrl && (
@@ -114,13 +121,15 @@ export const VoteOptionCard = ({
         {option.name}
       </h3>
 
-      <Button
-        variant="none"
-        className={`${styles.bg} ${styles.text} h-auto px-4 md:px-8 py-2 md:py-3 rounded-full font-bold text-xs md:text-sm transition-all shadow-sm flex items-center gap-1 md:gap-2 whitespace-nowrap animate-bounce-subtle md:animate-none z-10 border-0`}
-      >
-        <span className="hidden md:inline">Tap to Vote!</span>
-        <span className="md:hidden">Vote</span>
-      </Button>
+      {!disabled && (
+        <Button
+          variant="none"
+          className={`${styles.bg} ${styles.text} h-auto px-4 md:px-8 py-2 md:py-3 rounded-full font-bold text-xs md:text-sm transition-all shadow-sm flex items-center gap-1 md:gap-2 whitespace-nowrap animate-bounce-subtle md:animate-none z-10 border-0`}
+        >
+          <span className="hidden md:inline">Tap to Vote!</span>
+          <span className="md:hidden">Vote</span>
+        </Button>
+      )}
     </div>
   );
 };

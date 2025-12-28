@@ -16,8 +16,9 @@ export const VoteFeedItem = ({ vote }: VoteFeedItemProps) => {
   const optionB = vote.options[1];
 
   // 투표율 계산 (API에서 오지만, 안전을 위해 재계산하거나 API 값 사용)
-  const percentA = optionA.percent || 0;
-  const percentB = optionB.percent || 0;
+  const percentA = optionA?.percent || 0;
+  const percentB = optionB?.percent || 0;
+  const isEnded = new Date(vote.endsAt) < new Date();
 
   // 우세 판단
   const isTight = Math.abs(percentA - percentB) < 5; // 5% 미만 차이
@@ -26,10 +27,18 @@ export const VoteFeedItem = ({ vote }: VoteFeedItemProps) => {
 
   return (
     <Link href={`/vote/${vote.voteId}`} prefetch={false}>
-      <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 flex gap-4 battle-card cursor-pointer relative overflow-hidden group">
+      <div
+        className={`bg-white rounded-2xl p-5 shadow-sm border border-slate-100 flex gap-4 battle-card cursor-pointer relative overflow-hidden group ${
+          isEnded ? "opacity-75 grayscale-[0.5]" : ""
+        }`}
+      >
         <div
           className={`absolute top-0 left-0 w-1 h-full ${
-            percentA > percentB ? "bg-vote-blue" : "bg-vote-red"
+            percentA === percentB
+              ? "bg-primary"
+              : percentA > percentB
+              ? "bg-vote-blue"
+              : "bg-vote-red"
           }`}
         ></div>
 
@@ -52,6 +61,7 @@ export const VoteFeedItem = ({ vote }: VoteFeedItemProps) => {
         <div className="flex-1 flex flex-col justify-center">
           <div className="flex justify-between items-start mb-1">
             <h3 className="font-bold text-lg leading-tight text-slate-800 line-clamp-2 md:line-clamp-1">
+              {isEnded && <span className="text-red-500 mr-2">[마감]</span>}
               {vote.title}
             </h3>
             {winner && (
