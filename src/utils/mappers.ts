@@ -33,11 +33,11 @@ export type GenderChartData = {
 };
 
 export type PieChartData = Option & {
-  [key: string]: string | number | undefined;
+  [key: string]: string | number | string[] | undefined | null;
 };
 
 export function mapPieChartData(candidates: Option[]): PieChartData[] {
-  return candidates.map(({ descriptions, ...candidate }) => ({
+  return candidates.map((candidate) => ({
     ...candidate,
   }));
 }
@@ -185,7 +185,9 @@ export function voteDetailsMapper(data: VoteDetailsResponse): VoteDetails {
   };
 }
 
-export function commentsMapper(commentsData: CommentResponse[]): Comments {
+export function commentsMapper(
+  commentsData: CommentResponse[]
+): Omit<Comments, "isUserVoted"> {
   const totalCount = commentsData.length;
 
   // 👤 유저별 익명 ID 매핑

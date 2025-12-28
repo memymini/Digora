@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { adminVoteService } from "@/services/adminVoteService";
 import { adminVoteRepository } from "@/repositories/adminVoteRepository";

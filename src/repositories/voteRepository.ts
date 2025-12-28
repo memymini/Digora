@@ -60,4 +60,18 @@ export const voteRepository = {
 
     return { error };
   },
+
+  async getDailyVoteCount(client: SupabaseClient, userId: string) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const { count, error } = await client
+      .from("ballots")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", userId)
+      .gte("created_at", today.toISOString());
+
+    return { count, error };
+  },
 };
+

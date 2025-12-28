@@ -21,7 +21,9 @@ export const voteService = {
     return {
       ...vote,
       total_count: rpcData?.[0]?.total_count ?? 0,
-      options: rpcData?.[0]?.options ?? [],
+      options: (rpcData?.[0]?.options ?? []).sort(
+        (a: { id: number }, b: { id: number }) => a.id - b.id
+      ),
     };
   },
 
@@ -67,7 +69,9 @@ export const voteService = {
       total_count: rpcData?.[0]?.total_count ?? 0,
       is_user_voted: userVoted,
       option_id: userVotedOptionId,
-      options: rpcData?.[0]?.options ?? [],
+      options: (rpcData?.[0]?.options ?? []).sort(
+        (a: { id: number }, b: { id: number }) => a.id - b.id
+      ),
     };
   },
 
@@ -86,6 +90,12 @@ export const voteService = {
     if (!vote) throw new Error("NOT_FOUND");
     if (vote.status !== "ongoing") throw new Error("VOTE_NOT_ONGOING");
 
+    const { count: dailyCount, error: countError } =
+      await voteRepository.getDailyVoteCount(client, userId);
+
+    if (countError) throw countError;
+    if ((dailyCount ?? 0) >= 100) throw new Error("DAILY_LIMIT_EXCEEDED");
+
     const { error: ballotError } = await voteRepository.castBallot(
       client,
       voteId,
@@ -93,7 +103,8 @@ export const voteService = {
       optionId
     );
 
-    if (ballotError?.code === "23505") throw new Error("ALREADY_VOTED");
+    // Duplicate check removed as per requirement: "투표는 중복 투표가 가능하다"
+    // if (ballotError?.code === "23505") throw new Error("ALREADY_VOTED");
     if (ballotError) throw ballotError;
 
     return { success: true };

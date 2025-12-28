@@ -34,7 +34,7 @@ export const adminVoteRepository = {
     return { data, error };
   },
 
-  async insertVote(client: SupabaseClient, voteData: any) {
+  async insertVote(client: SupabaseClient, voteData: Record<string, unknown>) {
     const { data, error } = await client
       .from("votes")
       .insert(voteData)
@@ -43,7 +43,10 @@ export const adminVoteRepository = {
     return { data, error };
   },
 
-  async insertVoteOptions(client: SupabaseClient, options: any[]) {
+  async insertVoteOptions(
+    client: SupabaseClient,
+    options: Record<string, unknown>[]
+  ) {
     const { error } = await client.from("vote_options").insert(options);
     return { error };
   },
@@ -56,7 +59,11 @@ export const adminVoteRepository = {
     return { error };
   },
 
-  async updateVote(client: SupabaseClient, voteId: string, updateData: any) {
+  async updateVote(
+    client: SupabaseClient,
+    voteId: string,
+    updateData: Record<string, unknown>
+  ) {
     const { error } = await client
       .from("votes")
       .update(updateData)
@@ -67,7 +74,7 @@ export const adminVoteRepository = {
   async updateVoteOption(
     client: SupabaseClient,
     optionId: number,
-    updateData: any
+    updateData: Record<string, unknown>
   ) {
     const { error } = await client
       .from("vote_options")
