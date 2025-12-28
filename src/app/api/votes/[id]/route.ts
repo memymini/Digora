@@ -97,6 +97,12 @@ export async function POST(
         );
       case "ALREADY_VOTED":
         return createErrorResponse("ALREADY_VOTED", 409, "Already voted");
+      case "DAILY_LIMIT_EXCEEDED":
+        return createErrorResponse(
+          "DAILY_LIMIT_EXCEEDED",
+          429,
+          "투표는 하루에 100회만 가능합니다."
+        );
       default:
         return createErrorResponse("INTERNAL_SERVER_ERROR", 500, message);
     }
