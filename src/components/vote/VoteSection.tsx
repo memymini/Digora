@@ -39,7 +39,7 @@ export default function VoteSection({ voteId }: { voteId: number }) {
         </h1>
         <p className="text-slate-500 text-sm md:text-base">{data.details}</p>
         <div className="mt-2 text-slate-400 text-xs font-medium">
-          {totalVotes.toLocaleString()}명 참여
+          누적 {totalVotes.toLocaleString()}클릭
         </div>
       </div>
 
@@ -64,7 +64,7 @@ export default function VoteSection({ voteId }: { voteId: number }) {
           <VoteOptionCard
             key={option.id}
             option={option}
-            themeColor={index === 0 ? "brand-main" : "brand-sub"}
+            themeColor={index === 0 ? "vote-blue" : "vote-red"}
             onVote={handleVote}
           />
         ))}

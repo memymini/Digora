@@ -3,6 +3,9 @@
 import { VoteFeed as VoteFeedType } from "@/types";
 import Image from "next/image";
 import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { MiniVoteProgressBar } from "@/components/vote/MiniVoteProgressBar";
 
 interface VoteFeedItemProps {
   vote: VoteFeedType;
@@ -23,10 +26,10 @@ export const VoteFeedItem = ({ vote }: VoteFeedItemProps) => {
 
   return (
     <Link href={`/vote/${vote.voteId}`} prefetch={false}>
-      <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 flex gap-4 battle-card cursor-pointer relative overflow-hidden group hover:border-brand-main/50 transition-colors">
+      <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 flex gap-4 battle-card cursor-pointer relative overflow-hidden group">
         <div
           className={`absolute top-0 left-0 w-1 h-full ${
-            percentA > percentB ? "bg-brand-main" : "bg-brand-sub"
+            percentA > percentB ? "bg-vote-blue" : "bg-vote-red"
           }`}
         ></div>
 
@@ -40,7 +43,7 @@ export const VoteFeedItem = ({ vote }: VoteFeedItemProps) => {
               className="object-cover"
             />
           ) : (
-            <div className="w-full h-full bg-slate-200 flex items-center justify-center text-2xl">
+            <div className="w-full h-full bg-slate-200 flex items-center justify-center text-2xl text-slate-400 font-black">
               VS
             </div>
           )}
@@ -48,19 +51,16 @@ export const VoteFeedItem = ({ vote }: VoteFeedItemProps) => {
 
         <div className="flex-1 flex flex-col justify-center">
           <div className="flex justify-between items-start mb-1">
-            <h3 className="font-bold text-lg leading-tight text-slate-800 line-clamp-2 md:line-clamp-1 group-hover:text-brand-main transition-colors">
+            <h3 className="font-bold text-lg leading-tight text-slate-800 line-clamp-2 md:line-clamp-1">
               {vote.title}
             </h3>
             {winner && (
-              <span
-                className={`hidden sm:inline-block text-xs font-bold px-2 py-1 rounded whitespace-nowrap ml-2 ${
-                  percentA > percentB
-                    ? "text-brand-main bg-indigo-50"
-                    : "text-brand-sub bg-rose-50"
-                }`}
+              <Badge
+                variant={percentA > percentB ? "vote-blue" : "vote-red"}
+                className="hidden sm:inline-flex ml-2 whitespace-nowrap"
               >
                 {winner.name} 우세
-              </span>
+              </Badge>
             )}
           </div>
           <div className="text-sm text-slate-500 mb-3 flex items-center gap-2">
@@ -71,30 +71,13 @@ export const VoteFeedItem = ({ vote }: VoteFeedItemProps) => {
           </div>
 
           {/* 미니 게이지 바 */}
-          <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden flex">
-            <div
-              className="bg-brand-main h-full transition-all duration-500"
-              style={{ width: `${percentA}%` }}
-            ></div>
-            <div
-              className="bg-brand-sub h-full transition-all duration-500"
-              style={{ width: `${percentB}%` }}
-            ></div>
-          </div>
-          <div className="flex justify-between text-xs font-bold mt-1.5">
-            <span className="text-brand-main line-clamp-1 max-w-[45%]">
-              {optionA.name}
-            </span>
-            <span className="text-brand-sub line-clamp-1 max-w-[45%] text-right">
-              {optionB.name}
-            </span>
-          </div>
+          <MiniVoteProgressBar optionA={optionA} optionB={optionB} />
         </div>
 
         <div className="hidden md:flex flex-col justify-center pl-4 border-l border-slate-100">
-          <button className="text-sm font-bold text-slate-700 bg-slate-50 px-4 py-2 rounded-lg transition-colors">
+          <Button variant="secondary" size="sm" className="font-bold">
             참여하기
-          </button>
+          </Button>
         </div>
       </div>
     </Link>

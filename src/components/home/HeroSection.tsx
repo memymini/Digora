@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import { useHeroVoteQuery } from "@/hooks/queries/useHeroVoteQuery";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DefaultHero } from "./DefaultHero";
@@ -15,31 +14,13 @@ const HeroSectionSkeleton = () => {
       </div>
 
       {/* Main Card Skeleton */}
-      <div className="bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100 relative h-[400px] md:h-[384px]">
-        {/* Top Badge */}
-        <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-20">
-          <Skeleton className="h-6 w-32 rounded-full" />
-        </div>
-
-        {/* content split */}
-        <div className="flex h-full flex-col md:flex-row">
-          <Skeleton className="w-full h-1/2 md:h-full md:w-1/2" />
-          <Skeleton className="w-full h-1/2 md:h-full md:w-1/2" />
-        </div>
-
-        {/* VS Badge */}
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
-          <div className="bg-white rounded-full w-12 h-12 md:w-20 md:h-20 flex items-center justify-center shadow-lg border-4 border-slate-100">
-            <Skeleton className="w-full h-full rounded-full" />
-          </div>
-        </div>
-
+      <Skeleton className="rounded-3xl overflow-hidden relative h-[400px] md:h-[384px]">
         {/* Bottom Footer Area */}
         <div className="absolute bottom-0 w-full bg-slate-900 p-4 flex flex-col sm:flex-row justify-between items-center gap-4">
           <Skeleton className="h-6 w-full sm:w-1/2 bg-slate-700/50" />
           <Skeleton className="h-10 w-full sm:w-32 rounded-full bg-slate-700/50" />
         </div>
-      </div>
+      </Skeleton>
     </section>
   );
 };
