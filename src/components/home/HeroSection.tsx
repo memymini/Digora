@@ -1,5 +1,6 @@
 "use client";
 import { useHeroVoteQuery } from "@/hooks/queries/useHeroVoteQuery";
+import { useRouter } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DefaultHero } from "./DefaultHero";
 import { HeroOption } from "./HeroOption";
@@ -26,6 +27,7 @@ const HeroSectionSkeleton = () => {
 };
 
 export const HeroSection = () => {
+  const router = useRouter();
   const { data, isLoading } = useHeroVoteQuery();
   const optionA = data?.options[0];
   const optionB = data?.options[1];
@@ -47,7 +49,10 @@ export const HeroSection = () => {
         </p>
       </div>
 
-      <div className="bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100 relative group cursor-pointer battle-card">
+      <div
+        onClick={() => router.push(`/vote/${data.voteId}`)}
+        className="bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100 relative group cursor-pointer battle-card"
+      >
         <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-slate-900/90 backdrop-blur text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-2 z-20 shadow-lg">
           <div className="live-indicator"></div>누적 클릭수 {data.totalCount}
         </div>

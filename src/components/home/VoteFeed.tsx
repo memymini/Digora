@@ -15,9 +15,6 @@ export const VoteFeed = () => {
         <h2 className="text-xl font-bold text-slate-800">
           🔥 실시간 관심 집중
         </h2>
-        <span className="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded font-bold animate-pulse">
-          LIVE
-        </span>
       </div>
 
       <div className="flex flex-col gap-4">
