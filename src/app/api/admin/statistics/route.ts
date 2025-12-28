@@ -1,10 +1,12 @@
+import { createClient } from "@/lib/supabase/server";
 import { createErrorResponse, createSuccessResponse } from "@/utils/api";
 import { DailyReportResponse } from "@/types";
 import { adminStatisticService } from "@/services/adminStatisticService";
 
-export async function GET(request: Request) {
+export async function GET() {
   try {
-    const data = await adminStatisticService.getDailyStatistics();
+    const supabase = await createClient();
+    const data = await adminStatisticService.getDailyStatistics(supabase);
     return createSuccessResponse<DailyReportResponse[]>(data);
   } catch (e: unknown) {
     const error = e as Error;

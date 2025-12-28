@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
 import { createErrorResponse, createSuccessResponse } from "@/utils/api";
 import { voteService } from "@/services/voteService";
 import { heroVoteMapper } from "@/utils/mappers";
@@ -7,7 +8,8 @@ export const revalidate = 0;
 
 export async function GET(): Promise<NextResponse> {
   try {
-    const data = await voteService.getHeroVote();
+    const supabase = await createClient();
+    const data = await voteService.getHeroVote(supabase);
 
     if (!data) {
       return createSuccessResponse(null);

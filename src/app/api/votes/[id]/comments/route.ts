@@ -1,3 +1,4 @@
+import { createClient } from "@/lib/supabase/server";
 import { createErrorResponse, createSuccessResponse } from "@/utils/api";
 import { NextRequest, NextResponse } from "next/server";
 import { commentService } from "@/services/commentService";
@@ -15,7 +16,13 @@ export async function GET(
     if (isNaN(voteId)) {
       return createErrorResponse("INVALID_INPUT", 400, "Invalid vote ID");
     }
-    const data = await commentService.getComments(voteId);
+    const supabase = await createClient();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    const userId = session?.user?.id;
+
+    const data = await commentService.getComments(supabase, voteId, userId);
     return createSuccessResponse(data);
   } catch (e) {
     const error = e as Error;
@@ -38,8 +45,19 @@ export async function POST(
     if (!content) {
       return createErrorResponse("INVALID_INPUT", 400, "댓글 내용이 없습니다.");
     }
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return createErrorResponse("UNAUTHORIZED", 401, "로그인이 필요합니다.");
+    }
+
     const newComment = await commentService.createComment(
+      supabase,
       voteId,
+      user.id,
       content,
       parentId
     );

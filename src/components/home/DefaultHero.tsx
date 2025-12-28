@@ -1,73 +1,92 @@
 "use client";
-import { Button } from "@/components/ui/button";
+
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
 export const DefaultHero = () => {
-  const [animationStep, setAnimationStep] = React.useState(0);
-
-  React.useEffect(() => {
-    const timeouts = [
-      setTimeout(() => setAnimationStep(1), 200), // Show H1
-      setTimeout(() => setAnimationStep(2), 600), // Show Subtitle
-      setTimeout(() => setAnimationStep(3), 1000), // Show the rest
-    ];
-
-    return () => timeouts.forEach(clearTimeout);
-  }, []);
-
   return (
-    <section className="flex flex-col items-center w-full gap-8 text-center h-auto md:gap-12">
-      <p
-        className={`mb-4 text-3xl sm:text-4xl font-extrabold text-card-foreground md:text-6xl ${
-          animationStep >= 2 ? "animate-fade-in-up" : "opacity-0"
-        }`}
-      >
-        당신의 선택은?
-      </p>
+    <section className="mb-12">
+      <div className="text-center mb-6">
+        <h1 className="text-3xl md:text-4xl font-black text-slate-800 mb-2">
+          여론의 새로운 기준 <span className="text-brand-main">디고라</span>
+        </h1>
+        <p className="text-slate-500 text-sm md:text-base">
+          여러분의 의견을 보여주세요.
+        </p>
+      </div>
 
-      <div
-        className={`flex flex-col gap-8 items-center md:gap-12 w-full ${
-          animationStep >= 3 ? "animate-fade-in-up" : "opacity-0"
-        }`}
-      >
-        <div className="flex items-center w-full max-w-250 gap-4 justify-center sm:justify-around md:gap-8">
-          <div className="relative w-[100%]">
-            <div className="relative aspect-[3/4] overflow-hidden transition-all duration-300 rounded-lg">
-              <Image
-                src="/images/politician-a.jpg"
-                fill
-                alt="politician-a"
-                className="object-cover grayscale"
-              />
+      <Link href="/vote/1" className="block">
+        <div className="bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100 relative group cursor-pointer battle-card">
+          <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-slate-900/90 backdrop-blur text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-2 z-20 shadow-lg">
+            <div className="live-indicator"></div> 실시간 투표 진행중
+          </div>
+
+          <div className="flex flex-col flex-row h-auto md:h-96">
+            <div className="flex-1 relative h-52 md:h-auto overflow-hidden">
+              {/* Image */}
+              <div className="w-full h-full relative">
+                <Image
+                  src="/images/politician-a.jpg"
+                  alt="Option A"
+                  fill
+                  className="object-cover opacity-90 group-hover:scale-105 transition-transform duration-700 bg-indigo-50"
+                />
+              </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-indigo-900/80 to-transparent flex flex-col justify-end p-4 md:p-10">
+                <span className="text-indigo-300 font-bold text-xs md:text-sm mb-1">
+                  찬성
+                </span>
+                <div className="text-white text-3xl md:text-5xl font-black tracking-tighter">
+                  ???
+                </div>
+                <div className="text-white/80 text-xs md:text-sm mt-1">
+                  ▲ 참여하여 확인하기
+                </div>
+              </div>
+            </div>
+
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
+              <div className="bg-white rounded-full w-12 h-12 md:w-20 md:h-20 flex items-center justify-center font-black text-lg md:text-3xl shadow-lg border-4 border-slate-100 italic text-slate-800">
+                VS
+              </div>
+            </div>
+
+            <div className="flex-1 relative h-52 md:h-auto overflow-hidden">
+              {/* Image */}
+              <div className="w-full h-full relative">
+                <Image
+                  src="/images/politician-b.jpg"
+                  alt="Option B"
+                  fill
+                  className="object-cover opacity-90 group-hover:scale-105 transition-transform duration-700 bg-rose-50"
+                  style={{ objectPosition: "top" }}
+                />
+              </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-rose-900/80 to-transparent flex flex-col justify-end p-4 md:p-10 items-end">
+                <span className="text-rose-300 font-bold text-xs md:text-sm mb-1">
+                  반대
+                </span>
+                <div className="text-white text-3xl md:text-5xl font-black tracking-tighter">
+                  ???
+                </div>
+                <div className="text-white/80 text-xs md:text-sm mt-1">
+                  ▲ 참여하여 확인하기
+                </div>
+              </div>
             </div>
           </div>
 
-          <span className="text-2xl font-black md:text-4xl">vs</span>
-          <div className="relative w-[100%]">
-            <div className="relative aspect-[3/4] overflow-hidden transition-all duration-300 rounded-lg">
-              <Image
-                src="/images/politician-b.jpg"
-                fill
-                alt="politician-a"
-                className="object-cover grayscale"
-              />
+          <div className="bg-slate-900 text-white p-4 flex flex-col sm:flex-row justify-between items-center gap-4 hover:bg-slate-800 transition-colors">
+            <div className="font-bold text-lg text-center sm:text-left break-keep">
+              지금 가장 뜨거운 이슈에 투표하세요
             </div>
+            <button className="bg-brand-main hover:bg-indigo-400 text-white px-6 py-2 rounded-full font-bold text-sm transition-colors shadow-lg shadow-indigo-500/30 w-full sm:w-auto">
+              🔥 지금 참여하기
+            </button>
           </div>
         </div>
-        <p className="max-w-2xl mx-auto body-text text-muted-foreground md:body-text-1">
-          베리뱃지 시스템과 함께하는
-          <br className="sm:hidden" /> 검증된 익명 기반의 소셜 폴링 플랫폼에서
-          <br />
-          정치적 이슈에 대한 당신의 목소리를 들려주세요.
-        </p>
-        <Button variant="vote" size="lg">
-          <Link href="/vote/1" className="label-text md:label-text-1">
-            투표하러 가기
-          </Link>
-        </Button>
-      </div>
+      </Link>
     </section>
   );
 };

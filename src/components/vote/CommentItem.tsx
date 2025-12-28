@@ -12,6 +12,7 @@ interface CommentItemProps {
   comment: Comment;
   isReply?: boolean;
   userVoted: boolean;
+  isLoggedIn: boolean;
   voteId: number;
 }
 
@@ -19,6 +20,7 @@ export const CommentItem = ({
   comment,
   isReply = false,
   userVoted,
+  isLoggedIn,
   voteId,
 }: CommentItemProps) => {
   const [showReplyInput, setShowReplyInput] = useState(false);
@@ -87,7 +89,9 @@ export const CommentItem = ({
       </div>
       <div className={`pl-10 ${isReply ? "pl-4" : ""}`}>
         <p className="body-text mb-2">{comment.content}</p>
-        {userVoted && (
+
+        {/* Actions: Replaced userVoted check with isLoggedIn */}
+        {isLoggedIn && (
           <div className="flex items-center gap-4">
             {!isReply && (
               <Button
@@ -107,6 +111,7 @@ export const CommentItem = ({
             </Button>
           </div>
         )}
+
         {showReplyInput && (
           <div className="mt-4">
             <Textarea
@@ -143,6 +148,7 @@ export const CommentItem = ({
               comment={reply}
               isReply={true}
               userVoted={userVoted}
+              isLoggedIn={isLoggedIn}
               voteId={voteId}
             />
           ))}

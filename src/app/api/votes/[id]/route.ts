@@ -30,7 +30,7 @@ export async function GET(
     } = await supabase.auth.getUser();
 
     // ✅ userId를 서비스로 전달
-    const data = await voteService.getVoteDetails(voteId, user?.id);
+    const data = await voteService.getVoteDetails(supabase, voteId, user?.id);
     if (!data) {
       return createErrorResponse(
         "NOT_FOUND",
@@ -81,7 +81,7 @@ export async function POST(
       );
     }
 
-    const data = await voteService.handleVote(user.id, voteId, optionId);
+    const data = await voteService.handleVote(supabase, user.id, voteId, optionId);
     return createSuccessResponse(data);
   } catch (e: unknown) {
     const message = e instanceof Error ? e.message : JSON.stringify(e);

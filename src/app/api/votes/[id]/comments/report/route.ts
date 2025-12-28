@@ -28,6 +28,7 @@ export async function POST(req: NextRequest) {
 
     // 3. Report comment via service
     const result = await commentService.reportComment(
+      supabase,
       commentId,
       user.id,
       reason

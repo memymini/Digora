@@ -1,88 +1,65 @@
-import { createClient } from "@/lib/supabase/server";
 import { commentsMapper, singleCommentMapper } from "@/utils/mappers";
 import { SupabaseClient } from "@supabase/supabase-js";
+import { commentRepository } from "@/repositories/commentRepository";
+
 /**
  * 특정 투표의 댓글 목록 조회
  */
 
 export const commentService = {
-  async getComments(voteId: number) {
-    const supabase = await createClient();
+  async getComments(client: SupabaseClient, voteId: number, userId?: string) {
+    // 2. Parallel Fetch: Comments and User Vote Status
+    const [commentsRes, userVoteRes] = await Promise.all([
+      commentRepository.getComments(client, voteId),
+      userId
+        ? commentRepository.getUserBallot(client, voteId, userId)
+        : Promise.resolve({ data: null, error: null }),
+    ]);
 
-    const { data: commentsData, error } = await supabase
-      .from("comments")
-      .select(
-        `
-      id, 
-      body, 
-      created_at, 
-      parent_id, 
-      likes_count,
-      user_id,
-      badge_label,
-      profiles ( role )
-    `
-      )
-      .eq("vote_id", voteId)
-      .eq("visibility", "active")
-      .order("created_at", { ascending: true });
-
-    if (error) throw error;
+    if (commentsRes.error) throw commentsRes.error;
+    const isUserVoted = !!userVoteRes.data;
 
     // 🧩 mapper를 통해 익명화 및 트리 구조 변환
-    return commentsMapper(commentsData);
+    const mappedComments = commentsMapper(commentsRes.data || []);
+
+    return {
+      ...mappedComments,
+      isUserVoted,
+    };
   },
 
-  async createComment(voteId: number, content: string, parentId?: number) {
-    const supabase = await createClient();
-
-    // ✅ 현재 로그인된 유저 확인
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      throw new Error("UNAUTHORIZED");
-    }
-
-    // ✅ 댓글 DB 삽입
-    const { data: newComment, error } = await supabase
-      .from("comments")
-      .insert({
-        vote_id: voteId,
-        user_id: user.id,
-        body: content,
-        parent_id: parentId,
-        visibility: "active",
-        created_at: new Date().toISOString(),
-      })
-      .select(
-        `
-      id, 
-      body, 
-      created_at, 
-      parent_id, 
-      likes_count,
-      profiles ( display_name, role )
-    `
-      )
-      .single();
+  async createComment(
+    client: SupabaseClient,
+    voteId: number,
+    userId: string,
+    content: string,
+    parentId?: number
+  ) {
+    const { data: newComment, error } = await commentRepository.createComment(
+      client,
+      voteId,
+      userId,
+      content,
+      parentId
+    );
 
     if (error) throw error;
 
     // 🧩 단일 댓글 포맷으로 변환
     return singleCommentMapper(newComment);
   },
-  async reportComment(commentId: number, userId: string, reason: string) {
-    const supabase = await createClient();
-
-    const { error } = await supabase.from("comment_reports").insert({
-      comment_id: commentId,
-      reporter_id: userId,
-      reason: reason,
-      status: "pending",
-      created_at: new Date().toISOString(),
-    });
+  async reportComment(
+    client: SupabaseClient,
+    commentId: number,
+    userId: string,
+    reason: string
+  ) {
+    const { error } = await commentRepository.createReport(
+      client,
+      commentId,
+      userId,
+      reason
+    );
 
     if (error) {
       if (error.code === "23503") {
@@ -96,20 +73,21 @@ export const commentService = {
   /**
    * Toggles a 'like' on a comment for a given user.
    * Calls the `toggle_like` RPC function in the database.
-   * @param supabase - A Supabase client instance with appropriate authorization.
+   * @param client - A Supabase client instance with appropriate authorization.
    * @param commentId - The ID of the comment to like/unlike.
    * @param userId - The ID of the user performing the action.
    * @returns The new liked status (true if liked, false if unliked).
    */
   async toggleLike(
-    supabase: SupabaseClient,
+    client: SupabaseClient,
     commentId: number,
     userId: string
   ) {
-    const { data, error } = await supabase.rpc("toggle_like", {
-      p_comment_id: commentId,
-      p_user_id: userId,
-    });
+    const { data, error } = await commentRepository.toggleLikeRpc(
+      client,
+      commentId,
+      userId
+    );
 
     if (error) {
       console.error("Error toggling like:", error);

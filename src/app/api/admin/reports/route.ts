@@ -1,3 +1,4 @@
+import { createClient } from "@/lib/supabase/server";
 import { createErrorResponse, createSuccessResponse } from "@/utils/api";
 import { adminReportService } from "@/services/adminReportService";
 import { reportedCommentsMapper } from "@/utils/mappers";
@@ -7,8 +8,9 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const status = searchParams.get("status");
+    const supabase = await createClient();
 
-    const data = await adminReportService.getReports(status);
+    const data = await adminReportService.getReports(supabase, status);
     const mapped = reportedCommentsMapper(data);
     return createSuccessResponse<ReportedComment[]>(mapped);
   } catch (e: unknown) {
