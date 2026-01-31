@@ -1,3 +1,13 @@
+export interface CreateProfileRequest {
+  id: string;
+  kakao_user_id: string;
+  display_name: string;
+  role: string;
+  gender: string;
+  age_group: string;
+  birth_year: string;
+}
+
 export interface VoteRequest {
   optionId: number;
 }

@@ -1,16 +1,11 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { type NextRequest } from "next/server";
-
-// Helper function to map Kakao's age range format (e.g., "20~29") to our enum
-const mapKakaoAgeRange = (ageRange: string | undefined): string => {
-  if (!ageRange) return "unknown";
-  const startAge = parseInt(ageRange.split("~")[0], 10);
-  if (startAge >= 60) return "60s_plus";
-  if (startAge >= 20) return `${startAge}s`;
-  if (startAge < 20) return "20s_under";
-  return "unknown";
-};
+import { KakaoUserData } from "@/types/domain";
+import { GENDER } from "@/types/enums";
+import { kakaoService } from "@/services/kakaoService";
+import { profileService } from "@/services/profileService";
+import { createErrorRedirect } from "@/utils/api";
 
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url);
@@ -18,78 +13,43 @@ export async function GET(request: NextRequest) {
 
   if (code) {
     const supabase = await createClient();
-    const { data: sessionData, error: exchangeError } =
+
+    // 인증 코드로 세션 교환
+    const { data: authData, error: authError } =
       await supabase.auth.exchangeCodeForSession(code);
 
-    if (exchangeError) {
-      console.error("Error exchanging code for session:", exchangeError);
-      const redirectUrl = new URL("/", request.url);
-      redirectUrl.searchParams.set("error", "auth_error");
-      return NextResponse.redirect(redirectUrl);
+    if (authError) {
+      console.error("Error exchanging code for session:", authError);
+      return createErrorRedirect(request.url, "auth_error");
     }
 
-    // After successful login, check and create a profile if it doesn't exist
-    if (sessionData.user) {
-      const user = sessionData.user;
+    if (authData.user) {
+      const user = authData.user;
 
-      // Get current session to extract provider_token (Kakao access token)
-      const { data: currentSessionData, error: sessionError } =
+      // 카카오 API용 토큰 조회
+      const { data: session, error: sessionError } =
         await supabase.auth.getSession();
+
       if (sessionError) {
-        console.error("Error getting current session:", sessionError);
+        console.error("Error getting session:", sessionError);
+        return createErrorRedirect(request.url, "auth_error");
       }
 
-      let kakaoGender = user.user_metadata.gender || "unknown";
-      let kakaoAgeRange = user.user_metadata.age_range;
-      let kakaoBirthYear = user.user_metadata.birth_year || "unknown";
+      // 카카오 API에서 추가 정보 조회
+      const accessToken = session?.session?.provider_token;
+      const defaultKakaoData: KakaoUserData = {
+        gender: user.user_metadata.gender || GENDER.UNKNOWN,
+        ageRange: user.user_metadata.age_range,
+        birthYear: user.user_metadata.birth_year || GENDER.UNKNOWN,
+      };
+      const kakaoData = accessToken
+        ? await kakaoService.fetchUserData(accessToken, defaultKakaoData)
+        : defaultKakaoData;
 
-      const accessToken = currentSessionData?.session?.provider_token;
-      if (accessToken) {
-        try {
-          const kakaoRes = await fetch("https://kapi.kakao.com/v2/user/me", {
-            headers: { Authorization: `Bearer ${accessToken}` },
-          });
-          const kakaoUser = await kakaoRes.json();
-
-          if (kakaoUser.kakao_account) {
-            kakaoGender = kakaoUser.kakao_account.gender || kakaoGender;
-            kakaoAgeRange = kakaoUser.kakao_account.age_range || kakaoAgeRange;
-            kakaoBirthYear =
-              kakaoUser.kakao_account.birthyear || kakaoBirthYear;
-          }
-        } catch (fetchError) {
-          console.error("Error fetching Kakao user data:", fetchError);
-        }
-      }
-
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("id")
-        .eq("id", user.id)
-        .single();
-
-      if (!profile) {
-        console.log(user);
-        const { error: createProfileError } = await supabase
-          .from("profiles")
-          .insert({
-            id: user.id,
-            // Kakao-specific metadata
-            kakao_user_id: user.user_metadata.provider_id,
-            display_name: user.user_metadata.full_name,
-            role: "user", // Default role for new users
-            gender: kakaoGender || "unknown",
-            age_group: mapKakaoAgeRange(kakaoAgeRange),
-            birth_year: kakaoBirthYear || "unknown",
-          });
-
-        if (createProfileError) {
-          console.error("Failed to create user profile:", createProfileError);
-          // Redirect with an error, but the user is technically logged in
-          const redirectUrl = new URL("/", request.url);
-          redirectUrl.searchParams.set("error", "profile_creation_failed");
-          return NextResponse.redirect(redirectUrl);
-        }
+      // 프로필 보장 (없으면 생성)
+      const { success } = await profileService.ensureProfile(supabase, user, kakaoData);
+      if (!success) {
+        return createErrorRedirect(request.url, "profile_creation_failed");
       }
     }
   }

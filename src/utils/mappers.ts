@@ -119,6 +119,20 @@ export const AGE_GROUP_MAP: Record<string, string> = {
   unknown: "알 수 없음",
 };
 
+/**
+ * 카카오 연령대 형식(예: "20~29")을 앱 AgeRange로 변환
+ */
+export const mapKakaoAgeRange = (ageRange: string | undefined): string => {
+  if (!ageRange) return "unknown";
+  const startAge = parseInt(ageRange.split("~")[0], 10);
+  if (startAge >= 60) return "60s_plus";
+  if (startAge >= 50) return "50s";
+  if (startAge >= 40) return "40s";
+  if (startAge >= 30) return "30s";
+  if (startAge >= 20) return "20s";
+  return "20s_under";
+};
+
 export const OVERALL_GROUP_MAP: Record<string, string> = {
   "20s male": "20대 남성",
   "20s female": "20대 여성",
@@ -190,7 +204,7 @@ export function commentsMapper(
 ): Omit<Comments, "isUserVoted"> {
   const totalCount = commentsData.length;
 
-  // 👤 유저별 익명 ID 매핑
+  // 유저별 익명 ID 매핑
   const userToAnonymousIdMap = new Map<string, number>();
   let anonymousCounter = 1;
   commentsData.forEach((comment) => {
@@ -202,7 +216,7 @@ export function commentsMapper(
   const commentsMap = new Map<number, Comment>();
   const rootComments: Comment[] = [];
 
-  // 🧩 1차 변환 (DB → Domain)
+  // 1차 변환 (DB → Domain)
   commentsData.forEach((comment) => {
     const anonymousId = comment.user_id
       ? userToAnonymousIdMap.get(comment.user_id)
@@ -227,7 +241,7 @@ export function commentsMapper(
     commentsMap.set(comment.id, formatted);
   });
 
-  // 🧩 2차 변환 (트리 구조 구성)
+  // 2차 변환 (트리 구조 구성)
   commentsData.forEach((comment) => {
     const formatted = commentsMap.get(comment.id);
     if (formatted) {

@@ -1,4 +1,22 @@
 import { AgeRange, CommentStatus, Gender, Role, VoteStatus } from "./enums";
+
+// Kakao OAuth 관련 타입
+export interface KakaoAccount {
+  gender?: string;
+  age_range?: string;
+  birthyear?: string;
+}
+
+export interface KakaoUserResponse {
+  kakao_account?: KakaoAccount;
+}
+
+export interface KakaoUserData {
+  gender: string;
+  ageRange: string | undefined;
+  birthYear: string;
+}
+
 export interface Profile {
   id: string;
   kakao_user_id: string | null;
