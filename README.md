@@ -38,7 +38,7 @@ Digora는 사용자들이 다양한 주제에 대해 투표하고, 실시간으�
 
 | 기술              | 선정 이유                                      |
 | ----------------- | ---------------------------------------------- |
-| **Supabase**      | PostgreSQL + Auth + Realtime 올인원, 빠른 개발 |
+| **Supabase**      | PostgreSQL + Auth + Realtime, 빠른 개발 |
 | **Supabase Auth** | 카카오 OAuth 간편 연동, Row Level Security     |
 
 ### 상태 관리 & 데이터 페칭
